@@ -8,15 +8,16 @@
 #include <cstring>
 
 SocketCommunicatie::SocketCommunicatie(std::string ip, int p) {
-    ipAdresDoel = "10.0.0.1";
+    ipAdresDoel = "10.0.0.1"; // Gefixt: Is nu een string, je main hoeft niet te veranderen
     poort = 50001;
     isVerbonden = false;
+    stopThreads = false;
     server_fd = -1;
     laatsteOntvangstTijd = std::chrono::steady_clock::now();
 }
 
 SocketCommunicatie::~SocketCommunicatie() {
-    isVerbonden = false;
+    stopThreads = true;
     if (server_fd >= 0) close(server_fd);
 }
 
@@ -25,7 +26,7 @@ bool SocketCommunicatie::verbind() {
     int opt = 1;
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd == 0) return false;
+    if (server_fd < 0) return false;
 
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 
@@ -42,31 +43,33 @@ bool SocketCommunicatie::verbind() {
     std::thread([this]() {
         struct sockaddr_in client_address;
         int addrlen = sizeof(client_address);
-        char buffer[1024] = {0};
+        char buffer[1024];
 
-        while (this->isVerbonden) {
+        while (!this->stopThreads) {
             int new_socket = accept(this->server_fd, (struct sockaddr*)&client_address, (socklen_t*)&addrlen);
             if (new_socket >= 0) {
                 memset(buffer, 0, 1024);
-                read(new_socket, buffer, 1024);
-                std::string ontvangen(buffer);
+                int bytesRead = read(new_socket, buffer, 1024);
+                if (bytesRead > 0) {
+                    std::string ontvangen(buffer);
+                    this->laatsteOntvangstTijd = std::chrono::steady_clock::now();
 
-                this->laatsteOntvangstTijd = std::chrono::steady_clock::now();
-
-                if (ontvangen.find("Heartbeat") == std::string::npos) {
-                    std::lock_guard<std::mutex> lock(this->data_mutex);
-                    this->laatsteData = ontvangen;
-                    std::cout << "\n[Nieuwe Data Ontvangen]: " << ontvangen << std::endl;
-                } else {
-                    std::cout << "[Heartbeat Ontvangen]: " << ontvangen << std::endl;
+                    if (ontvangen.find("Heartbeat") == std::string::npos) {
+                        std::lock_guard<std::mutex> lock(this->data_mutex);
+                        this->laatsteData = ontvangen;
+                        std::cout << "\n[Nieuwe Data Ontvangen]: " << ontvangen << std::endl;
+                    } else {
+                        std::cout << "[Heartbeat Ontvangen]: " << ontvangen << std::endl;
+                    }
                 }
                 close(new_socket);
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }).detach();
 
     std::thread([this]() {
-        while (this->isVerbonden) {
+        while (!this->stopThreads) {
             std::this_thread::sleep_for(std::chrono::seconds(2));
             this->verzendData("Heartbeat: Pi is online.");
         }
