@@ -4,12 +4,14 @@
 #include <string>
 #include <chrono>
 #include <mutex>
+#include <atomic>
 
 class SocketCommunicatie {
 private:
     std::string ipAdresDoel;
     int poort;
     bool isVerbonden;
+    std::atomic<bool> stopThreads;
 
     int server_fd;
     std::string laatsteData;
