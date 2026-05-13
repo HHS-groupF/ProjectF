@@ -4,15 +4,14 @@
 #include <string>
 #include <chrono>
 #include <mutex>
-#include <atomic> // Toegevoegd voor veilige achtergrond threads
+#include <atomic>
 
 class SocketCommunicatie {
 private:
     std::string ipAdresDoel;
     int poort;
     bool isVerbonden;
-    std::atomic<bool> stopThreads; // Voorkomt dat de verbinding permanent sterft
-
+    std::atomic<bool> stopThreads;
     int server_fd;
     std::string laatsteData;
     std::mutex data_mutex;
