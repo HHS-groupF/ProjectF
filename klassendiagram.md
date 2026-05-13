@@ -1,4 +1,8 @@
-```mermaid
+# Systeem Architectuur Klassendiagram
+
+Hieronder staat het volledige overzicht van de klassen en hun onderlinge relaties binnen het project.
+
+\mermaid
 classDiagram
     class Lichtkrant {
         -String huidigeTekst
@@ -167,5 +171,4 @@ classDiagram
     TemperatuurSensor "1" --> "1" STM32 : Leest uit
     LuchtvochtigheidSensor "1" --> "1" STM32 : Leest uit
     CO2Sensor "1" --> "1" STM32 : Leest uit
-
-```
+\endmermaid
