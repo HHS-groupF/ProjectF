@@ -1,3 +1,4 @@
+\page classdiagram Systeem Architectuur Klassendiagram
 # Systeem Architectuur Klassendiagram
 
 Hieronder staat het volledige overzicht van de klassen en hun onderlinge relaties binnen het project.
