@@ -84,18 +84,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3dd2a5a6343b2def1ecdcac1eab24107" id="r_a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a3dd2a5a6343b2def1ecdcac1eab24107">SocketCommunicatie</a> (std::string ipAdresDoel, int poort)</td></tr>
 <tr class="separator:a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0e7084777c8d853809af3eddc5321e4" id="r_aa0e7084777c8d853809af3eddc5321e4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#aa0e7084777c8d853809af3eddc5321e4">~SocketCommunicatie</a> ()</td></tr>
-<tr class="memdesc:aa0e7084777c8d853809af3eddc5321e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ruimt de socket resources netjes op bij vernietiging van het object.  <br /></td></tr>
 <tr class="separator:aa0e7084777c8d853809af3eddc5321e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c5dcb06e834fda45750c8f7b65499c2" id="r_a4c5dcb06e834fda45750c8f7b65499c2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2">verbind</a> ()</td></tr>
-<tr class="memdesc:a4c5dcb06e834fda45750c8f7b65499c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zet een TCP server op en start threads voor ontvangst en heartbeats.  <br /></td></tr>
 <tr class="separator:a4c5dcb06e834fda45750c8f7b65499c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc675503414f97b72e1b0841d42b770e" id="r_acc675503414f97b72e1b0841d42b770e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e">verzendData</a> (std::string bericht)</td></tr>
 <tr class="separator:acc675503414f97b72e1b0841d42b770e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b0e748b6173474a8eccfbe2807db96e" id="r_a1b0e748b6173474a8eccfbe2807db96e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a1b0e748b6173474a8eccfbe2807db96e">ontvangData</a> ()</td></tr>
-<tr class="memdesc:a1b0e748b6173474a8eccfbe2807db96e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread-safe ophalen van nieuwe data.  <br /></td></tr>
 <tr class="separator:a1b0e748b6173474a8eccfbe2807db96e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2422c45729ebb7e63c9152b9c200c15b" id="r_a2422c45729ebb7e63c9152b9c200c15b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a2422c45729ebb7e63c9152b9c200c15b">checkConnectieStatus</a> ()</td></tr>
-<tr class="memdesc:a2422c45729ebb7e63c9152b9c200c15b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bewaakt de verbinding op basis van de laatste ontvangsttijd.  <br /></td></tr>
 <tr class="separator:a2422c45729ebb7e63c9152b9c200c15b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dd2a5a6343b2def1ecdcac1eab24107" id="r_a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a3dd2a5a6343b2def1ecdcac1eab24107">SocketCommunicatie</a> (std::string ipAdresDoel, int poort)</td></tr>
 <tr class="separator:a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,8 +149,6 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Ruimt de socket resources netjes op bij vernietiging van het object. </p>
 
 </div>
 </div>
@@ -219,13 +213,6 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Bewaakt de verbinding op basis van de laatste ontvangsttijd. </p>
-<ul>
-<li>Als er meer dan 5 seconden geen data of heartbeat is binnengekomen, wordt de verbinding als verbroken beschouwd.</li>
-<li><dl class="section return"><dt>Returns</dt><dd>true zolang de verbinding actief is, anders false. </dd></dl>
-</li>
-</ul>
-
 </div>
 </div>
 <a id="a2422c45729ebb7e63c9152b9c200c15b" name="a2422c45729ebb7e63c9152b9c200c15b"></a>
@@ -260,9 +247,6 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Thread-safe ophalen van nieuwe data. </p>
-<dl class="section return"><dt>Returns</dt><dd>De ontvangen string. De interne buffer wordt na ophalen direct leeggemaakt. </dd></dl>
-
 </div>
 </div>
 <a id="a1b0e748b6173474a8eccfbe2807db96e" name="a1b0e748b6173474a8eccfbe2807db96e"></a>
@@ -296,13 +280,6 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Zet een TCP server op en start threads voor ontvangst en heartbeats. </p>
-<ul>
-<li>Maakt een niet-blokkerende afhandeling van inkomende connecties mogelijk via een gedetacheerde thread. Start ook een zend-thread voor "I am alive" heartbeats.</li>
-<li><dl class="section return"><dt>Returns</dt><dd>true bij succesvol binden en luisteren, false bij een fout. </dd></dl>
-</li>
-</ul>
 
 </div>
 </div>
