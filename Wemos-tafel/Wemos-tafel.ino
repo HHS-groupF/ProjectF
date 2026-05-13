@@ -3,9 +3,9 @@
 
 // VUL GEGEVENS IN
 // ==========================================
-const char* wifiNaam = "Pouriya";
+const char* wifiNaam = "Pouriya"; 
 const char* wifiWachtwoord = "useruser";
-const char* piIpAdres = "192.168.164.201"; // Het IP-adres van de Pi
+const char* piIpAdres = "192.168.164.201"; // Het IP-adres van de Pi (rbp_b)
 
 NetwerkManager netwerk(wifiNaam, wifiWachtwoord, piIpAdres);
 
