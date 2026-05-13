@@ -1,4 +1,4 @@
-#include "RPIBUS_Socket.h" // Of RPIWEMOS_Socket.h afhankelijk van de Pi
+#include "RPIBUS_Socket.h"
 #include <iostream>
 #include <thread>
 
