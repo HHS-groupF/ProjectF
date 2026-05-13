@@ -17,6 +17,6 @@ GENERATE_LATEX         = NO
 EXTRACT_ALL            = YES
 
 # --- Mermaid Integration ---
-HTML_FOOTER = footer.html
+HTML_FOOTER = ./footer.html
 ALIASES += "mermaid=\htmlonly <div class=\"mermaid\">"
 ALIASES += "endmermaid=</div> \endhtmlonly"
