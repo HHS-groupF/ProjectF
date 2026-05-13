@@ -1,8 +1,3 @@
-/**
- * @file RPIBUS_Socket.cpp
- * @brief Implementatie van de SocketCommunicatie klasse (BUS versie).
- */
-
 #include "RPIBUS_Socket.h"
 #include <iostream>
 #include <thread>
@@ -15,57 +10,47 @@
 using namespace std;
 using namespace std::chrono;
 
-/**
- * @brief Initialiseert de socket communicatie instellingen.
- * @param ip Doel IP-adres.
- * @param p Poortnummer.
- */
 SocketCommunicatie::SocketCommunicatie(string ip, int p) 
     : ipAdresDoel(move(ip)), poort(p), isVerbonden(false), server_fd(-1) {
     laatsteOntvangstTijd = steady_clock::now();
 }
 
-/**
- * @brief Ruimt de socket resources netjes op bij vernietiging van het object.
- */
 SocketCommunicatie::~SocketCommunicatie() {
     isVerbonden = false;
+    // Sluit de poort netjes af als het object wordt vernietigd
     if (server_fd >= 0) close(server_fd);
 }
 
-/**
- * @brief Zet een TCP server op en start threads voor ontvangst en heartbeats.
- * * Maakt een niet-blokkerende afhandeling van inkomende connecties mogelijk
- * via een gedetacheerde thread. Start ook een zend-thread voor "I am alive" heartbeats.
- * * @return true bij succesvol binden en luisteren, false bij een fout.
- */
 bool SocketCommunicatie::verbind() {
     struct sockaddr_in address{}; 
     int opt = 1;
 
+    // Maak een TCP socket aan
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == 0) return false;
 
-    // Zorgt ervoor dat de poort direct hergebruikt kan worden na herstart
+    // Zorg ervoor dat we de poort direct opnieuw kunnen gebruiken na een crash of herstart
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_addr.s_addr = INADDR_ANY; // Luister op alle netwerkinterfaces
     address.sin_port = htons(poort);
 
+    // Koppel de socket aan de poort en begin met luisteren (max 3 in de wachtrij)
     if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) return false;
     if (listen(server_fd, 3) < 0) return false;
 
     isVerbonden = true;
     laatsteOntvangstTijd = steady_clock::now();
 
-    // Thread voor het ontvangen van inkomende verbindingen en data
+    // Start een achtergrond-thread (detach) om inkomende verbindingen af te handelen
     thread([this]() {
         struct sockaddr_in client_address{};
         socklen_t addrlen = sizeof(client_address);
         array<char, 1024> buffer{}; 
 
         while (this->isVerbonden) {
+            // Wacht op een inkomende connectie
             int new_socket = accept(this->server_fd, (struct sockaddr*)&client_address, &addrlen);
             if (new_socket >= 0) {
                 buffer.fill(0); 
@@ -73,9 +58,11 @@ bool SocketCommunicatie::verbind() {
                 
                 if (bytesRead > 0) {
                     string ontvangen(buffer.data(), bytesRead);
+                    
+                    // Update de timer omdat we zojuist iets ontvangen hebben
                     this->laatsteOntvangstTijd = steady_clock::now();
 
-                    // Filter heartbeats eruit voor de datastroom
+                    // Sla alleen echte data op in de buffer, negeer heartbeats voor de hoofdapplicatie
                     if (ontvangen.find("Heartbeat") == string::npos) {
                         lock_guard<mutex> lock(this->data_mutex);
                         this->laatsteData = ontvangen;
@@ -84,12 +71,12 @@ bool SocketCommunicatie::verbind() {
                         cout << "[BUS - Heartbeat Ontvangen]: " << ontvangen << endl;
                     }
                 }
-                close(new_socket);
+                close(new_socket); // Verbinding weer sluiten na het lezen
             }
         }
     }).detach();
 
-    // Thread voor het periodiek verzenden van een heartbeat
+    // Start een tweede achtergrond-thread die elke 2 seconden een teken van leven (heartbeat) verstuurt
     thread([this]() {
         while (this->isVerbonden) {
             this_thread::sleep_for(seconds(2));
@@ -100,10 +87,6 @@ bool SocketCommunicatie::verbind() {
     return true;
 }
 
-/**
- * @brief Maakt een tijdelijke client-socket aan en verstuurt data.
- * @param bericht De tekst die via TCP verzonden moet worden.
- */
 void SocketCommunicatie::verzendData(const string& bericht) {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) return;
@@ -112,38 +95,32 @@ void SocketCommunicatie::verzendData(const string& bericht) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(poort);
 
+    // Zet het IP adres om naar het juiste formaat
     if (inet_pton(AF_INET, ipAdresDoel.c_str(), &serv_addr.sin_addr) <= 0) {
         close(sock);
         return;
     }
 
+    // Probeer te verbinden en stuur het bericht
     if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) >= 0) {
         send(sock, bericht.c_str(), bericht.length(), 0);
     }
     close(sock);
 }
 
-/**
- * @brief Thread-safe ophalen van nieuwe data.
- * @return De ontvangen string. De interne buffer wordt na ophalen direct leeggemaakt.
- */
 string SocketCommunicatie::ontvangData() {
-    lock_guard<mutex> lock(data_mutex);
+    lock_guard<mutex> lock(data_mutex); // Lock om thread-safety problemen te voorkomen
     string data = laatsteData;
-    laatsteData.clear(); 
+    laatsteData.clear(); // Maak de string leeg zodat we niet twee keer hetzelfde uitlezen
     return data;
 }
 
-/**
- * @brief Bewaakt de verbinding op basis van de laatste ontvangsttijd.
- * * Als er meer dan 5 seconden geen data of heartbeat is binnengekomen,
- * wordt de verbinding als verbroken beschouwd.
- * * @return true zolang de verbinding actief is, anders false.
- */
 bool SocketCommunicatie::checkConnectieStatus() {
+    // Check hoelang het geleden is sinds het laatste bericht (data of heartbeat)
     auto nu = steady_clock::now();
     auto verstreken = duration_cast<seconds>(nu - laatsteOntvangstTijd).count();
 
+    // Als we 5 seconden niks gehoord hebben, gaan we ervan uit dat de verbinding weg is
     if (verstreken > 5) {
         if (isVerbonden) {
             cout << "\n[FOUT] BUS Communicatie langer dan 5 sec weggevallen!" << endl;
@@ -156,5 +133,4 @@ bool SocketCommunicatie::checkConnectieStatus() {
     return isVerbonden;
 }
 
-// Opmerking: Deze resterende accolade stond in de originele code. Mogelijk onnodig als er geen namespace open is.
 }
