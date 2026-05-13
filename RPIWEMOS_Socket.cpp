@@ -8,7 +8,7 @@
 #include <cstring>
 
 SocketCommunicatie::SocketCommunicatie(std::string ip, int p) {
-    ipAdresDoel = "10.0.0.1"; // Gefixt: Is nu een string, je main hoeft niet te veranderen
+    ipAdresDoel = "10.0.0.1";
     poort = 50001;
     isVerbonden = false;
     stopThreads = false;
