@@ -77,21 +77,30 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Beheert de socket communicatie voor de Raspberry Pi BUS.  
+ <a href="classSocketCommunicatie.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="RPIBUS__Socket_8h_source.html">RPIBUS_Socket.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3dd2a5a6343b2def1ecdcac1eab24107" id="r_a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a3dd2a5a6343b2def1ecdcac1eab24107">SocketCommunicatie</a> (std::string ipAdresDoel, int poort)</td></tr>
+<tr class="memdesc:a3dd2a5a6343b2def1ecdcac1eab24107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor voor <a class="el" href="classSocketCommunicatie.html" title="Beheert de socket communicatie voor de Raspberry Pi BUS.">SocketCommunicatie</a>.  <br /></td></tr>
 <tr class="separator:a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0e7084777c8d853809af3eddc5321e4" id="r_aa0e7084777c8d853809af3eddc5321e4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#aa0e7084777c8d853809af3eddc5321e4">~SocketCommunicatie</a> ()</td></tr>
+<tr class="memdesc:aa0e7084777c8d853809af3eddc5321e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. Sluit de openstaande server socket.  <br /></td></tr>
 <tr class="separator:aa0e7084777c8d853809af3eddc5321e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c5dcb06e834fda45750c8f7b65499c2" id="r_a4c5dcb06e834fda45750c8f7b65499c2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2">verbind</a> ()</td></tr>
+<tr class="memdesc:a4c5dcb06e834fda45750c8f7b65499c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start de server en de bijbehorende luister- en heartbeat-threads.  <br /></td></tr>
 <tr class="separator:a4c5dcb06e834fda45750c8f7b65499c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc675503414f97b72e1b0841d42b770e" id="r_acc675503414f97b72e1b0841d42b770e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e">verzendData</a> (std::string bericht)</td></tr>
+<tr class="memdesc:acc675503414f97b72e1b0841d42b770e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verstuurt een bericht over TCP naar het ingestelde doel-IP.  <br /></td></tr>
 <tr class="separator:acc675503414f97b72e1b0841d42b770e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b0e748b6173474a8eccfbe2807db96e" id="r_a1b0e748b6173474a8eccfbe2807db96e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a1b0e748b6173474a8eccfbe2807db96e">ontvangData</a> ()</td></tr>
+<tr class="memdesc:a1b0e748b6173474a8eccfbe2807db96e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Haalt de laatst ontvangen data op en leegt de buffer.  <br /></td></tr>
 <tr class="separator:a1b0e748b6173474a8eccfbe2807db96e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2422c45729ebb7e63c9152b9c200c15b" id="r_a2422c45729ebb7e63c9152b9c200c15b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a2422c45729ebb7e63c9152b9c200c15b">checkConnectieStatus</a> ()</td></tr>
+<tr class="memdesc:a2422c45729ebb7e63c9152b9c200c15b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controleert of er recent (binnen 5 seconden) nog een bericht of heartbeat is ontvangen.  <br /></td></tr>
 <tr class="separator:a2422c45729ebb7e63c9152b9c200c15b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dd2a5a6343b2def1ecdcac1eab24107" id="r_a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a3dd2a5a6343b2def1ecdcac1eab24107">SocketCommunicatie</a> (std::string ipAdresDoel, int poort)</td></tr>
 <tr class="separator:a3dd2a5a6343b2def1ecdcac1eab24107"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -106,7 +115,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2422c45729ebb7e63c9152b9c200c15b" id="r_a2422c45729ebb7e63c9152b9c200c15b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSocketCommunicatie.html#a2422c45729ebb7e63c9152b9c200c15b">checkConnectieStatus</a> ()</td></tr>
 <tr class="separator:a2422c45729ebb7e63c9152b9c200c15b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Beheert de socket communicatie voor de Raspberry Pi BUS. </p>
+<ul>
+<li>Deze klasse zorgt voor het opzetten van een server-socket om data en heartbeats te ontvangen, en bevat logica om berichten naar een doel-IP te sturen. </li>
+</ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3dd2a5a6343b2def1ecdcac1eab24107" name="a3dd2a5a6343b2def1ecdcac1eab24107"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3dd2a5a6343b2def1ecdcac1eab24107">&#9670;&#160;</a></span>SocketCommunicatie() <span class="overload">[1/2]</span></h2>
 
@@ -133,6 +147,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Constructor voor <a class="el" href="classSocketCommunicatie.html" title="Beheert de socket communicatie voor de Raspberry Pi BUS.">SocketCommunicatie</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ipAdresDoel</td><td>Het IP-adres van de doelmachine. </td></tr>
+    <tr><td class="paramname">poort</td><td>De netwerkpoort voor de communicatie. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="aa0e7084777c8d853809af3eddc5321e4" name="aa0e7084777c8d853809af3eddc5321e4"></a>
@@ -149,6 +172,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Destructor. Sluit de openstaande server socket. </p>
 
 </div>
 </div>
@@ -213,6 +238,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Controleert of er recent (binnen 5 seconden) nog een bericht of heartbeat is ontvangen. </p>
+<dl class="section return"><dt>Returns</dt><dd>true als de verbinding nog actief lijkt, anders false. </dd></dl>
+
 </div>
 </div>
 <a id="a2422c45729ebb7e63c9152b9c200c15b" name="a2422c45729ebb7e63c9152b9c200c15b"></a>
@@ -246,6 +274,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Haalt de laatst ontvangen data op en leegt de buffer. </p>
+<dl class="section return"><dt>Returns</dt><dd>Een string met de laatst ontvangen data, of een lege string als er geen nieuwe data is. </dd></dl>
 
 </div>
 </div>
@@ -281,6 +312,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Start de server en de bijbehorende luister- en heartbeat-threads. </p>
+<dl class="section return"><dt>Returns</dt><dd>true als de socket succesvol is aangemaakt en gebonden, anders false. </dd></dl>
+
 </div>
 </div>
 <a id="a4c5dcb06e834fda45750c8f7b65499c2" name="a4c5dcb06e834fda45750c8f7b65499c2"></a>
@@ -315,6 +349,14 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Verstuurt een bericht over TCP naar het ingestelde doel-IP. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bericht</td><td>De string-data die verzonden moet worden. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
