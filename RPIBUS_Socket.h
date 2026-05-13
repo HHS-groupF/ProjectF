@@ -1,10 +1,3 @@
-/**
- * @file RPIBUS_Socket.h
- * @brief Header-bestand voor de SocketCommunicatie klasse (BUS versie).
- * * Bevat de klassedefinitie voor het opzetten en beheren van TCP-socketcommunicatie.
- * Ondersteunt asynchrone ontvangst en automatische heartbeat-controle.
- */
-
 #ifndef RPIBUS_SOCKET_H
 #define RPIBUS_SOCKET_H
 
@@ -13,59 +6,26 @@
 #include <mutex>
 #include <atomic>
 
-/**
- * @class SocketCommunicatie
- * @brief Beheert de socket communicatie voor de Raspberry Pi BUS.
- * * Deze klasse zorgt voor het opzetten van een server-socket om data en heartbeats 
- * te ontvangen, en bevat logica om berichten naar een doel-IP te sturen.
- */
+// Klasse voor het opzetten en beheren van TCP-socketcommunicatie voor de BUS
 class SocketCommunicatie {
 private:
-    std::string ipAdresDoel;                                                /**< Het IP-adres waarnaar berichten worden verstuurd. */
-    int poort;                                                              /**< De poort waarop gecommuniceerd wordt. */
-    bool isVerbonden;                                                       /**< Statusvlag die aangeeft of de verbinding actief is. */
-    std::atomic<bool> stopThreads;                                          /**< Vlag om threads veilig af te sluiten (indien geïmplementeerd). */
-    int server_fd;                                                          /**< File descriptor voor de server socket. */
-    std::string laatsteData;                                                /**< Buffer voor de laatst ontvangen data. */
-    std::mutex data_mutex;                                                  /**< Mutex voor thread-safe toegang tot data. */
-    std::chrono::time_point<std::chrono::steady_clock> laatsteOntvangstTijd;/**< Tijdstip van het laatst ontvangen bericht. */
+    std::string ipAdresDoel; // IP waar we berichten naartoe sturen
+    int poort;               // De poort voor zowel zenden als ontvangen
+    bool isVerbonden;        // Status van de verbinding
+    std::atomic<bool> stopThreads; 
+    int server_fd;           // File descriptor van de server socket
+    std::string laatsteData; // Opslag voor het laatst ontvangen bericht
+    std::mutex data_mutex;   // Zorgt dat data veilig uitgelezen kan worden door threads
+    std::chrono::time_point<std::chrono::steady_clock> laatsteOntvangstTijd; // Tijdstip van laatste teken van leven
 
 public:
-    /**
-     * @brief Constructor voor SocketCommunicatie.
-     * @param ipAdresDoel Het IP-adres van de doelmachine.
-     * @param poort De netwerkpoort voor de communicatie.
-     */
     SocketCommunicatie(std::string ipAdresDoel, int poort);
-
-    /**
-     * @brief Destructor. Sluit de openstaande server socket.
-     */
     ~SocketCommunicatie();
 
-    /**
-     * @brief Start de server en de bijbehorende luister- en heartbeat-threads.
-     * @return true als de socket succesvol is aangemaakt en gebonden, anders false.
-     */
-    bool verbind();
-
-    /**
-     * @brief Verstuurt een bericht over TCP naar het ingestelde doel-IP.
-     * @param bericht De string-data die verzonden moet worden.
-     */
-    void verzendData(std::string bericht);
-
-    /**
-     * @brief Haalt de laatst ontvangen data op en leegt de buffer.
-     * @return Een string met de laatst ontvangen data, of een lege string als er geen nieuwe data is.
-     */
-    std::string ontvangData();
-
-    /**
-     * @brief Controleert of er recent (binnen 5 seconden) nog een bericht of heartbeat is ontvangen.
-     * @return true als de verbinding nog actief lijkt, anders false.
-     */
-    bool checkConnectieStatus();
+    bool verbind(); // Start de ontvangstserver en achtergrondtaken
+    void verzendData(std::string bericht); // Stuur een bericht naar het doel-IP
+    std::string ontvangData(); // Lees de nieuwste data uit en maak de buffer leeg
+    bool checkConnectieStatus(); // Controleert op een timeout (bijv. kabel los of andere kant offline)
 };
 
 #endif
