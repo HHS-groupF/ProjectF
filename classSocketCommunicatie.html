@@ -174,6 +174,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Destructor. Sluit de openstaande server socket. </p>
+<p>Ruimt de socket resources netjes op bij vernietiging van het object. </p>
 
 </div>
 </div>
@@ -239,7 +240,13 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Controleert of er recent (binnen 5 seconden) nog een bericht of heartbeat is ontvangen. </p>
-<dl class="section return"><dt>Returns</dt><dd>true als de verbinding nog actief lijkt, anders false. </dd></dl>
+<p>Bewaakt de verbinding op basis van de laatste ontvangsttijd.</p>
+<dl class="section return"><dt>Returns</dt><dd>true als de verbinding nog actief lijkt, anders false.</dd></dl>
+<ul>
+<li>Als er meer dan 5 seconden geen data of heartbeat is binnengekomen, wordt de verbinding als verbroken beschouwd.</li>
+<li><dl class="section return"><dt>Returns</dt><dd>true zolang de verbinding actief is, anders false. </dd></dl>
+</li>
+</ul>
 
 </div>
 </div>
@@ -276,7 +283,10 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Haalt de laatst ontvangen data op en leegt de buffer. </p>
-<dl class="section return"><dt>Returns</dt><dd>Een string met de laatst ontvangen data, of een lege string als er geen nieuwe data is. </dd></dl>
+<p>Thread-safe ophalen van nieuwe data.</p>
+<dl class="section return"><dt>Returns</dt><dd>Een string met de laatst ontvangen data, of een lege string als er geen nieuwe data is.</dd>
+<dd>
+De ontvangen string. De interne buffer wordt na ophalen direct leeggemaakt. </dd></dl>
 
 </div>
 </div>
@@ -313,7 +323,13 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Start de server en de bijbehorende luister- en heartbeat-threads. </p>
-<dl class="section return"><dt>Returns</dt><dd>true als de socket succesvol is aangemaakt en gebonden, anders false. </dd></dl>
+<p>Zet een TCP server op en start threads voor ontvangst en heartbeats.</p>
+<dl class="section return"><dt>Returns</dt><dd>true als de socket succesvol is aangemaakt en gebonden, anders false.</dd></dl>
+<ul>
+<li>Maakt een niet-blokkerende afhandeling van inkomende connecties mogelijk via een gedetacheerde thread. Start ook een zend-thread voor "I am alive" heartbeats.</li>
+<li><dl class="section return"><dt>Returns</dt><dd>true bij succesvol binden en luisteren, false bij een fout. </dd></dl>
+</li>
+</ul>
 
 </div>
 </div>
