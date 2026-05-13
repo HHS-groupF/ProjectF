@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['zetlampaan_0',['zetLampAan',['../classTafel.html#a23a18405781dfde9b6b2b2458df6f732',1,'Tafel']]],
-  ['zetlampuit_1',['zetLampUit',['../classTafel.html#a24b4c3d07cac0b4056099f46a04257ca',1,'Tafel']]]
+  ['verbind_0',['verbind',['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()'],['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()']]],
+  ['verwerkbericht_1',['verwerkBericht',['../classTafelBeheerder.html#a929d8c0aed22ce078d6bf56301d61750',1,'TafelBeheerder']]],
+  ['verzenddata_2',['verzenddata',['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)'],['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)']]]
 ];

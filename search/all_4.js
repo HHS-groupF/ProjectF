@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['klassendiagram_0',['klassendiagram',['../md_klassendiagram.html',1,'']]],
-  ['klassendiagram_2emd_1',['klassendiagram.md',['../klassendiagram_8md.html',1,'']]]
+  ['isconnected_0',['isConnected',['../classNetwerkManager.html#a2654520a87bb9a337b4e38db738852d6',1,'NetwerkManager']]]
 ];

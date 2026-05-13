@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DoxyTest: klassendiagram</title>
+<title>DoxyTest: Systeem Architectuur Klassendiagram</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,178 +70,181 @@ $(function() {
 
 </div><!-- top -->
 <div><div class="header">
-  <div class="headertitle"><div class="title">klassendiagram</div></div>
+  <div class="headertitle"><div class="title">Systeem Architectuur Klassendiagram</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><div class="fragment"><div class="line">classDiagram</div>
-<div class="line">    class Lichtkrant {</div>
-<div class="line">        -String huidigeTekst</div>
-<div class="line">        +updateTekst(nieuweTekst: String) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class Bewegingssensor {</div>
-<div class="line">        -int beweging</div>
-<div class="line">        +metingen(bewegingen: int) int</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class WemosD1 {</div>
-<div class="line">        -String ipAdres</div>
-<div class="line">        -bool isSlaapstand</div>
-<div class="line">        +verzendNaarPi(data: String) void</div>
-<div class="line">        +ontvangVanPi() String</div>
-<div class="line">        +gaNaarSlaapstand() void</div>
-<div class="line">        +wordWakker() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class RGBLampen {</div>
-<div class="line">        -int R</div>
-<div class="line">        -int G</div>
-<div class="line">        -int B</div>
-<div class="line">        +aangaan() void</div>
-<div class="line">        +veranderKleur(R: int, G: int, B: int) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class Drukknoppen {</div>
-<div class="line">        -int drukstatus</div>
-<div class="line">        +ingedrukken(drukstatus: int) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class OverRuleKnop {</div>
-<div class="line">        -bool isIngedrukt</div>
-<div class="line">        -int doelComponentId</div>
-<div class="line">        +stuurOverruleSignaal() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class Dashboard {</div>
-<div class="line">        -DateTime laatsteUpdate</div>
-<div class="line">        -List~String~ actieveWaarschuwingen</div>
-<div class="line">        +haalSysteemDataOp() void</div>
-<div class="line">        +toonOverzicht() void</div>
-<div class="line">        +slaDataOpInLog() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class RPIWEMOS {</div>
-<div class="line">        -List~WemosD1~ verbondenWemosApparaten</div>
-<div class="line">        -SocketCommunicatie socket</div>
-<div class="line">        +luisterNaarTafelKnoppen() void</div>
-<div class="line">        +verwerkBewegingRestaurant(status: bool) void</div>
-<div class="line">        +stuurSignaalNaarRPIBus(signaal: String) void</div>
-<div class="line">        +zetWemosInSlaapstand(tijd: DateTime) void</div>
-<div class="line">        +verwerkOverrule(componentId: int, status: bool) void</div>
-<div class="line">        +logSysteemData() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class SocketCommunicatie {</div>
-<div class="line">        -String ipAdresDoel</div>
-<div class="line">        -int poort</div>
-<div class="line">        -bool isVerbonden</div>
-<div class="line">        +verbind() bool</div>
-<div class="line">        +verzendData(bericht: String) void</div>
-<div class="line">        +ontvangData() String</div>
-<div class="line">        +checkConnectieStatus() bool</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class RPIBUS {</div>
-<div class="line">        -List~STM32~ verbondenSTM32Microcontrollers</div>
-<div class="line">        -SocketCommunicatie socket</div>
-<div class="line">        -bool brandAlarmActief</div>
-<div class="line">        +leesKlimaatSensoren() void</div>
-<div class="line">        +evalueerGrenswaarden() bool</div>
-<div class="line">        +stuurVentilatorAan(status: bool) void</div>
-<div class="line">        +activeerNoodStop() void</div>
-<div class="line">        +verwerkOverrule(componentId: int, status: bool) void</div>
-<div class="line">        +logSysteemData() void</div>
-<div class="line">        +stuurDataNaarRPIWMOS() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class HandBrandmelder {</div>
-<div class="line">        -bool isGeactiveerd</div>
-<div class="line">        -String locatie</div>
-<div class="line">        +triggerNoodsituatie() void</div>
-<div class="line">        +resetMelder() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class STM32 {</div>
-<div class="line">        -int busAdres</div>
-<div class="line">        +stuurDataOverBus(data: String) void</div>
-<div class="line">        +leesSensorUit(sensorId: int) float</div>
-<div class="line">        +stuurActuatorAan(actuatorId: int, status: bool) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class Leds {</div>
-<div class="line">        -int status</div>
-<div class="line">        +AanGaan(Status: int) void</div>
-<div class="line">        +UitGaan(Status: int) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class Ventilator {</div>
-<div class="line">        -bool isAan</div>
-<div class="line">        -bool overRule</div>
-<div class="line">        +AanGaan(Status: int) void</div>
-<div class="line">        +UitGaan(Status: int) void</div>
-<div class="line">        +noodStop() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class LedMatrix {</div>
-<div class="line">        -String typeMatrix</div>
-<div class="line">        -String actieveWeergave</div>
-<div class="line">        -int weergaveTimer</div>
-<div class="line">        +toonTafelNummer(tafelNr: int) void</div>
-<div class="line">        +toonSensorData(co2: float, temp: float) void</div>
-<div class="line">        +wisScherm() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class Buzzer {</div>
-<div class="line">        -bool isActief</div>
-<div class="line">        -int volumeDB</div>
-<div class="line">        +startAlarm() void</div>
-<div class="line">        +stopAlarm() void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class TemperatuurSensor {</div>
-<div class="line">        -float huidigewaarde</div>
-<div class="line">        -float grenswaarde</div>
-<div class="line">        +meetWaarde() float</div>
-<div class="line">        +grensOverschreden() bool</div>
-<div class="line">        +setGrenswaarde(nieuweWaarde: float) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class LuchtvochtigheidSensor {</div>
-<div class="line">        -float huidigewaarde</div>
-<div class="line">        -float grenswaarde</div>
-<div class="line">        +meetWaarde() float</div>
-<div class="line">        +grensOverschreden() bool</div>
-<div class="line">        +setGrenswaarde(nieuweWaarde: float) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    class CO2Sensor {</div>
-<div class="line">        -float huidigewaarde</div>
-<div class="line">        -float grenswaarde</div>
-<div class="line">        +meetWaarde() float</div>
-<div class="line">        +grensOverschreden() bool</div>
-<div class="line">        +setGrenswaarde(nieuweWaarde: float) void</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    %% Relationships</div>
-<div class="line">    Bewegingssensor &quot;1..*&quot; --&gt; &quot;1&quot; WemosD1 : Leest uit</div>
-<div class="line">    WemosD1 &quot;1&quot; --&gt; &quot;1&quot; Lichtkrant : Stuurt aan</div>
-<div class="line">    WemosD1 &quot;1&quot; --&gt; &quot;1..*&quot; RGBLampen : Stuurt aan</div>
-<div class="line">    Drukknoppen &quot;1..*&quot; --&gt; &quot;1&quot; WemosD1 : Leest uit</div>
-<div class="line">    WemosD1 &quot;1..*&quot; -- &quot;1&quot; RPIWEMOS : Verzenden/Ontvangen</div>
-<div class="line">    Dashboard &quot;1&quot; --&gt; &quot;1&quot; RPIWEMOS : Leest uit</div>
-<div class="line">    OverRuleKnop &quot;1&quot; --&gt; &quot;1&quot; RPIWEMOS : Neemt over</div>
-<div class="line">    RPIWEMOS &quot;1&quot; -- &quot;1&quot; SocketCommunicatie : Zenden/Ontvangen</div>
-<div class="line">    SocketCommunicatie &quot;1&quot; -- &quot;1&quot; RPIBUS : Zenden/Ontvangen</div>
-<div class="line">    RPIBUS &quot;1&quot; -- &quot;1&quot; STM32 : Verzenden/Ontvangen</div>
-<div class="line">    HandBrandmelder &quot;1&quot; --&gt; &quot;1&quot; STM32 : Stuurt noodsignaal</div>
-<div class="line">    STM32 &quot;1&quot; --&gt; &quot;1..*&quot; Leds : Stuurt aan</div>
-<div class="line">    STM32 &quot;1&quot; --&gt; &quot;1&quot; Ventilator : Stuurt aan</div>
-<div class="line">    STM32 &quot;1&quot; --&gt; &quot;1&quot; LedMatrix : Stuurt aan</div>
-<div class="line">    STM32 &quot;1&quot; --&gt; &quot;1&quot; Buzzer : Stuurt aan</div>
-<div class="line">    TemperatuurSensor &quot;1&quot; --&gt; &quot;1&quot; STM32 : Leest uit</div>
-<div class="line">    LuchtvochtigheidSensor &quot;1&quot; --&gt; &quot;1&quot; STM32 : Leest uit</div>
-<div class="line">    CO2Sensor &quot;1&quot; --&gt; &quot;1&quot; STM32 : Leest uit</div>
-</div><!-- fragment --> </div></div><!-- contents -->
+<div class="textblock"><p><a class="anchor" id="autotoc_md0"></a> Hieronder staat het volledige overzicht van de klassen en hun onderlinge relaties binnen het project.</p>
+<p> <div class="mermaid">
+classDiagram
+    class Lichtkrant {
+        -String huidigeTekst
+        +updateTekst(nieuweTekst: String) void
+    }
+
+    class Bewegingssensor {
+        -int beweging
+        +metingen(bewegingen: int) int
+    }
+
+    class WemosD1 {
+        -String ipAdres
+        -bool isSlaapstand
+        +verzendNaarPi(data: String) void
+        +ontvangVanPi() String
+        +gaNaarSlaapstand() void
+        +wordWakker() void
+    }
+
+    class RGBLampen {
+        -int R
+        -int G
+        -int B
+        +aangaan() void
+        +veranderKleur(R: int, G: int, B: int) void
+    }
+
+    class Drukknoppen {
+        -int drukstatus
+        +ingedrukken(drukstatus: int) void
+    }
+
+    class OverRuleKnop {
+        -bool isIngedrukt
+        -int doelComponentId
+        +stuurOverruleSignaal() void
+    }
+
+    class Dashboard {
+        -DateTime laatsteUpdate
+        -List~String~ actieveWaarschuwingen
+        +haalSysteemDataOp() void
+        +toonOverzicht() void
+        +slaDataOpInLog() void
+    }
+
+    class RPIWEMOS {
+        -List~WemosD1~ verbondenWemosApparaten
+        -SocketCommunicatie socket
+        +luisterNaarTafelKnoppen() void
+        +verwerkBewegingRestaurant(status: bool) void
+        +stuurSignaalNaarRPIBus(signaal: String) void
+        +zetWemosInSlaapstand(tijd: DateTime) void
+        +verwerkOverrule(componentId: int, status: bool) void
+        +logSysteemData() void
+    }
+
+    class SocketCommunicatie {
+        -String ipAdresDoel
+        -int poort
+        -bool isVerbonden
+        +verbind() bool
+        +verzendData(bericht: String) void
+        +ontvangData() String
+        +checkConnectieStatus() bool
+    }
+
+    class RPIBUS {
+        -List~STM32~ verbondenSTM32Microcontrollers
+        -SocketCommunicatie socket
+        -bool brandAlarmActief
+        +leesKlimaatSensoren() void
+        +evalueerGrenswaarden() bool
+        +stuurVentilatorAan(status: bool) void
+        +activeerNoodStop() void
+        +verwerkOverrule(componentId: int, status: bool) void
+        +logSysteemData() void
+        +stuurDataNaarRPIWMOS() void
+    }
+
+    class HandBrandmelder {
+        -bool isGeactiveerd
+        -String locatie
+        +triggerNoodsituatie() void
+        +resetMelder() void
+    }
+
+    class STM32 {
+        -int busAdres
+        +stuurDataOverBus(data: String) void
+        +leesSensorUit(sensorId: int) float
+        +stuurActuatorAan(actuatorId: int, status: bool) void
+    }
+
+    class Leds {
+        -int status
+        +AanGaan(Status: int) void
+        +UitGaan(Status: int) void
+    }
+
+    class Ventilator {
+        -bool isAan
+        -bool overRule
+        +AanGaan(Status: int) void
+        +UitGaan(Status: int) void
+        +noodStop() void
+    }
+
+    class LedMatrix {
+        -String typeMatrix
+        -String actieveWeergave
+        -int weergaveTimer
+        +toonTafelNummer(tafelNr: int) void
+        +toonSensorData(co2: float, temp: float) void
+        +wisScherm() void
+    }
+
+    class Buzzer {
+        -bool isActief
+        -int volumeDB
+        +startAlarm() void
+        +stopAlarm() void
+    }
+
+    class TemperatuurSensor {
+        -float huidigewaarde
+        -float grenswaarde
+        +meetWaarde() float
+        +grensOverschreden() bool
+        +setGrenswaarde(nieuweWaarde: float) void
+    }
+
+    class LuchtvochtigheidSensor {
+        -float huidigewaarde
+        -float grenswaarde
+        +meetWaarde() float
+        +grensOverschreden() bool
+        +setGrenswaarde(nieuweWaarde: float) void
+    }
+
+    class CO2Sensor {
+        -float huidigewaarde
+        -float grenswaarde
+        +meetWaarde() float
+        +grensOverschreden() bool
+        +setGrenswaarde(nieuweWaarde: float) void
+    }
+
+    %% Relationships
+    Bewegingssensor "1..*" --> "1" WemosD1 : Leest uit
+    WemosD1 "1" --> "1" Lichtkrant : Stuurt aan
+    WemosD1 "1" --> "1..*" RGBLampen : Stuurt aan
+    Drukknoppen "1..*" --> "1" WemosD1 : Leest uit
+    WemosD1 "1..*" -- "1" RPIWEMOS : Verzenden/Ontvangen
+    Dashboard "1" --> "1" RPIWEMOS : Leest uit
+    OverRuleKnop "1" --> "1" RPIWEMOS : Neemt over
+    RPIWEMOS "1" -- "1" SocketCommunicatie : Zenden/Ontvangen
+    SocketCommunicatie "1" -- "1" RPIBUS : Zenden/Ontvangen
+    RPIBUS "1" -- "1" STM32 : Verzenden/Ontvangen
+    HandBrandmelder "1" --> "1" STM32 : Stuurt noodsignaal
+    STM32 "1" --> "1..*" Leds : Stuurt aan
+    STM32 "1" --> "1" Ventilator : Stuurt aan
+    STM32 "1" --> "1" LedMatrix : Stuurt aan
+    STM32 "1" --> "1" Buzzer : Stuurt aan
+    TemperatuurSensor "1" --> "1" STM32 : Leest uit
+    LuchtvochtigheidSensor "1" --> "1" STM32 : Leest uit
+    CO2Sensor "1" --> "1" STM32 : Leest uit
+</div>  </p>
+</div></div><!-- contents -->
 </div><!-- PageDoc -->
 <hr class="footer"/><address class="footer"><small>
 Generated by Doxygen

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['on_5fconnect_0',['on_connect',['../classMqttClient.html#ad7c02482d77ad5bc4beadee56822d136',1,'MqttClient']]],
-  ['on_5fmessage_1',['on_message',['../classMqttClient.html#a6a0ad4cd49ad56787d2129797bf7a096',1,'MqttClient']]],
-  ['ontvangdata_2',['ontvangdata',['../classSocketCommunicatie.html#a1b0e748b6173474a8eccfbe2807db96e',1,'SocketCommunicatie::ontvangData()'],['../classSocketCommunicatie.html#a1b0e748b6173474a8eccfbe2807db96e',1,'SocketCommunicatie::ontvangData()']]]
+  ['netwerkmanager_0',['netwerkmanager',['../classNetwerkManager.html',1,'NetwerkManager'],['../classNetwerkManager.html#ae2f095440a59a9c833d250d81f2dbf27',1,'NetwerkManager::NetwerkManager()']]],
+  ['netwerkmanager_2ecpp_1',['NetwerkManager.cpp',['../NetwerkManager_8cpp.html',1,'']]],
+  ['netwerkmanager_2eh_2',['NetwerkManager.h',['../NetwerkManager_8h.html',1,'']]]
 ];
