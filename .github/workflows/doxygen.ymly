@@ -1,0 +1,30 @@
+name: Build and Deploy Doxygen
+
+on:
+  push:
+    branches:
+      - main  # Make sure this matches your default branch name!
+
+permissions:
+  contents: write # This gives the action permission to upload the website
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Download your code onto the temporary GitHub server
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Run Doxygen using the Doxyfile you created in Step 1
+      - name: Generate Doxygen
+        uses: mattnotmitt/doxygen-action@v1.9.8
+        with:
+          doxyfile-path: 'doxygen/Doxyfile'
+
+      # 3. Take the 'html' folder Doxygen made and push it to a new branch
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./html
