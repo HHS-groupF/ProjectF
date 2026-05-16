@@ -11,20 +11,22 @@ class NetwerkManager {
     const char* _mqttServer;
     WiFiClient _espClient;
     PubSubClient _client;
-    
+    String _clientId;                        // Unieke ID gebaseerd op MAC-adres
+    unsigned long _laatsteHerverbindTijd = 0; // Tijdstip van laatste MQTT herverbindpoging
+
     void setupWifi();
+    void verbindMqtt(); // Eenmalige MQTT verbindpoging
 
   public:
     NetwerkManager(const char* ssid, const char* password, const char* mqttServer);
-    
+
     void begin(MQTT_CALLBACK_SIGNATURE); // Initialiseert alles
-    void loop();                        // Houdt de verbinding levend
-    
-    // Om berichten te sturen via de manager
+    void loop();                         // Houdt WiFi en MQTT verbinding levend
+
     void stuurBericht(const char* topic, const char* bericht);
     void subscribe(const char* topic);
     bool isConnected();
-    PubSubClient& getClient(); // Geeft toegang tot de onderliggende client
+    PubSubClient& getClient();
 };
 
 #endif

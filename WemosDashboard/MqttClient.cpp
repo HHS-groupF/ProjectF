@@ -1,6 +1,7 @@
 #include "MqttClient.h"
+#include <iostream>
 
-MqttClient::MqttClient(const char *id, const char *host, int port) : mosqpp::mosquittopp(id) {
+MqttClient::MqttClient(const char *id, const char *host, int port) : mosqpp::mosquittopp(id), _host(host), _port(port) {
     mosqpp::lib_init();
     connect(host, port, 60);
 }
@@ -16,10 +17,18 @@ void MqttClient::on_connect(int rc) {
     }
 }
 
+void MqttClient::on_disconnect(int rc) {
+    // Automatisch herverbinden als de verbinding onverwacht wegvalt
+    if (rc != 0) {
+        std::cout << "[MQTT] Verbinding verbroken, opnieuw verbinden..." << std::endl;
+        reconnect();
+    }
+}
+
 void MqttClient::on_message(const struct mosquitto_message *message) {
     std::string topic(message->topic);
     std::string payload(static_cast<char*>(message->payload), message->payloadlen);
-    
+
     if (onMessageCallback) {
         onMessageCallback(topic, payload); // Geef rauwe data door aan beheerder
     }

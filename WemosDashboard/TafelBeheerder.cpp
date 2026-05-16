@@ -6,15 +6,20 @@ void TafelBeheerder::verwerkBericht(std::string topic, std::string payload) {
     // Haal id uit "tafel/X/status"
     size_t eersteSlash = topic.find('/');
     size_t tweedeSlash = topic.rfind('/');
-    
+
     if (eersteSlash != std::string::npos && tweedeSlash != std::string::npos) {
         int id = std::stoi(topic.substr(eersteSlash + 1, tweedeSlash - eersteSlash - 1));
-        
-        // Vuur de juiste UI actie af
-        if (payload == "HELP" && onTafelHulpNodig) {
-            onTafelHulpNodig(id);
-        } else if (payload == "OK" && onTafelGeholpen) {
-            onTafelGeholpen(id);
+
+        if (payload == "HELP") {
+            // Alleen reageren als deze tafel nog niet actief is (voorkomt dubbele meldingen)
+            if (_actieveTafels.find(id) == _actieveTafels.end()) {
+                _actieveTafels.insert(id);
+                if (onTafelHulpNodig) onTafelHulpNodig(id);
+            }
+        } else if (payload == "OK") {
+            // Tafel uit de actieve set halen
+            _actieveTafels.erase(id);
+            if (onTafelGeholpen) onTafelGeholpen(id);
         }
     }
 }

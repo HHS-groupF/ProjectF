@@ -4,12 +4,14 @@
 #include "MqttClient.h"
 #include <string>
 #include <functional>
+#include <set>
 
 class TafelBeheerder {
 private:
     MqttClient& netwerk;
     std::function<void(int)> onTafelHulpNodig;
     std::function<void(int)> onTafelGeholpen;
+    std::set<int> _actieveTafels; // Houdt bij welke tafels momenteel hulp nodig hebben
 
 public:
     TafelBeheerder(MqttClient& mqttNetwerk);

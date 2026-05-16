@@ -1,3 +1,4 @@
+#include "config.h"          // Verbindingsinstellingen (server, poort, client-ID)
 #include "MqttClient.h"
 #include "TafelBeheerder.h"
 #include <iostream>
@@ -5,7 +6,7 @@
 int main() {
     std::cout << "--- Restaurant Systeem Gestart ---" << std::endl;
 
-    MqttClient mqtt("PiController", "127.0.0.1", 1883);
+    MqttClient mqtt(MQTT_CLIENT_ID, MQTT_SERVER, MQTT_PORT);
     TafelBeheerder beheerder(mqtt);
 
     // Koppel netwerk aan beheerder
