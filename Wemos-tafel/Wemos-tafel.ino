@@ -1,15 +1,11 @@
-#include "config.h"         // Netwerkinstellingen (SSID, wachtwoord, server IP)
+#include "config.h"              // Netwerkinstellingen (SSID, wachtwoord, server IP)
+#include "tafel_config_unit1.h"  // ← aanpassen per unit
 #include "NetwerkManager.h"
 #include "Tafel.h"
 
 NetwerkManager netwerk(WIFI_SSID, WIFI_PASSWORD, MQTT_SERVER);
 
-// TAFELS TOEVOEGEN (Knop, Lamp, ID, netwerk)
-// ==========================================
-Tafel tafels[] = {
-  Tafel(D1, D2, 1, netwerk), // Tafel 1
-  Tafel(D5, D6, 2, netwerk)  // Tafel 2
-};
+Tafel tafels[] = { TAFEL_CONFIG(netwerk) };
 const int aantalTafels = sizeof(tafels) / sizeof(Tafel);
 
 // BERICHTEN ONTVANGEN VAN DE PI
