@@ -1,13 +1,8 @@
+#include "config.h"         // Netwerkinstellingen (SSID, wachtwoord, server IP)
 #include "NetwerkManager.h"
 #include "Tafel.h"
 
-// VUL GEGEVENS IN
-// ==========================================
-const char* wifiNaam = "Pouriya"; 
-const char* wifiWachtwoord = "useruser";
-const char* piIpAdres = "192.168.164.201"; // Het IP-adres van de Pi (rbp_b)
-
-NetwerkManager netwerk(wifiNaam, wifiWachtwoord, piIpAdres);
+NetwerkManager netwerk(WIFI_SSID, WIFI_PASSWORD, MQTT_SERVER);
 
 // TAFELS TOEVOEGEN (Knop, Lamp, ID, netwerk)
 // ==========================================

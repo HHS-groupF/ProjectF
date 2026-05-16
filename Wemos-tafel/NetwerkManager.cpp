@@ -14,6 +14,12 @@ void NetwerkManager::setupWifi() {
   Serial.println();
   Serial.print("Verbinden met "); Serial.println(_ssid);
 
+  // Als statisch IP is ingesteld in config.h, gebruik dat in plaats van DHCP
+  #ifdef GEBRUIK_STATISCH_IP
+    WiFi.config(IPAddress(STATISCH_IP), IPAddress(GATEWAY), IPAddress(SUBNET));
+    Serial.println("Statisch IP ingesteld.");
+  #endif
+
   WiFi.begin(_ssid, _password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
