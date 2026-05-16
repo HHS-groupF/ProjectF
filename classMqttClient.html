@@ -93,6 +93,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a11935fb35c1661d0a65b4735d815bb2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7c02482d77ad5bc4beadee56822d136" id="r_ad7c02482d77ad5bc4beadee56822d136"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMqttClient.html#ad7c02482d77ad5bc4beadee56822d136">on_connect</a> (int rc) override</td></tr>
 <tr class="separator:ad7c02482d77ad5bc4beadee56822d136"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af69df6680b04300adb8b2536948b96d7" id="r_af69df6680b04300adb8b2536948b96d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMqttClient.html#af69df6680b04300adb8b2536948b96d7">on_disconnect</a> (int rc) override</td></tr>
+<tr class="separator:af69df6680b04300adb8b2536948b96d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a0ad4cd49ad56787d2129797bf7a096" id="r_a6a0ad4cd49ad56787d2129797bf7a096"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMqttClient.html#a6a0ad4cd49ad56787d2129797bf7a096">on_message</a> (const struct mosquitto_message *message) override</td></tr>
 <tr class="separator:a6a0ad4cd49ad56787d2129797bf7a096"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46253f8ca2f87bcbbc2d71cba2c02b24" id="r_a46253f8ca2f87bcbbc2d71cba2c02b24"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMqttClient.html#a46253f8ca2f87bcbbc2d71cba2c02b24">stuurBericht</a> (const std::string &amp;topic, const std::string &amp;payload)</td></tr>
@@ -164,6 +166,32 @@ Public Member Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void MqttClient::on_connect </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>rc</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af69df6680b04300adb8b2536948b96d7" name="af69df6680b04300adb8b2536948b96d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af69df6680b04300adb8b2536948b96d7">&#9670;&#160;</a></span>on_disconnect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MqttClient::on_disconnect </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>rc</em></td><td>)</td>
