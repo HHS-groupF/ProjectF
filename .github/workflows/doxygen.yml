@@ -3,16 +3,16 @@ name: Build and Deploy Doxygen
 on:
   push:
     branches:
-      - main  # Make sure this matches your default branch name!
+      - main  
 
 permissions:
-  contents: write # This gives the action permission to upload the website
+  contents: write 
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. Download your code onto the temporary GitHub server
+      # 1. Download code onto the temporary GitHub server
       - name: Checkout repository
         uses: actions/checkout@v4
 
