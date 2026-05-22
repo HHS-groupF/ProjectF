@@ -3,7 +3,7 @@
 TafelBeheerder::TafelBeheerder(MqttClient& mqttNetwerk) : netwerk(mqttNetwerk) {}
 
 void TafelBeheerder::verwerkBericht(std::string topic, std::string payload) {
-    // Haal id uit "tafel/X/status"
+    // Haal het tafelnummer uit het topic, bijv. "tafel/3/status" → id = 3
     size_t eersteSlash = topic.find('/');
     size_t tweedeSlash = topic.rfind('/');
 

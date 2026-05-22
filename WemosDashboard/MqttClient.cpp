@@ -3,7 +3,7 @@
 
 MqttClient::MqttClient(const char *id, const char *host, int port) : mosqpp::mosquittopp(id), _host(host), _port(port) {
     mosqpp::lib_init();
-    connect(host, port, 60);
+    connect(host, port, 60); // 60 = keepalive in seconden
 }
 
 MqttClient::~MqttClient() {

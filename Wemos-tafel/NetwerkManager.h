@@ -4,6 +4,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+// Beheert de WiFi- en MQTT-verbinding voor de Wemos
 class NetwerkManager {
   private:
     const char* _ssid;
@@ -23,9 +24,9 @@ class NetwerkManager {
     void begin(MQTT_CALLBACK_SIGNATURE); // Initialiseert alles
     void loop();                         // Houdt WiFi en MQTT verbinding levend
 
-    void stuurBericht(const char* topic, const char* bericht);
-    void subscribe(const char* topic);
-    bool isConnected();
+    void stuurBericht(const char* topic, const char* bericht); // Publiceert een bericht op een topic
+    void subscribe(const char* topic);                          // Abonneer op een extra topic
+    bool isConnected();                                         // Geeft true als MQTT verbonden is
     PubSubClient& getClient();
 };
 

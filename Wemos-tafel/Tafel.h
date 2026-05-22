@@ -9,10 +9,10 @@ class Tafel {
     int _buttonPin;
     int _ledPin;
     int _id;
-    bool _helpNodig;
-    int _laatsteKnopStatus;
+    bool _helpNodig;                     // true als de lamp aan staat en hulp onderweg is
+    int _laatsteKnopStatus;              // Vorige knopstand, voor debounce vergelijking
     unsigned long _laatsteDebounceTijd;
-    unsigned long _debounceDelay = 50; 
+    unsigned long _debounceDelay = 50;   // Knop moet 50ms stabiel zijn voor registratie
     NetwerkManager& _netwerk; // Referentie naar onze netwerk manager
 
   public:
