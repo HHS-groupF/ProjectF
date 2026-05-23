@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mqttclient_0',['MqttClient',['../classMqttClient.html',1,'']]]
+  ['co2sensor_5ft_0',['CO2Sensor_t',['../structCO2Sensor__t.html',1,'']]]
 ];

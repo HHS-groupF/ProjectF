@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['verbind_0',['verbind',['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()'],['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()']]],
-  ['verwerkbericht_1',['verwerkBericht',['../classTafelBeheerder.html#a929d8c0aed22ce078d6bf56301d61750',1,'TafelBeheerder']]],
-  ['verzenddata_2',['verzenddata',['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)'],['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)']]]
+  ['readme_2emd_0',['README.md',['../README_8md.html',1,'']]],
+  ['resettafel_1',['resetTafel',['../classTafelBeheerder.html#aa07df8fe20a32307a5a9750f65a88819',1,'TafelBeheerder']]],
+  ['rpibus_5fsocket_2ecpp_2',['RPIBUS_Socket.cpp',['../RPIBUS__Socket_8cpp.html',1,'']]],
+  ['rpibus_5fsocket_2eh_3',['RPIBUS_Socket.h',['../RPIBUS__Socket_8h.html',1,'']]],
+  ['rpiwemos_5fsocket_2ecpp_4',['RPIWEMOS_Socket.cpp',['../RPIWEMOS__Socket_8cpp.html',1,'']]],
+  ['rpiwemos_5fsocket_2eh_5',['RPIWEMOS_Socket.h',['../RPIWEMOS__Socket_8h.html',1,'']]]
 ];

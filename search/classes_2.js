@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['socketcommunicatie_0',['SocketCommunicatie',['../classSocketCommunicatie.html',1,'']]]
+  ['mqttclient_0',['MqttClient',['../classMqttClient.html',1,'']]]
 ];

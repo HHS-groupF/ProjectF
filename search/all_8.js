@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['netwerkmanager_0',['netwerkmanager',['../classNetwerkManager.html',1,'NetwerkManager'],['../classNetwerkManager.html#ae2f095440a59a9c833d250d81f2dbf27',1,'NetwerkManager::NetwerkManager()']]],
-  ['netwerkmanager_2ecpp_1',['NetwerkManager.cpp',['../NetwerkManager_8cpp.html',1,'']]],
-  ['netwerkmanager_2eh_2',['NetwerkManager.h',['../NetwerkManager_8h.html',1,'']]]
+  ['isaan_0',['isAan',['../structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1',1,'Ventilator_t']]],
+  ['isconnected_1',['isConnected',['../classNetwerkManager.html#a2654520a87bb9a337b4e38db738852d6',1,'NetwerkManager']]]
 ];

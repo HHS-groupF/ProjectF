@@ -1,12 +1,8 @@
 var searchData=
 [
-  ['tafel_0',['tafel',['../classTafel.html',1,'Tafel'],['../classTafel.html#a12be682d015dc43108a52c38803e4002',1,'Tafel::Tafel()']]],
-  ['tafel_2ecpp_1',['Tafel.cpp',['../Tafel_8cpp.html',1,'']]],
-  ['tafel_2eh_2',['Tafel.h',['../Tafel_8h.html',1,'']]],
-  ['tafel_5fconfig_3',['tafel_config',['../tafel__config__unit1_8h.html#ab68390acf380b41bcb7b34976d026802',1,'TAFEL_CONFIG:&#160;tafel_config_unit1.h'],['../tafel__config__unit2_8h.html#ab68390acf380b41bcb7b34976d026802',1,'TAFEL_CONFIG:&#160;tafel_config_unit2.h']]],
-  ['tafel_5fconfig_5funit1_2eh_4',['tafel_config_unit1.h',['../tafel__config__unit1_8h.html',1,'']]],
-  ['tafel_5fconfig_5funit2_2eh_5',['tafel_config_unit2.h',['../tafel__config__unit2_8h.html',1,'']]],
-  ['tafelbeheerder_6',['tafelbeheerder',['../classTafelBeheerder.html',1,'TafelBeheerder'],['../classTafelBeheerder.html#ac914ae9c3f2e9372e28321229e262d21',1,'TafelBeheerder::TafelBeheerder()']]],
-  ['tafelbeheerder_2ecpp_7',['TafelBeheerder.cpp',['../TafelBeheerder_8cpp.html',1,'']]],
-  ['tafelbeheerder_2eh_8',['TafelBeheerder.h',['../TafelBeheerder_8h.html',1,'']]]
+  ['on_5fconnect_0',['on_connect',['../classMqttClient.html#ad7c02482d77ad5bc4beadee56822d136',1,'MqttClient']]],
+  ['on_5fdisconnect_1',['on_disconnect',['../classMqttClient.html#af69df6680b04300adb8b2536948b96d7',1,'MqttClient']]],
+  ['on_5fmessage_2',['on_message',['../classMqttClient.html#a6a0ad4cd49ad56787d2129797bf7a096',1,'MqttClient']]],
+  ['ontvangdata_3',['ontvangdata',['../classSocketCommunicatie.html#a1b0e748b6173474a8eccfbe2807db96e',1,'SocketCommunicatie::ontvangData()'],['../classSocketCommunicatie.html#a1b0e748b6173474a8eccfbe2807db96e',1,'SocketCommunicatie::ontvangData()']]],
+  ['overrule_4',['overRule',['../structVentilator__t.html#a193d4ddafc6452ca1d486722bcf5b16a',1,'Ventilator_t']]]
 ];

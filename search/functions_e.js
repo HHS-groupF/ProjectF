@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['_7emqttclient_0',['~MqttClient',['../classMqttClient.html#a11935fb35c1661d0a65b4735d815bb2f',1,'MqttClient']]],
-  ['_7esocketcommunicatie_1',['~socketcommunicatie',['../classSocketCommunicatie.html#aa0e7084777c8d853809af3eddc5321e4',1,'SocketCommunicatie::~SocketCommunicatie()'],['../classSocketCommunicatie.html#aa0e7084777c8d853809af3eddc5321e4',1,'SocketCommunicatie::~SocketCommunicatie()']]]
+  ['update_0',['update',['../classTafel.html#af54d430974de3ffbb0e87ed3b6f09992',1,'Tafel']]]
 ];

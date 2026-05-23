@@ -1,0 +1,11 @@
+var searchData=
+[
+  ['ventilator_5faangaan_0',['ventilator_aangaan',['../Ventilator_8c.html#a5aac35f0f97e54b6faab6213165d9b7f',1,'Ventilator_AanGaan(Ventilator_t *vent, int Status):&#160;Ventilator.c'],['../Ventilator_8h.html#a5aac35f0f97e54b6faab6213165d9b7f',1,'Ventilator_AanGaan(Ventilator_t *vent, int Status):&#160;Ventilator.c']]],
+  ['ventilator_5fcreate_1',['ventilator_create',['../Ventilator_8c.html#ad64926d86b7510bf639815cf6fd3cf08',1,'Ventilator_Create(Ventilator_t *vent):&#160;Ventilator.c'],['../Ventilator_8h.html#ad64926d86b7510bf639815cf6fd3cf08',1,'Ventilator_Create(Ventilator_t *vent):&#160;Ventilator.c']]],
+  ['ventilator_5fgetisaan_2',['ventilator_getisaan',['../Ventilator_8c.html#a27cd2edc4f3bee103a2bc4fe54e8b4d5',1,'Ventilator_getIsAan(Ventilator_t *vent):&#160;Ventilator.c'],['../Ventilator_8h.html#a27cd2edc4f3bee103a2bc4fe54e8b4d5',1,'Ventilator_getIsAan(Ventilator_t *vent):&#160;Ventilator.c']]],
+  ['ventilator_5fnoodstop_3',['ventilator_noodstop',['../Ventilator_8c.html#a10576c7007ffe80b87c5a75fd4034005',1,'Ventilator_noodStop(Ventilator_t *vent):&#160;Ventilator.c'],['../Ventilator_8h.html#a10576c7007ffe80b87c5a75fd4034005',1,'Ventilator_noodStop(Ventilator_t *vent):&#160;Ventilator.c']]],
+  ['ventilator_5fuitgaan_4',['ventilator_uitgaan',['../Ventilator_8c.html#a9ed4df6071a98dd04aa65df9ca25ed6b',1,'Ventilator_UitGaan(Ventilator_t *vent, int Status):&#160;Ventilator.c'],['../Ventilator_8h.html#a9ed4df6071a98dd04aa65df9ca25ed6b',1,'Ventilator_UitGaan(Ventilator_t *vent, int Status):&#160;Ventilator.c']]],
+  ['verbind_5',['verbind',['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()'],['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()']]],
+  ['verwerkbericht_6',['verwerkBericht',['../classTafelBeheerder.html#a929d8c0aed22ce078d6bf56301d61750',1,'TafelBeheerder']]],
+  ['verzenddata_7',['verzenddata',['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)'],['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)']]]
+];

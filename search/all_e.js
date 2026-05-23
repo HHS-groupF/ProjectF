@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['update_0',['update',['../classTafel.html#af54d430974de3ffbb0e87ed3b6f09992',1,'Tafel']]]
+  ['pi_5fip_5fadres_0',['PI_IP_ADRES',['../Wemos-tafel_2config_8h.html#a70e7cc39c70b41d8b03b7ca79899cd61',1,'config.h']]],
+  ['projectf_1',['ProjectF',['../md_README.html',1,'']]]
 ];

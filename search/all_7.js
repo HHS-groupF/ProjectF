@@ -1,12 +1,11 @@
 var searchData=
 [
-  ['main_0',['main',['../Socketverbinding_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4',1,'main():&#160;main.cpp'],['../WemosDashboard_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4',1,'main():&#160;main.cpp']]],
-  ['main_2ec_1',['main.c',['../main_8c.html',1,'']]],
-  ['main_2ecpp_2',['main.cpp',['../Socketverbinding_2main_8cpp.html',1,'(Global Namespace)'],['../WemosDashboard_2main_8cpp.html',1,'(Global Namespace)']]],
-  ['mqtt_5fclient_5fid_3',['MQTT_CLIENT_ID',['../WemosDashboard_2config_8h.html#a87467ea560dbba1fe10d066adb9f4a11',1,'config.h']]],
-  ['mqtt_5fport_4',['MQTT_PORT',['../WemosDashboard_2config_8h.html#aa8632baff6bbb5004385998918f1e6bd',1,'config.h']]],
-  ['mqtt_5fserver_5',['mqtt_server',['../Wemos-tafel_2config_8h.html#a977bd2592e99309a86e7034189e9e62d',1,'MQTT_SERVER:&#160;config.h'],['../WemosDashboard_2config_8h.html#a977bd2592e99309a86e7034189e9e62d',1,'MQTT_SERVER:&#160;config.h']]],
-  ['mqttclient_6',['mqttclient',['../classMqttClient.html',1,'MqttClient'],['../classMqttClient.html#a75bff64870cc19a8cd342caae46e2b9d',1,'MqttClient::MqttClient()']]],
-  ['mqttclient_2ecpp_7',['MqttClient.cpp',['../MqttClient_8cpp.html',1,'']]],
-  ['mqttclient_2eh_8',['MqttClient.h',['../MqttClient_8h.html',1,'']]]
+  ['hal_5fgpio_5fexti_5fcallback_0',['HAL_GPIO_EXTI_Callback',['../Ventilator_2main_8c.html#a0cd91fd3a9608559c2a87a8ba6cba55f',1,'main.c']]],
+  ['hal_5ftim_5fperiodelapsedcallback_1',['HAL_TIM_PeriodElapsedCallback',['../Ventilator_2main_8c.html#a8a3b0ad512a6e6c6157440b68d395eac',1,'main.c']]],
+  ['hi2c_2',['hi2c',['../structCO2Sensor__t.html#acb39015b145292d0b0f8017a9006a7fd',1,'CO2Sensor_t::hi2c'],['../structLuchtvochtigheidSensor__t.html#a5f2c78f6d8aa4821f0333a5cb3014fef',1,'LuchtvochtigheidSensor_t::hi2c'],['../structTemperatuurSensor__t.html#a90f7982ba904f6bd74498d83fbbbaf95',1,'TemperatuurSensor_t::hi2c']]],
+  ['hi2c1_3',['hi2c1',['../Ventilator_2main_8c.html#af7b2c26e44dadaaa798a5c3d82914ba7',1,'main.c']]],
+  ['htim2_4',['htim2',['../Ventilator_2main_8c.html#a2c80fd5510e2990a59a5c90d745c716c',1,'main.c']]],
+  ['huart2_5',['huart2',['../Ventilator_2main_8c.html#aa9479c261d65eecedd3d9582f7f0f89c',1,'main.c']]],
+  ['huidigewaarde_6',['huidigewaarde',['../structCO2Sensor__t.html#a9c4a2e9c62f1ce397a1b77e73c938542',1,'CO2Sensor_t::huidigewaarde'],['../structLuchtvochtigheidSensor__t.html#a30a07442caf77dcfbfc9146ce1b42688',1,'LuchtvochtigheidSensor_t::huidigewaarde'],['../structTemperatuurSensor__t.html#a46e793af7f23c84cbacc1b4fc32ec161',1,'TemperatuurSensor_t::huidigewaarde']]],
+  ['hum_7',['hum',['../Ventilator_2main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8',1,'main.c']]]
 ];

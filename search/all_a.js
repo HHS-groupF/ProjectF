@@ -1,5 +1,14 @@
 var searchData=
 [
-  ['pi_5fip_5fadres_0',['PI_IP_ADRES',['../Wemos-tafel_2config_8h.html#a70e7cc39c70b41d8b03b7ca79899cd61',1,'config.h']]],
-  ['projectf_1',['ProjectF',['../md_README.html',1,'']]]
+  ['ld3_5fgpio_5fport_0',['LD3_GPIO_Port',['../main_8h.html#ae851c2d6146e6d4fac9f4a9983f5cf1f',1,'main.h']]],
+  ['ld3_5fpin_1',['LD3_Pin',['../main_8h.html#a71154fae0eacbdf882bd1481164f0652',1,'main.h']]],
+  ['loop_2',['loop',['../classNetwerkManager.html#a2171459a35175f8dcfbdcd2e50c83727',1,'NetwerkManager']]],
+  ['luchtvochtigheidsensor_2ec_3',['LuchtvochtigheidSensor.c',['../LuchtvochtigheidSensor_8c.html',1,'']]],
+  ['luchtvochtigheidsensor_2eh_4',['LuchtvochtigheidSensor.h',['../LuchtvochtigheidSensor_8h.html',1,'']]],
+  ['luchtvochtigheidsensor_5fcreate_5',['luchtvochtigheidsensor_create',['../LuchtvochtigheidSensor_8c.html#a6134d9858da124ed44a0be0e6a796dca',1,'LuchtvochtigheidSensor_Create(LuchtvochtigheidSensor_t *sensor, I2C_HandleTypeDef *edge_i2c, float initieleGrens):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a6134d9858da124ed44a0be0e6a796dca',1,'LuchtvochtigheidSensor_Create(LuchtvochtigheidSensor_t *sensor, I2C_HandleTypeDef *edge_i2c, float initieleGrens):&#160;LuchtvochtigheidSensor.c']]],
+  ['luchtvochtigheidsensor_5fgrensoverschreden_6',['luchtvochtigheidsensor_grensoverschreden',['../LuchtvochtigheidSensor_8c.html#a40afd5524213bd5a37bf898852241928',1,'LuchtvochtigheidSensor_grensOverschreden(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a40afd5524213bd5a37bf898852241928',1,'LuchtvochtigheidSensor_grensOverschreden(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c']]],
+  ['luchtvochtigheidsensor_5fleesmeting_7',['luchtvochtigheidsensor_leesmeting',['../LuchtvochtigheidSensor_8c.html#a3f637f04429213888f953adf6b3c0ac6',1,'LuchtvochtigheidSensor_LeesMeting(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a3f637f04429213888f953adf6b3c0ac6',1,'LuchtvochtigheidSensor_LeesMeting(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c']]],
+  ['luchtvochtigheidsensor_5fsetgrenswaarde_8',['luchtvochtigheidsensor_setgrenswaarde',['../LuchtvochtigheidSensor_8c.html#a7b7b26268134b3bf67afa7cf6f59d42f',1,'LuchtvochtigheidSensor_setGrenswaarde(LuchtvochtigheidSensor_t *sensor, float nieuweWaarde):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a7b7b26268134b3bf67afa7cf6f59d42f',1,'LuchtvochtigheidSensor_setGrenswaarde(LuchtvochtigheidSensor_t *sensor, float nieuweWaarde):&#160;LuchtvochtigheidSensor.c']]],
+  ['luchtvochtigheidsensor_5fstartmeting_9',['luchtvochtigheidsensor_startmeting',['../LuchtvochtigheidSensor_8c.html#acd0e64c8763ae6ac48969abeb17300b5',1,'LuchtvochtigheidSensor_StartMeting(LuchtvochtigheidSensor_t *sensor, TIM_HandleTypeDef *htim):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#acd0e64c8763ae6ac48969abeb17300b5',1,'LuchtvochtigheidSensor_StartMeting(LuchtvochtigheidSensor_t *sensor, TIM_HandleTypeDef *htim):&#160;LuchtvochtigheidSensor.c']]],
+  ['luchtvochtigheidsensor_5ft_10',['LuchtvochtigheidSensor_t',['../structLuchtvochtigheidSensor__t.html',1,'']]]
 ];

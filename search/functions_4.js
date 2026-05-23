@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['loop_0',['loop',['../classNetwerkManager.html#a2171459a35175f8dcfbdcd2e50c83727',1,'NetwerkManager']]]
+  ['getclient_0',['getClient',['../classNetwerkManager.html#ac3249280ad83accf2f0e9104078e4951',1,'NetwerkManager']]],
+  ['getid_1',['getId',['../classTafel.html#a0fca1ec24e2957da5c165e2dce2463d7',1,'Tafel']]]
 ];

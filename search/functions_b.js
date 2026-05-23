@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update_0',['update',['../classTafel.html#af54d430974de3ffbb0e87ed3b6f09992',1,'Tafel']]]
+  ['resettafel_0',['resetTafel',['../classTafelBeheerder.html#aa07df8fe20a32307a5a9750f65a88819',1,'TafelBeheerder']]]
 ];

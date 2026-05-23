@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['isconnected_0',['isConnected',['../classNetwerkManager.html#a2654520a87bb9a337b4e38db738852d6',1,'NetwerkManager']]]
+  ['error_5fhandler_0',['error_handler',['../Ventilator_2main_8c.html#a1730ffe1e560465665eb47d9264826f9',1,'Error_Handler(void):&#160;main.c'],['../main_8h.html#a1730ffe1e560465665eb47d9264826f9',1,'Error_Handler(void):&#160;main.c']]]
 ];

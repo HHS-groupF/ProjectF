@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['wifi_5fpassword_0',['WIFI_PASSWORD',['../Wemos-tafel_2config_8h.html#a8685d8aff7e570048090a3a51afceb07',1,'config.h']]],
-  ['wifi_5fssid_1',['WIFI_SSID',['../Wemos-tafel_2config_8h.html#a586542b79d00e4db7e1d5a667ae83a2b',1,'config.h']]]
+  ['pi_5fip_5fadres_0',['PI_IP_ADRES',['../Wemos-tafel_2config_8h.html#a70e7cc39c70b41d8b03b7ca79899cd61',1,'config.h']]]
 ];

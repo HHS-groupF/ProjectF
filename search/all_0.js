@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['architectuur_20klassendiagram_0',['architectuur klassendiagram',['../classdiagram.html',1,'Systeem Architectuur Klassendiagram'],['../classdiagram.html#autotoc_md0',1,'Systeem Architectuur Klassendiagram']]]
+  ['_5fwrite_0',['_write',['../Ventilator_2main_8c.html#aa025a12d45f60c7d0eae249e61f0c7f9',1,'main.c']]]
 ];

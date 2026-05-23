@@ -1,6 +1,10 @@
 var searchData=
 [
-  ['verbind_0',['verbind',['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()'],['../classSocketCommunicatie.html#a4c5dcb06e834fda45750c8f7b65499c2',1,'SocketCommunicatie::verbind()']]],
-  ['verwerkbericht_1',['verwerkBericht',['../classTafelBeheerder.html#a929d8c0aed22ce078d6bf56301d61750',1,'TafelBeheerder']]],
-  ['verzenddata_2',['verzenddata',['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)'],['../classSocketCommunicatie.html#acc675503414f97b72e1b0841d42b770e',1,'SocketCommunicatie::verzendData(std::string bericht)']]]
+  ['setcallback_0',['setCallback',['../classMqttClient.html#aa5f47ab7245962529bdd1549ed0153ae',1,'MqttClient']]],
+  ['setuievents_1',['setUIEvents',['../classTafelBeheerder.html#a7be4ed8aa7cfafc752c9f6339db9fab5',1,'TafelBeheerder']]],
+  ['setup_2',['setup',['../classTafel.html#a1361472e917f2087f250dc766f451543',1,'Tafel']]],
+  ['socketcommunicatie_3',['socketcommunicatie',['../classSocketCommunicatie.html#a3dd2a5a6343b2def1ecdcac1eab24107',1,'SocketCommunicatie::SocketCommunicatie(std::string ipAdresDoel, int poort)'],['../classSocketCommunicatie.html#a3dd2a5a6343b2def1ecdcac1eab24107',1,'SocketCommunicatie::SocketCommunicatie(std::string ipAdresDoel, int poort)']]],
+  ['stuurbericht_4',['stuurbericht',['../classNetwerkManager.html#aa6dd53dd8c8eb787d74aba617af9ff0e',1,'NetwerkManager::stuurBericht()'],['../classMqttClient.html#a46253f8ca2f87bcbbc2d71cba2c02b24',1,'MqttClient::stuurBericht()']]],
+  ['subscribe_5',['subscribe',['../classNetwerkManager.html#aa73a99ad153c3c50ae94481bb9869b6b',1,'NetwerkManager']]],
+  ['systemclock_5fconfig_6',['SystemClock_Config',['../Ventilator_2main_8c.html#a70af21c671abfcc773614a9a4f63d920',1,'main.c']]]
 ];
