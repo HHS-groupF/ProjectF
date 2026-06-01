@@ -14,6 +14,7 @@ MqttClient::~MqttClient() {
 void MqttClient::on_connect(int rc) {
     if (rc == 0) {
         subscribe(NULL, "tafel/+/status");
+        subscribe(NULL, "sensor/beweging");
     }
 }
 

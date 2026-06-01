@@ -45,7 +45,6 @@ int main() {
     );
 
    
-    mqtt.subscribe(nullptr, "sensor/beweging");
     mqtt.loop_start();
 
     // Achtergrond thread: roept elke seconde tick() aan
