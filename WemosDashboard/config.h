@@ -8,4 +8,11 @@
 // Hoe lang geen beweging voordat de lamp uitgaat (in seconden)
 #define BEWEGING_TIMEOUT_SECONDEN 1200  // 20 minuten
 
+// Kleur presets voor het sfeerlicht (R, G, B — waarde tussen 0 en 255)
+#define KLEUR_WIT   "255,255,255"  // helder wit
+#define KLEUR_WARM  "255,120,20"   // warm oranje, gezellige sfeer
+#define KLEUR_ROOD  "255,0,0"      // rood
+#define KLEUR_BLAUW "0,0,255"      // blauw
+#define KLEUR_GROEN "0,255,0"      // groen
+
 #endif
