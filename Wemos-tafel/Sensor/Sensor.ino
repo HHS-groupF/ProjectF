@@ -1,0 +1,60 @@
+#include "config.h"
+#include "NetwerkManager.h"
+#include "PirSensor.h"
+#include "RGBLampen.h"
+
+NetwerkManager netwerk(WIFI_SSID, WIFI_PASSWORD, MQTT_SERVER);
+
+const int PIR_PIN = D1;
+const int RED_PIN = D2;
+const int GREEN_PIN = D3;
+const int BLUE_PIN = D5;
+
+PirSensor sensor(PIR_PIN);
+RGBLampen rgb(RED_PIN, GREEN_PIN, BLUE_PIN);
+
+bool vorigeBeweging = false;
+
+void callback(char *topic, byte *payload, unsigned int length) {
+  String strTopic = String(topic);
+  String commando = "";
+  for (unsigned int i = 0; i < length; i++) {
+    commando += (char)payload[i];
+  }
+
+  if (strTopic == "sensor/rgb/set") {
+    if (commando == "AAN") {
+      rgb.aangaan();
+    } 
+    else if (commando == "UIT") {
+      rgb.veranderKleur(0, 0, 0);
+    }
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+  Serial.println("\n--- Start Wemos 2 (DUMB NODE): Sfeer & Sensor ---");
+
+  netwerk.begin(callback);
+  sensor.begin();
+  rgb.begin();
+}
+
+void loop() {
+  netwerk.loop();
+
+  bool huidigeBeweging = sensor.detecteertBeweging();
+
+  if (huidigeBeweging != vorigeBeweging) {
+    if (huidigeBeweging == true) {
+      netwerk.stuurBericht("sensor/beweging", "JA");
+      Serial.println("Verstuurd naar Pi: Beweging gestart");
+    } else {
+      netwerk.stuurBericht("sensor/beweging", "NEE");
+      Serial.println("Verstuurd naar Pi: Beweging gestopt");
+    }
+    vorigeBeweging = huidigeBeweging; // Update het geheugen
+  }
+}

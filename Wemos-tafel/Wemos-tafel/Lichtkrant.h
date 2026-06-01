@@ -9,21 +9,19 @@
 class Lichtkrant {
   private:
     MD_Parola display;
-    char huidigBericht[256];  
-    bool nieuwBericht;        
+    char standaardBericht[256];
+    char tijdelijkBericht[256]; 
+    bool toonTijdelijk;         
+    bool nieuwBericht;          
 
   public:
-    // Constructor
     Lichtkrant(uint8_t csPin, uint8_t maxDevices);
 
-    // Initialisatie (aanroepen in setup)
     void setup();
-
-    // Verversen van het display (aanroepen in loop)
     void update();
 
-    // Ontvang een nieuw bericht van de Pi via MQTT
-    void zetBericht(String bericht);
+    void zetStandaardBericht(String bericht);
+    void zetTijdelijkBericht(String bericht);
 };
 
 #endif

@@ -5,14 +5,9 @@ NetwerkManager::NetwerkManager(const char* ssid, const char* password, const cha
 
 void NetwerkManager::begin(MQTT_CALLBACK_SIGNATURE) {
   setupWifi();
-
-  // Unieke client-ID op basis van MAC-adres, zodat twee units elkaar niet van de broker aftrappen
   _clientId = "Tafel_" + WiFi.macAddress();
-
   _client.setServer(_mqttServer, 1883);
   _client.setCallback(callback);
-
-  // Eerste verbindpoging meteen bij opstarten
   verbindMqtt();
 }
 
@@ -21,7 +16,6 @@ void NetwerkManager::setupWifi() {
   Serial.println();
   Serial.print("Verbinden met "); Serial.println(_ssid);
 
-  // Als statisch IP is ingesteld in config.h, gebruik dat in plaats van DHCP
   #ifdef GEBRUIK_STATISCH_IP
     WiFi.config(IPAddress(STATISCH_IP), IPAddress(GATEWAY), IPAddress(SUBNET));
     Serial.println("Statisch IP ingesteld.");
@@ -39,7 +33,12 @@ void NetwerkManager::verbindMqtt() {
   Serial.print("MQTT verbinden als "); Serial.print(_clientId); Serial.print("...");
   if (_client.connect(_clientId.c_str())) {
     Serial.println("verbonden");
-    _client.subscribe("tafel/+/reset");
+    
+    // --- ABONNEMENTEN (SUBSCRIBES) ---
+    _client.subscribe("tafel/+/reset");      // Voor Wemos 1 (Tafels)
+    _client.subscribe("wemos/lichtkrant");   // Voor Wemos 1 (Lichtkrant MENU en MSG)
+    _client.subscribe("sensor/rgb/set");     // Voor Wemos 2 (AAN/UIT commando's voor de lamp)
+    
   } else {
     Serial.print("fout, rc="); Serial.print(_client.state());
     Serial.println(" probeer opnieuw over 5 seconden");
@@ -48,7 +47,6 @@ void NetwerkManager::verbindMqtt() {
 }
 
 void NetwerkManager::loop() {
-  // Controleer of WiFi nog verbonden is, herverbind indien nodig
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("WiFi weg, opnieuw verbinden...");
     setupWifi();

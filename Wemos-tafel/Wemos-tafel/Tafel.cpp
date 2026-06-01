@@ -1,6 +1,5 @@
 #include "Tafel.h"
 
-// Constructor: we koppelen de pinnummers en de netwerkmanager aan de tafel
 Tafel::Tafel(int bPin, int lPin, int id, NetwerkManager& netwerkManager) 
   : _netwerk(netwerkManager) { 
   _buttonPin = bPin;
