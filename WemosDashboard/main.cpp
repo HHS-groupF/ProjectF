@@ -2,10 +2,12 @@
 #include "MqttClient.h"
 #include "TafelBeheerder.h"
 #include "LichtkrantBeheerder.h"
-#include "SensorBeheerder.h" 
-#include "DashboardUI.h"     
+#include "SensorBeheerder.h"
+#include "DashboardUI.h"
 #include <iostream>
 #include <string>
+#include <thread>
+#include <chrono>
 
 int main() {
     std::cout << "--- Restaurant Systeem Gestart ---" << std::endl;
@@ -45,10 +47,21 @@ int main() {
    
     mqtt.subscribe(nullptr, "sensor/beweging");
     mqtt.loop_start();
-    ui.toonMenu(); 
-    
+
+    // Achtergrond thread: roept elke seconde tick() aan
+    // zodat de lamp uitgaat na X minuten geen beweging
+    std::thread timerThread([&sensorBeheerder]() {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            sensorBeheerder.tick();
+        }
+    });
+    timerThread.detach(); // laat de thread zelfstandig draaien
+
+    ui.toonMenu();
+
     std::string invoer;
-    
+
     while (std::getline(std::cin, invoer)) {
         if (invoer == "q") {
             break;
