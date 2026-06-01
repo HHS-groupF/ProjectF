@@ -9,5 +9,10 @@
 #define PI_IP_ADRES     "172.16.221.246"
 #define MQTT_SERVER     PI_IP_ADRES
 
+// --- Pin Configuraties ---
+const int PIR_PIN = D1;
+const int RED_PIN = D2;
+const int GREEN_PIN = D3;
+const int BLUE_PIN = D5;
 
 #endif
