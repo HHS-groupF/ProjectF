@@ -5,11 +5,6 @@
 
 NetwerkManager netwerk(WIFI_SSID, WIFI_PASSWORD, MQTT_SERVER);
 
-const int PIR_PIN = D1;
-const int RED_PIN = D2;
-const int GREEN_PIN = D3;
-const int BLUE_PIN = D5;
-
 PirSensor sensor(PIR_PIN);
 RGBLampen rgb(RED_PIN, GREEN_PIN, BLUE_PIN);
 
