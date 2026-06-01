@@ -18,11 +18,16 @@ void callback(char *topic, byte *payload, unsigned int length) {
   }
 
   if (strTopic == "sensor/rgb/set") {
-    if (commando == "AAN") {
-      rgb.aangaan();
-    } 
-    else if (commando == "UIT") {
+    if (commando == "UIT") {
+      // lamp uit
       rgb.veranderKleur(0, 0, 0);
+    } else {
+      // verwacht formaat: "R,G,B" bv. "255,120,20"
+      int r = commando.substring(0, commando.indexOf(',')).toInt();
+      commando = commando.substring(commando.indexOf(',') + 1);
+      int g = commando.substring(0, commando.indexOf(',')).toInt();
+      int b = commando.substring(commando.indexOf(',') + 1).toInt();
+      rgb.veranderKleur(r, g, b);
     }
   }
 }

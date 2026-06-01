@@ -6,7 +6,7 @@ void SensorBeheerder::verwerkBeweging(const std::string& status) {
     std::lock_guard<std::mutex> lock(_mutex); // voorkomt conflict met de timer thread
     if (status == "JA") {
         _timerActief = false; // annuleer de timer, iemand is er weer
-        _mqtt.stuurBericht("sensor/rgb/set", "AAN");
+        _mqtt.stuurBericht("sensor/rgb/set", KLEUR_WIT); // tijdelijk, later via Qt dashboard
         std::cout << "\r\033[2K[SENSOR] Beweging gedetecteerd, sfeerlicht AAN.\n> " << std::flush;
     }
     else if (status == "NEE") {
