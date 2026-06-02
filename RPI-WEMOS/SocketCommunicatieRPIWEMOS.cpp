@@ -35,12 +35,18 @@ void SocketCommunicatieRPIWEMOS::leesData() {
 }
 
 void SocketCommunicatieRPIWEMOS::verzendData(const QString &bericht) {
-    if (stuurSocket->state() == QAbstractSocket::ConnectedState) {
-        stuurSocket->write(bericht.toUtf8());
-        stuurSocket->flush();
-    } else {
+    // Start alleen een nieuwe verbinding als de socket echt los is; bij een
+    // verbinding die nog bezig is ('Connecting') zou een tweede connectToHost
+    // een Qt-waarschuwing geven.
+    if (stuurSocket->state() == QAbstractSocket::UnconnectedState) {
         stuurSocket->connectToHost(Config::RPI_BUS_IP, Config::POORT_RPIBUS_COMMANDS);
     }
+
+    // write() buffert de data terwijl de socket nog verbindt en verstuurt het
+    // zodra de verbinding klaar is. Zo gaat het bericht (bijv. een eenmalig
+    // commando van de gebruiker) niet verloren.
+    stuurSocket->write(bericht.toUtf8());
+    stuurSocket->flush();
 }
 
 QString SocketCommunicatieRPIWEMOS::ontvangData() {

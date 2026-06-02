@@ -1,5 +1,5 @@
-#ifndef TEMPERAURE_SENSOR_H_
-#define TEMPERAURE_SENSOR_H_
+#ifndef TEMPERATUUR_SENSOR_H_
+#define TEMPERATUUR_SENSOR_H_
 
 #include "main.h"
 #include <stdbool.h>

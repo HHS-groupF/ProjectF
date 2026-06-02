@@ -6,6 +6,8 @@
 #include <mutex>
 #include <atomic>
 
+#include "config.h"
+
 // Klasse voor het opzetten en beheren van TCP-socketcommunicatie voor de BUS
 class SocketCommunicatie {
 private:
@@ -19,11 +21,12 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> laatsteOntvangstTijd; // Tijdstip van laatste teken van leven
 
 public:
-    SocketCommunicatie(std::string ipAdresDoel, int poort);
+    // De BUS stuurt standaard naar de WEMOS-machine; waarden komen uit config.h
+    SocketCommunicatie(std::string ipAdresDoel = Config::IP_RPIWEMOS, int poort = Config::POORT);
     ~SocketCommunicatie();
 
     bool verbind(); // Start de ontvangstserver en achtergrondtaken
-    void verzendData(std::string bericht); // Stuur een bericht naar het doel-IP
+    void verzendData(const std::string& bericht); // Stuur een bericht naar het doel-IP
     std::string ontvangData(); // Lees de nieuwste data uit en maak de buffer leeg
     bool checkConnectieStatus(); // Controleert op een timeout (bijv. kabel los of andere kant offline)
 };

@@ -7,13 +7,8 @@
 #include <unistd.h>
 #include <cstring>
 
-SocketCommunicatie::SocketCommunicatie(std::string ip, int p) {
-    // Let op: De parameters worden hier overschreven door vaste waarden.
-    ipAdresDoel = "10.0.0.1";
-    poort = 50001;
-    isVerbonden = false;
-    stopThreads = false;
-    server_fd = -1;
+SocketCommunicatie::SocketCommunicatie(std::string ip, int p)
+    : ipAdresDoel(std::move(ip)), poort(p), isVerbonden(false), stopThreads(false), server_fd(-1) {
     laatsteOntvangstTijd = std::chrono::steady_clock::now();
 }
 

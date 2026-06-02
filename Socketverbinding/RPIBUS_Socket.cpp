@@ -10,12 +10,13 @@
 using namespace std;
 using namespace std::chrono;
 
-SocketCommunicatie::SocketCommunicatie(string ip, int p) 
-    : ipAdresDoel(move(ip)), poort(p), isVerbonden(false), server_fd(-1) {
+SocketCommunicatie::SocketCommunicatie(string ip, int p)
+    : ipAdresDoel(move(ip)), poort(p), isVerbonden(false), stopThreads(false), server_fd(-1) {
     laatsteOntvangstTijd = steady_clock::now();
 }
 
 SocketCommunicatie::~SocketCommunicatie() {
+    stopThreads = true; // Zorgt dat de while-loops in de threads stoppen
     isVerbonden = false;
     // Sluit de poort netjes af als het object wordt vernietigd
     if (server_fd >= 0) close(server_fd);
@@ -27,7 +28,7 @@ bool SocketCommunicatie::verbind() {
 
     // Maak een TCP socket aan
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd == 0) return false;
+    if (server_fd < 0) return false;
 
     // Zorg ervoor dat we de poort direct opnieuw kunnen gebruiken na een crash of herstart
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
@@ -47,9 +48,9 @@ bool SocketCommunicatie::verbind() {
     thread([this]() {
         struct sockaddr_in client_address{};
         socklen_t addrlen = sizeof(client_address);
-        array<char, 1024> buffer{}; 
+        array<char, 1024> buffer{};
 
-        while (this->isVerbonden) {
+        while (!this->stopThreads) {
             // Wacht op een inkomende connectie
             int new_socket = accept(this->server_fd, (struct sockaddr*)&client_address, &addrlen);
             if (new_socket >= 0) {
@@ -78,7 +79,7 @@ bool SocketCommunicatie::verbind() {
 
     // Start een tweede achtergrond-thread die elke 2 seconden een teken van leven (heartbeat) verstuurt
     thread([this]() {
-        while (this->isVerbonden) {
+        while (!this->stopThreads) {
             this_thread::sleep_for(seconds(2));
             this->verzendData("Heartbeat: BUS Pi is online.");
         }
@@ -131,6 +132,4 @@ bool SocketCommunicatie::checkConnectieStatus() {
     }
 
     return isVerbonden;
-}
-
 }

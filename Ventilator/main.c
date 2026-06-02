@@ -53,6 +53,10 @@ Ventilator_t vent;
 
 volatile bool noodstopActief = false;
 
+/* Wijst naar de metingKlaar-vlag van de sensor die op dit moment meet.
+ * Zo zet de timer-interrupt alleen de juiste vlag, niet alle drie tegelijk. */
+volatile bool* volatile actieveMetingFlag = NULL;
+
 int _write(int file, char *ptr, int len) {
     HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
     return len;
@@ -120,18 +124,21 @@ int main(void)
       if ((currentMillis - lastSensorCheck >= sensorInterval) && (currentState == STATE_IDLE)) {
           lastSensorCheck = currentMillis;
           currentState = STATE_WAITING_CO2;
+          actieveMetingFlag = &co2.metingKlaar;
           CO2Sensor_StartMeting(&co2, &htim2);
       }
 
       if ((currentState == STATE_WAITING_CO2) && co2.metingKlaar) {
           CO2Sensor_LeesMeting(&co2);
           currentState = STATE_WAITING_TEMP;
+          actieveMetingFlag = &temp.metingKlaar;
           TemperatuurSensor_StartMeting(&temp, &htim2);
       }
 
       if ((currentState == STATE_WAITING_TEMP) && temp.metingKlaar) {
           TemperatuurSensor_LeesMeting(&temp);
           currentState = STATE_WAITING_HUM;
+          actieveMetingFlag = &hum.metingKlaar;
           LuchtvochtigheidSensor_StartMeting(&hum, &htim2);
       }
 
@@ -366,9 +373,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim->Instance == TIM2) {
         HAL_TIM_Base_Stop_IT(htim);
 
-        co2.metingKlaar = true;
-        temp.metingKlaar = true;
-        hum.metingKlaar = true;
+        // Zet alleen de vlag van de sensor die op dit moment daadwerkelijk meet
+        if (actieveMetingFlag != NULL) {
+            *actieveMetingFlag = true;
+        }
     }
 }
 

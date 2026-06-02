@@ -3,8 +3,8 @@
 #include <thread>
 
 int main() {
-    // Instantieer het communicatie-object met het doel-IP en de poort
-    SocketCommunicatie communicator("10.0.0.2", 50001);
+    // Instantieer het communicatie-object met het doel-IP en de poort uit config.h
+    SocketCommunicatie communicator(Config::IP_RPIWEMOS, Config::POORT);
 
     // Probeer de server te starten en te binden aan de poort
     if (communicator.verbind()) {
