@@ -18,6 +18,9 @@ signals:
     void brandAlarmStatusGewijzigd(bool actief);
     void overruleStatusGewijzigd(bool actief);
     void logBerichtGegenereerd(const QString &bericht);
+
+private:
+    bool handmatigeOverruleActief = false;
 };
 
 #endif // CENTRAALBESTURINGSSYSTEEMRPIWEMOS_H
