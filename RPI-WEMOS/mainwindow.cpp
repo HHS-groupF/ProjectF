@@ -172,8 +172,8 @@ void MainWindow::updateScherm()
                     bool brand = jsonObj["brandAlarm"].toBool();
                     bool overrule = jsonObj["overrule"].toBool();
 
-                    beheerWaarschuwing("🔥 NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
-                    beheerWaarschuwing("⚠️ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
+                    beheerWaarschuwing("ðŸ”¥ NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
+                    beheerWaarschuwing("âš ï¸ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
                 }
 
                 // SENSOR DATA
@@ -192,7 +192,7 @@ void MainWindow::updateScherm()
                         if (waarde > asY_CO2->max()) asY_CO2->setMax(waarde + 200);
                         if (waarde < asY_CO2->min()) asY_CO2->setMin(qMax(0.0, waarde - 100));
 
-                        QString msg = "⚠️ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
+                        QString msg = "âš ï¸ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
                         beheerWaarschuwing(msg, waarde > Config::CO2_WAARSCHUWING && !jsonObj["brandAlarm"].toBool());
                     }
                     else if (id == "TEMP") {
@@ -203,7 +203,7 @@ void MainWindow::updateScherm()
                         if (waarde > asY_Temp->max()) asY_Temp->setMax(waarde + 5);
                         if (waarde < asY_Temp->min()) asY_Temp->setMin(waarde - 5);
 
-                        QString msg = "⚠️ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "°C) -> Actie: Ventilator AAN";
+                        QString msg = "âš ï¸ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "Â°C) -> Actie: Ventilator AAN";
                         beheerWaarschuwing(msg, waarde > Config::TEMP_WAARSCHUWING && !jsonObj["brandAlarm"].toBool());
                     }
                     else if (id == "HUM") {
@@ -213,7 +213,7 @@ void MainWindow::updateScherm()
                         if (secondenGeleden > windowSize) asX_Lucht->setRange(secondenGeleden - windowSize, secondenGeleden);
                         if (waarde > asY_Lucht->max()) asY_Lucht->setMax(qMin(100.0, waarde + 10));
 
-                        QString msg = "⚠️ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
+                        QString msg = "âš ï¸ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
                         beheerWaarschuwing(msg, waarde > Config::HUM_WAARSCHUWING && !jsonObj["brandAlarm"].toBool());
                     }
                 }
@@ -323,7 +323,7 @@ void MainWindow::setupGrafieken()
     chartTemp->addSeries(seriesWaarschuwingTemp);
     chartTemp->addSeries(seriesBrandTemp);
     chartTemp->legend()->hide();
-    chartTemp->setTitle("Temperatuur (°C)");
+    chartTemp->setTitle("Temperatuur (Â°C)");
 
     asX_Temp = new QValueAxis();
     asX_Temp->setRange(0, startTijdvenster);
