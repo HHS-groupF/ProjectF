@@ -33,10 +33,13 @@ void SocketCommunicatieRPIBUS::nieuweVerbinding() {
 }
 
 void SocketCommunicatieRPIBUS::verzendData(const QString &bericht) {
-    if (sensorSocket->state() == QAbstractSocket::ConnectedState) {
-        sensorSocket->write(bericht.toUtf8());
-        sensorSocket->flush();
-    } else if (sensorSocket->state() == QAbstractSocket::UnconnectedState) {
+    // 1. Verbind als dat nog niet zo is
+    if (sensorSocket->state() == QAbstractSocket::UnconnectedState) {
         sensorSocket->connectToHost(Config::RPI_WEMOS_IP, Config::POORT_WEMOS_DATA);
     }
+
+    // 2. Schrijf de data ALTIJD weg. Als de status 'Connecting' is, buffert Qt dit
+    // in het geheugen en stuurt het weg zodra de verbinding open is. Geen dataverlies meer!
+    sensorSocket->write(bericht.toUtf8());
+    sensorSocket->flush();
 }

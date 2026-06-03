@@ -1,24 +1,34 @@
 #include <QCoreApplication>
 #include "SocketCommunicatieRPIBUS.h"
 #include "CentraalBesturingssysteemRPIBUS.h"
+#include "CanBusCommunicatieRPIBUS.h" // NIEUW
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    // Maak de netwerkmodule en de logica module aan
     SocketCommunicatieRPIBUS socket;
     CentraalBesturingssysteemRPIBUS systeem;
+    CanBusCommunicatieRPIBUS canBus; // NIEUW
 
-    // 1. Koppel inkomende netwerkcommando's (vanaf WEMOS) aan het systeem
+    // Socket -> Systeem (Binnenkomende Netwerk Commando's)
     QObject::connect(&socket, &SocketCommunicatieRPIBUS::inkomendCommando,
                      &systeem, &CentraalBesturingssysteemRPIBUS::verwerkCommando);
 
-    // 2. Koppel uitgaande data en statussen (vanuit het systeem) aan het netwerk
+    // Systeem -> Socket (Uitgaande Netwerk Data)
     QObject::connect(&systeem, &CentraalBesturingssysteemRPIBUS::stuurNetwerkData,
                      &socket, &SocketCommunicatieRPIBUS::verzendData);
 
-    // Start de servers/clients
+    // NIEUW: CAN -> Systeem (Binnenkomende STM32 Sensor Data)
+    QObject::connect(&canBus, &CanBusCommunicatieRPIBUS::inkomendeSensorData,
+                     &systeem, &CentraalBesturingssysteemRPIBUS::verwerkCanSensorData);
+
+    // NIEUW: Systeem -> CAN (Uitgaande STM32 Commando's)
+    QObject::connect(&systeem, &CentraalBesturingssysteemRPIBUS::stuurCanCommando,
+                     &canBus, &CanBusCommunicatieRPIBUS::verstuurCommandoNaarSTM);
+
     socket.start();
+    canBus.start("can0"); // Start de CAN-bus op interface can0
+
     return a.exec();
 }

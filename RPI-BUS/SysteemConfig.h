@@ -5,8 +5,8 @@
 
 namespace Config {
 // Netwerkinstellingen
-const QString RPI_WEMOS_IP = "127.0.0.1";
-const QString RPI_BUS_IP   = "127.0.0.1";
+const QString RPI_WEMOS_IP = "145.52.127.190";
+const QString RPI_BUS_IP   = "145.52.127.183";
 
 constexpr int POORT_WEMOS_DATA      = 8080; // Waar WEMOS op luistert (binnenkomende sensordata)
 constexpr int POORT_RPIBUS_COMMANDS = 8081; // Waar RPI-BUS op luistert (binnenkomende commando's)
