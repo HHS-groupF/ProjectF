@@ -225,5 +225,56 @@ Zet de onderdelen in deze volgorde aan, anders missen verbindingen elkaar:
 | Dashboard-LED "Socketverbinding" blijft rood | RPI-BUS draait niet of verkeerd IP in `SysteemConfig.h` |
 | "MQTT verbinding verbroken" | broker draait niet of `MQTT_BROKER`-IP klopt niet |
 | Wemos blijft op "." in Serial Monitor | WiFi-SSID/wachtwoord fout |
-| CMake-fout `Could not find Qt6 Mqtt` | QtMqtt-module niet geïnstalleerd |
+| CMake-fout `Could not find Qt6 Mqtt` | QtMqtt-module niet geïnstalleerd → zie Bijlage A |
 | Geen sensordata in grafieken | RPI-BUS niet verbonden met WEMOS poort 8080 |
+
+---
+
+## Bijlage A — QtMqtt vanaf bron installeren (Raspberry Pi)
+
+QtMqtt zit níet in de apt-repository en moet je zelf bouwen tegen je geïnstalleerde
+Qt6. Onderstaande stappen zijn getest op een Raspberry Pi 5 met **Qt 6.8.2**.
+
+**1. Controleer je exacte Qt6-versie** (de tag moet hiermee overeenkomen):
+```bash
+qmake6 --version
+```
+
+**2. Build-gereedschap + benodigde dev-pakketten:**
+```bash
+sudo apt update
+sudo apt install -y git cmake ninja-build build-essential \
+                    qt6-base-dev qt6-base-private-dev qt6-charts-dev
+```
+> `qt6-base-private-dev` is cruciaal: QtMqtt gebruikt private Qt-API
+> (`Qt6::CorePrivate`). Zonder dit pakket faalt CMake met de melding dat
+> `.../qt6/QtCore/<versie>` niet bestaat.
+
+**3. QtMqtt klonen op de juiste versie-tag** (vervang `6.8.2` door jouw versie):
+```bash
+cd ~
+git clone https://code.qt.io/qt/qtmqtt.git
+cd qtmqtt
+git checkout v6.8.2
+```
+
+**4. Bouwen en installeren in `/usr`** (zodat het systeem-Qt het vindt):
+```bash
+mkdir build && cd build
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+ninja
+sudo ninja install
+sudo ldconfig
+```
+
+**5. Controleren of het gelukt is:**
+```bash
+find /usr -name "Qt6MqttConfig.cmake"
+```
+Komt er een pad terug (bijv. `/usr/lib/aarch64-linux-gnu/cmake/Qt6Mqtt/...`),
+dan is `find_package(Qt6 REQUIRED COMPONENTS Mqtt)` tevreden. Daarna in
+Qt Creator: **Build → Clear CMake Configuration** en opnieuw configureren.
+
+> **Tip (terminal-plakprobleem):** krijg je fouten als `Unable to locate package
+> qt6-base-dev~` of `^[[200~sudo`, dan plakt je terminal "bracketed paste"-tekens
+> mee. Zet dat uit met `printf '\e[?2004l'` of typ de commando's handmatig.
