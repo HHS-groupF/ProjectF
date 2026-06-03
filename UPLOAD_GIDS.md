@@ -126,12 +126,19 @@ In het logboek-venster zou moeten verschijnen:
 
 ---
 
-## 7. Wemos #1 — Tafel & Lichtkrant (ESP8266)
+## 7. Wemos #1 — Wemos Tafel (ESP8266)
+
+Je uploadt hier **één sketch: de "Wemos tafel"** (`Wemos-tafel.ino`). Belangrijk:
+diezelfde sketch stuurt óók de lichtkrant (LED-matrix) aan — dat is geen aparte
+upload, het zit allemaal in deze ene sketch. Je hoeft dus alleen de Wemos-tafel
+code te flashen; de lichtkrant-functionaliteit komt automatisch mee.
 
 **Map:** `Wemos-tafel/Wemos-tafel/` (open `Wemos-tafel.ino` in Arduino IDE — alle
-`.h`/`.cpp` in die map openen automatisch mee als tabbladen).
+`.h`/`.cpp` in die map, inclusief `Lichtkrant.h`/`.cpp`, openen automatisch mee
+als tabbladen).
 
-**Benodigde libraries** (Library Manager):
+**Benodigde libraries** (Library Manager) — ook de matrix-libraries zijn nodig
+omdat de lichtkrant in deze sketch zit:
 - `ESP8266WiFi` (komt met de ESP8266-board-package)
 - `PubSubClient`
 - `MD_Parola`
