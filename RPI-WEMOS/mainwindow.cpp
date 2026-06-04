@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->textBrowser_Logboek->append("Netwerk backend gestart. Luistert naar poort " + QString::number(Config::POORT_WEMOS_DATA) + "...");
     }
 
-    // --- Bifrost-server (Heimdall): vervangt MQTT richting de Wemos-devices ---
+    // --- Bifrost-server (Heimdall): communicatie richting de Wemos-devices ---
     heimdall = new Heimdall(this);
 
     connect(heimdall, &Heimdall::logBericht, this, [this](QString bericht) {

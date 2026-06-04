@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>   // nodig om te associeren met het WiFi-netwerk en een IP te krijgen
 
-// Callback in PubSubClient-stijl (char* topic, byte* payload, length),
-// zodat de bestaande .ino-callback vrijwel ongewijzigd blijft.
+// Callback-signatuur (char* topic, byte* payload, length) — bewust eenvoudig
+// gehouden zodat de .ino-callback klein en overzichtelijk blijft.
 typedef void (*RuneCallback)(char* topic, uint8_t* payload, unsigned int length);
 
 // ===========================================================================

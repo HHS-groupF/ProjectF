@@ -8,7 +8,7 @@ namespace Config {
 const QString RPI_WEMOS_IP = "127.0.0.1";
 const QString RPI_BUS_IP   = "127.0.0.1";
 
-// Bifrost (eigen socket-protocol naar de Wemos-devices, vervangt MQTT)
+// Bifrost (eigen socket-protocol naar de Wemos-devices)
 constexpr int POORT_BIFROST         = 9000; // Waar Heimdall op luistert (Wemos-clients verbinden hier)
 
 constexpr int POORT_WEMOS_DATA      = 8080; // Waar WEMOS op luistert (binnenkomende sensordata)

@@ -15,7 +15,7 @@ class Tafel {
     unsigned long _debounceDelay = 50;
     SocketWemos& _netwerk;
   public:
-    Tafel(int bPin, int lPin, int id, SocketWemos& netwerkManager);
+    Tafel(int bPin, int lPin, int id, SocketWemos& netwerk);
     void setup();
     void update();
     void zetLampAan();

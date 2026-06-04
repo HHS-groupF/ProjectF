@@ -14,11 +14,10 @@ juiste hardware zet. Werk de onderdelen bij voorkeur in de aangegeven volgorde a
 | `Wemos-tafel/Wemos-tafel/` | Wemos D1 mini #1 (ESP8266) | Arduino IDE | C++ (.ino) |
 | `Wemos-tafel/Sensor/` | Wemos D1 mini #2 (ESP8266) | Arduino IDE | C++ (.ino) |
 | `Ventilator/` | STM32 (L4-serie) | STM32CubeIDE | C |
-| `Lichtkran/` | (los testscript voor LED-matrix) | Arduino IDE | C++ (.ino) |
 
-> De mappen `Socketverbinding/` en `WemosDashboard/` zijn **oudere versies** en
-> worden niet meer op hardware gezet. Het actieve systeem zijn de Qt-projecten
-> `RPI-WEMOS` en `RPI-BUS`.
+> De oude MQTT-/experiment-mappen (`WemosDashboard/`, `Socketverbinding/`,
+> `Lichtkran/`) zijn verwijderd. Het actieve systeem bestaat uit de vier mappen
+> hierboven; de lichtkrant zit nu in de Wemos-tafel sketch.
 
 ---
 
@@ -46,8 +45,8 @@ gebruiken. Dit zijn de plekken die **moeten kloppen**:
 
 - **Raspberry Pi's:** Raspberry Pi OS geïnstalleerd, op het netwerk, SSH of
   toetsenbord/scherm beschikbaar.
-- **Qt:** Qt6 met de modules **Widgets, Charts en Network**. (Geen QtMqtt nodig —
-  de Wemos-communicatie loopt nu over ons eigen Bifrost-socketprotocol.)
+- **Qt:** Qt6 met de modules **Widgets en Charts**. (Geen QtMqtt of QtNetwork
+  nodig — alle netwerkcommunicatie loopt over onze eigen rauwe sockets.)
 - **Arduino IDE:** met ESP8266-board-ondersteuning
   (Boardmanager-URL: `http://arduino.esp8266.com/stable/package_esp8266com_index.json`).
 - **STM32CubeIDE** voor het STM32-deel.
