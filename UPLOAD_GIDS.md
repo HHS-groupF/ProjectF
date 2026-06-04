@@ -293,6 +293,18 @@ topic<spatie>payload\n
 | `sensor/rgb/set`    | Pi → Wemos | `R,G,B` of `UIT` | sfeerlicht instellen |
 | `wemos/lichtkrant`  | Pi → Wemos | `MENU:<tekst>` / `MSG:<tekst>` | vaste loop / eenmalige melding |
 
+**Voorbeeldregels** (zoals ze letterlijk over de lijn gaan, elk met `\n` erachter):
+```
+tafel/1/status HELP
+tafel/1/status OK
+tafel/3/reset RESET
+sensor/beweging JA
+sensor/rgb/set 255,120,20
+sensor/rgb/set UIT
+wemos/lichtkrant MENU:Dagmenu - Groene curry
+wemos/lichtkrant MSG:Tafel 5 roept!
+```
+
 **Routing (bewust simpel gehouden)**
 - Uitgaand stuurt Heimdall elke Rune naar **alle** verbonden Wemos-en (broadcast);
   elke Wemos filtert zelf op het topic dat hij nodig heeft en negeert de rest.
@@ -317,6 +329,19 @@ spaties, afgesloten met `\n`:**
 | `STATUS <brand> <overrule> <ventilator>` | BUS → WEMOS | elk veld `1` of `0` | systeemstatus, bv. `STATUS 0 0 1` (ventilator aan) |
 | `HEARTBEAT` | BUS → WEMOS | — | levensteken, elke 2 s; houdt de status-LED van de socketverbinding groen |
 | `COMMAND: ALARM_OVERRULED` | WEMOS → BUS | — | gebruiker heft het brandalarm handmatig op |
+
+**Voorbeeldregels** (elk met `\n` erachter):
+```
+SENSOR 256 CO2 750
+SENSOR 257 TEMP 22.4
+SENSOR 258 HUM 48.0
+STATUS 0 0 1
+STATUS 1 0 0
+HEARTBEAT
+COMMAND: ALARM_OVERRULED
+```
+Lezen aan de WEMOS-kant: `"SENSOR 256 CO2 750".split(' ')` → `["SENSOR","256","CO2","750"]`
+→ type=`SENSOR`, sensorId=`delen[2]`=`CO2`, waarde=`delen[3].toDouble()`=`750`.
 
 **Verwerking aan de WEMOS-kant** (`updateScherm`):
 1. Splits de regel op spaties.
