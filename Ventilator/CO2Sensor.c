@@ -22,7 +22,7 @@ void CO2Sensor_StartMeting(CO2Sensor_t* sensor, TIM_HandleTypeDef* htim) {
     sensor->metingKlaar = false;
 
     if (HAL_I2C_Master_Transmit(sensor->hi2c, (0x58 << 1), cmd, 2, HAL_MAX_DELAY) == HAL_OK) {
-        __HAL_TIM_SET_AUTORELOAD(htim, 12 - 1);
+    	__HAL_TIM_SET_AUTORELOAD(htim, 50 - 1);
         __HAL_TIM_SET_COUNTER(htim, 0);
         HAL_TIM_Base_Start_IT(htim);
     } else {

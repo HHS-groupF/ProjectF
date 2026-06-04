@@ -2,62 +2,44 @@
 /**
   ******************************************************************************
   * @file           : main.c
-  * @brief          : Main program body (C version with hardware timer sequencing)
+  * @brief          : Main program body (Pure C - CAN Sensor Node met TX & RX)
   ******************************************************************************
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 #include "CO2Sensor.h"
 #include "LuchtvochtigheidSensor.h"
 #include "TemperatuurSensor.h"
-#include "Ventilator.h"
-/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
 typedef enum {
     STATE_IDLE,
     STATE_WAITING_CO2,
     STATE_WAITING_TEMP,
     STATE_WAITING_HUM
 } SystemState_t;
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
 I2C_HandleTypeDef hi2c1;
-
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart2;
 
-/* USER CODE BEGIN PV */
 CO2Sensor_t co2;
 LuchtvochtigheidSensor_t hum;
 TemperatuurSensor_t temp;
-Ventilator_t vent;
 
-volatile bool noodstopActief = false;
+CAN_RxHeaderTypeDef RxHeader;
+uint8_t             RxData[8];
 
 int _write(int file, char *ptr, int len) {
     HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
     return len;
 }
-/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -65,50 +47,61 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM2_Init(void);
-/* USER CODE BEGIN PFP */
+static void MX_CAN1_Init(void);
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
 
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
+  MX_CAN1_Init();
 
-  /* USER CODE BEGIN 2 */
   CO2Sensor_Create(&co2, &hi2c1, 800.0f);
   LuchtvochtigheidSensor_Create(&hum, &hi2c1, 70.0f);
   TemperatuurSensor_Create(&temp, &hi2c1, 26.0f);
-  Ventilator_Create(&vent);
 
   CO2Sensor_Init(&co2);
-  printf("[INFO] Systeem succesvol opgestart in C met Hardware Timer!\r\n");
-  /* USER CODE END 2 */
+  printf("\r\n\r\n[INFO] STM32 CAN-Sensor Node opgestart (TX & RX Actief)!\r\n");
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+  CAN_FilterTypeDef  sFilterConfig;
+  sFilterConfig.FilterBank = 0;
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  sFilterConfig.FilterIdHigh = 0x0000;
+  sFilterConfig.FilterIdLow = 0x0000;
+  sFilterConfig.FilterMaskIdHigh = 0x0000;
+  sFilterConfig.FilterMaskIdLow = 0x0000;
+  sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+  sFilterConfig.FilterActivation = ENABLE;
+  sFilterConfig.SlaveStartFilterBank = 14;
+
+  if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+      printf("[ERROR] CAN Filter init gefaald!\r\n");
+      Error_Handler();
+  }
+
+  if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+      printf("[ERROR] Kon CAN-bus niet starten!\r\n");
+      Error_Handler();
+  } else {
+      printf("[INFO] CAN-bus succesvol gestart.\r\n");
+  }
+
+  if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+      printf("[ERROR] Kon CAN RX Interrupt niet activeren!\r\n");
+      Error_Handler();
+  } else {
+      printf("[INFO] Luisteren naar inkomende CAN berichten op FIFO0...\r\n");
+  }
+
   uint32_t lastSensorCheck = 0;
   const uint32_t sensorInterval = 1000;
   SystemState_t currentState = STATE_IDLE;
@@ -143,41 +136,37 @@ int main(void)
           float t = temp.huidigewaarde;
           float h = hum.huidigewaarde;
 
-          printf("CO2: %.1f ppm | Temp: %.1f C | Vocht: %.1f %%\r\n", c, t, h);
+          printf("[TX] Verzenden -> CO2: %.1f ppm | Temp: %.1f C | Vocht: %.1f %%\r\n", c, t, h);
 
-          float brandGrensCO2  = 2000.0f;
-          float brandGrensTemp = 50.0f;
-          float brandGrensHum  = 72.0f;
+          // FIX: Struct met {0} initialiseren, anders crasht de CAN hardware direct door garbage data!
+          CAN_TxHeaderTypeDef TxHeader = {0};
+          uint32_t TxMailbox;
+          uint8_t TxData[4];
 
-          bool brandAlarm = (c > brandGrensCO2) || (t > brandGrensTemp) || (h > brandGrensHum);
+          TxHeader.RTR = CAN_RTR_DATA;
+          TxHeader.IDE = CAN_ID_STD;
+          TxHeader.DLC = 4;
+          TxHeader.TransmitGlobalTime = DISABLE;
 
-          bool ventilatieNodig = CO2Sensor_grensOverschreden(&co2) ||
-                                 TemperatuurSensor_grensOverschreden(&temp) ||
-                                 LuchtvochtigheidSensor_grensOverschreden(&hum);
-
-          if (noodstopActief || brandAlarm) {
-              noodstopActief = true;
-
-              if (Ventilator_getIsAan(&vent)) {
-                  Ventilator_noodStop(&vent);
-              }
+          if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0) {
+              TxHeader.StdId = 0x100;
+              memcpy(TxData, &c, 4);
+              HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
           }
-          else if (ventilatieNodig) {
-              if (!Ventilator_getIsAan(&vent)) {
-                  Ventilator_AanGaan(&vent, 1);
-              }
+
+          if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0) {
+              TxHeader.StdId = 0x101;
+              memcpy(TxData, &t, 4);
+              HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
           }
-          else {
-              if (Ventilator_getIsAan(&vent)) {
-                  Ventilator_UitGaan(&vent, 0);
-              }
+
+          if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0) {
+              TxHeader.StdId = 0x102;
+              memcpy(TxData, &h, 4);
+              HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
           }
       }
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
   }
-  /* USER CODE END 3 */
 }
 
 void SystemClock_Config(void)
@@ -185,8 +174,7 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
-  {
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK) {
     Error_Handler();
   }
 
@@ -201,12 +189,11 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 16;
+  RCC_OscInitStruct.PLL.PLLN = 40; // <-- Dit is de cruciale wijziging!
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler();
   }
 
@@ -217,23 +204,34 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK) { // <-- FLASH_LATENCY_4 is hier ook nodig!
     Error_Handler();
   }
 
   HAL_RCCEx_EnableMSIPLLMode();
 }
+static void MX_CAN1_Init(void)
+{
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 10;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = DISABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
 
 static void MX_I2C1_Init(void)
 {
-  /* USER CODE BEGIN I2C1_Init 0 */
-
-  /* USER CODE END I2C1_Init 0 */
-
-  /* USER CODE BEGIN I2C1_Init 1 */
-
-  /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
   hi2c1.Init.Timing = 0x00B07CB4;
   hi2c1.Init.OwnAddress1 = 0;
@@ -247,33 +245,21 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
-
   if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
   {
     Error_Handler();
   }
-
   if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
 }
 
 static void MX_TIM2_Init(void)
 {
-  /* USER CODE BEGIN TIM2_Init 0 */
-
-  /* USER CODE END TIM2_Init 0 */
-
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
-  /* USER CODE BEGIN TIM2_Init 1 */
-
-  /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 31999;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -295,20 +281,10 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM2_Init 2 */
-
-  /* USER CODE END TIM2_Init 2 */
 }
 
 static void MX_USART2_UART_Init(void)
 {
-  /* USER CODE BEGIN USART2_Init 0 */
-
-  /* USER CODE END USART2_Init 0 */
-
-  /* USER CODE BEGIN USART2_Init 1 */
-
-  /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
   huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
@@ -323,77 +299,48 @@ static void MX_USART2_UART_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USART2_Init 2 */
-
-  /* USER CODE END USART2_Init 2 */
 }
 
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  /* USER CODE BEGIN MX_GPIO_Init_1 */
-
-  /* USER CODE END MX_GPIO_Init_1 */
 
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  HAL_GPIO_WritePin(GPIOB, VENTILATOR_Pin|LD3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4, GPIO_PIN_RESET); // Zorg dat juiste pins gedefinieerd zijn voor LD3/Vent
 
-  GPIO_InitStruct.Pin = VENTILATOR_Pin|LD3_Pin;
+  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_4;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  GPIO_InitStruct.Pin = DRUKKNOP_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(DRUKKNOP_GPIO_Port, &GPIO_InitStruct);
-
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-
-  /* USER CODE BEGIN MX_GPIO_Init_2 */
-
-  /* USER CODE END MX_GPIO_Init_2 */
 }
 
-/* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM2) {
         HAL_TIM_Base_Stop_IT(htim);
-
         co2.metingKlaar = true;
         temp.metingKlaar = true;
         hum.metingKlaar = true;
     }
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == DRUKKNOP_Pin) {
-        noodstopActief = false;
-    }
-}
-/* USER CODE END 4 */
+//void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+//    if (hcan->Instance == CAN1) {
+//        if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK) {
+//            // FIX: Printf en trage functies zijn VERWIJDERD uit deze interrupt, anders crasht je hele systeem direct.
+//            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+//        }
+//    }
+//}
 
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
   __disable_irq();
   while (1)
   {
   }
-  /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
