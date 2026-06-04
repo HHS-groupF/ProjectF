@@ -3,13 +3,12 @@
 
 #include <QObject>
 #include <QString>
-#include <QJsonObject>
 
 class CentraalBesturingssysteemRPIWEMOS : public QObject {
     Q_OBJECT
 public:
     explicit CentraalBesturingssysteemRPIWEMOS(QObject *parent = nullptr);
-    void verwerkInkomendeStatus(const QJsonObject &jsonObj);
+    void verwerkInkomendeStatus(bool brand, bool overrule, bool ventilator);
 public slots:
     void activeerBrandOverrule();
 signals:

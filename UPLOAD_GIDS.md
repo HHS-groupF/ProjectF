@@ -81,7 +81,8 @@ Wemos-en (zie §10).
 ## 5. RPI-BUS (Qt6) op de BUS-Pi
 
 RPI-BUS is de schakel tussen de STM32 (CAN) en het dashboard (TCP). Hij leest de
-sensordata van de STM32 over `can0` en stuurt die als JSON door naar RPI-WEMOS.
+sensordata van de STM32 over `can0` en stuurt die als eigen tekstregels
+(`SENSOR …` / `STATUS …`, geen JSON-library) door naar RPI-WEMOS.
 
 1. Kopieer de map `RPI-BUS/` naar de BUS-Pi.
 2. Zorg dat `can0` omhoog staat (zie §3) — anders verbindt de CAN-laag niet.
@@ -304,7 +305,7 @@ netwerk- of messaging-libraries):
 STM32 (Ventilator)
    │  CAN-bus  (can0, 500 kbit/s) — 32-bit float per CAN-ID
    ▼
-RPI-BUS  ── TCP 8080 (sensordata, JSON) ─────────►  RPI-WEMOS (dashboard)
+RPI-BUS  ── TCP 8080 (sensordata, tekstregels) ──►  RPI-WEMOS (dashboard)
          ◄─ TCP 8081 (commando's) ──────────────────┘
                                                      │  Bifrost / TCP 9000
                                                      ▼
@@ -315,7 +316,7 @@ RPI-BUS  ── TCP 8080 (sensordata, JSON) ─────────►  RPI-
 | Verbinding | Techniek | Aan beide kanten |
 |---|---|---|
 | **STM32 ↔ RPI-BUS** | CAN-bus | STM32: HAL CAN1 · Pi: QtSerialBus + SocketCAN (`can0`) via `CanBusCommunicatieRPIBUS` |
-| **RPI-BUS ↔ RPI-WEMOS** | eigen rauwe POSIX-sockets | `SocketCommunicatieRPIBUS` ↔ `SocketCommunicatieRPIWEMOS` · JSON-regels · poort 8080/8081 |
+| **RPI-BUS ↔ RPI-WEMOS** | eigen rauwe POSIX-sockets | `SocketCommunicatieRPIBUS` ↔ `SocketCommunicatieRPIWEMOS` · eigen tekstregels · poort 8080/8081 |
 | **RPI-WEMOS ↔ Wemos** | Bifrost over TCP | Pi: rauwe POSIX-socket (`Heimdall`) · Wemos: `WiFiClient` (`SocketWemos`) · poort 9000 |
 
 **Over de transportlagen:**
@@ -328,4 +329,16 @@ RPI-BUS  ── TCP 8080 (sensordata, JSON) ─────────►  RPI-
 **CAN-payload (STM32 → Pi):** elke sensor is een eigen CAN-ID met 4 databytes
 (little-endian 32-bit float):
 `0x100` = CO2 · `0x101` = temperatuur · `0x102` = luchtvochtigheid.
-RPI-BUS verpakt die waarden vervolgens als JSON-regels voor het dashboard.
+
+**Berichtformaat RPI-BUS ↔ RPI-WEMOS** (eigen tekstregels, handmatig geparset met
+splitsen op spaties — géén JSON-library):
+
+| Regel | Richting | Betekenis |
+|---|---|---|
+| `SENSOR <nodeId> <type> <waarde>` | BUS → WEMOS | sensormeting, bv. `SENSOR 256 CO2 750` |
+| `STATUS <brand> <overrule> <ventilator>` | BUS → WEMOS | systeemstatus met 1/0, bv. `STATUS 0 0 1` |
+| `HEARTBEAT` | BUS → WEMOS | levensteken (elke 2 s) → status-LED van de socketverbinding |
+| `COMMAND: ALARM_OVERRULED` | WEMOS → BUS | gebruiker heft het brandalarm op |
+
+Net als Bifrost is elke regel met `\n` afgesloten en wordt hij bij de ontvanger
+met een simpele `split()` uit elkaar gehaald.

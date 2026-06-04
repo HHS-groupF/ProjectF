@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "SysteemConfig.h"
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QDateTime>
 #include <QListWidget>
 #include <QPen>
@@ -160,66 +158,62 @@ void MainWindow::updateScherm()
             QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
             ui->textBrowser_Logboek->append(tijd + " - Inkomend: " + schoonBericht);
 
-            QJsonParseError parseFout;
-            QJsonDocument jsonDoc = QJsonDocument::fromJson(schoonBericht.toUtf8(), &parseFout);
+            // --- Eigen Bifrost-stijl parser (geen JSON-library): splits op spaties. ---
+            QStringList delen = schoonBericht.split(' ', Qt::SkipEmptyParts);
+            if (delen.isEmpty()) continue;
+            const QString type = delen[0];
 
-            if (parseFout.error == QJsonParseError::NoError) {
-                QJsonObject jsonObj = jsonDoc.object();
+            // STATUS <brand> <overrule> <ventilator>   (1/0)
+            if (type == "STATUS" && delen.size() >= 4) {
+                bool brand      = (delen[1] == "1");
+                bool overrule   = (delen[2] == "1");
+                bool ventilator = (delen[3] == "1");
 
-                // STATUS UPDATES
-                if (jsonObj["type"].toString() == "status") {
-                    centraalSysteem->verwerkInkomendeStatus(jsonObj);
+                centraalSysteem->verwerkInkomendeStatus(brand, overrule, ventilator);
 
-                    bool brand = jsonObj["brandAlarm"].toBool();
-                    bool overrule = jsonObj["overrule"].toBool();
+                beheerWaarschuwing("🔥 NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
+                beheerWaarschuwing("⚠️ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
+            }
 
-                    beheerWaarschuwing("🔥 NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
-                    beheerWaarschuwing("⚠️ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
+            // SENSOR <nodeId> <sensorId> <waarde>
+            else if (type == "SENSOR" && delen.size() >= 4) {
+                QString id = delen[2];
+                double waarde = delen[3].toDouble();
+                double secondenGeleden = timerSindsStart.elapsed() / 1000.0;
+                double windowSize = 60.0;
+
+                if (id == "CO2") {
+                    ui->lcdNumber_CO2->display(waarde);
+                    seriesCO2->append(secondenGeleden, waarde);
+
+                    if (secondenGeleden > windowSize) asX_CO2->setRange(secondenGeleden - windowSize, secondenGeleden);
+                    if (waarde > asY_CO2->max()) asY_CO2->setMax(waarde + 200);
+                    if (waarde < asY_CO2->min()) asY_CO2->setMin(qMax(0.0, waarde - 100));
+
+                    QString msg = "⚠️ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
+                    beheerWaarschuwing(msg, waarde > Config::CO2_WAARSCHUWING);
                 }
+                else if (id == "TEMP") {
+                    ui->lcdNumber_Temperatuur->display(waarde);
+                    seriesTemp->append(secondenGeleden, waarde);
 
-                // SENSOR DATA
-                else if (jsonObj["type"].toString() == "sensor") {
-                    QString id = jsonObj["sensorId"].toString();
+                    if (secondenGeleden > windowSize) asX_Temp->setRange(secondenGeleden - windowSize, secondenGeleden);
+                    if (waarde > asY_Temp->max()) asY_Temp->setMax(waarde + 5);
+                    if (waarde < asY_Temp->min()) asY_Temp->setMin(waarde - 5);
 
-                    double waarde = jsonObj["waarde"].toDouble();
-                    double secondenGeleden = timerSindsStart.elapsed() / 1000.0;
-                    double windowSize = 60.0;
-
-                    if (id == "CO2") {
-                        ui->lcdNumber_CO2->display(waarde);
-                        seriesCO2->append(secondenGeleden, waarde);
-
-                        if (secondenGeleden > windowSize) asX_CO2->setRange(secondenGeleden - windowSize, secondenGeleden);
-                        if (waarde > asY_CO2->max()) asY_CO2->setMax(waarde + 200);
-                        if (waarde < asY_CO2->min()) asY_CO2->setMin(qMax(0.0, waarde - 100));
-
-                        QString msg = "⚠️ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
-                        beheerWaarschuwing(msg, waarde > Config::CO2_WAARSCHUWING && !jsonObj["brandAlarm"].toBool());
-                    }
-                    else if (id == "TEMP") {
-                        ui->lcdNumber_Temperatuur->display(waarde);
-                        seriesTemp->append(secondenGeleden, waarde);
-
-                        if (secondenGeleden > windowSize) asX_Temp->setRange(secondenGeleden - windowSize, secondenGeleden);
-                        if (waarde > asY_Temp->max()) asY_Temp->setMax(waarde + 5);
-                        if (waarde < asY_Temp->min()) asY_Temp->setMin(waarde - 5);
-
-                        QString msg = "⚠️ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "°C) -> Actie: Ventilator AAN";
-                        beheerWaarschuwing(msg, waarde > Config::TEMP_WAARSCHUWING && !jsonObj["brandAlarm"].toBool());
-                    }
-                    else if (id == "HUM") {
-                        ui->lcdNumber_Luchtvochtigheid->display(waarde);
-                        seriesLucht->append(secondenGeleden, waarde);
-
-                        if (secondenGeleden > windowSize) asX_Lucht->setRange(secondenGeleden - windowSize, secondenGeleden);
-                        if (waarde > asY_Lucht->max()) asY_Lucht->setMax(qMin(100.0, waarde + 10));
-
-                        QString msg = "⚠️ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
-                        beheerWaarschuwing(msg, waarde > Config::HUM_WAARSCHUWING && !jsonObj["brandAlarm"].toBool());
-                    }
+                    QString msg = "⚠️ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "°C) -> Actie: Ventilator AAN";
+                    beheerWaarschuwing(msg, waarde > Config::TEMP_WAARSCHUWING);
                 }
-            } else {
-                qDebug() << "JSON Fout:" << parseFout.errorString() << "in bericht:" << schoonBericht;
+                else if (id == "HUM") {
+                    ui->lcdNumber_Luchtvochtigheid->display(waarde);
+                    seriesLucht->append(secondenGeleden, waarde);
+
+                    if (secondenGeleden > windowSize) asX_Lucht->setRange(secondenGeleden - windowSize, secondenGeleden);
+                    if (waarde > asY_Lucht->max()) asY_Lucht->setMax(qMin(100.0, waarde + 10));
+
+                    QString msg = "⚠️ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
+                    beheerWaarschuwing(msg, waarde > Config::HUM_WAARSCHUWING);
+                }
             }
         }
     }

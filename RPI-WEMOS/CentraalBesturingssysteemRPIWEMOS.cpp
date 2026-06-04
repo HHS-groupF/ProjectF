@@ -5,17 +5,11 @@ CentraalBesturingssysteemRPIWEMOS::CentraalBesturingssysteemRPIWEMOS(QObject *pa
 {
 }
 
-void CentraalBesturingssysteemRPIWEMOS::verwerkInkomendeStatus(const QJsonObject &jsonObj)
+void CentraalBesturingssysteemRPIWEMOS::verwerkInkomendeStatus(bool brand, bool overrule, bool ventilator)
 {
-    if (jsonObj.contains("brandAlarm")) {
-        emit brandAlarmStatusGewijzigd(jsonObj["brandAlarm"].toBool());
-    }
-    if (jsonObj.contains("overrule")) {
-        emit overruleStatusGewijzigd(jsonObj["overrule"].toBool());
-    }
-    if (jsonObj.contains("ventilator")) {
-        emit ventilatorStatusGewijzigd(jsonObj["ventilator"].toBool());
-    }
+    emit brandAlarmStatusGewijzigd(brand);
+    emit overruleStatusGewijzigd(overrule);
+    emit ventilatorStatusGewijzigd(ventilator);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::activeerBrandOverrule()

@@ -1,7 +1,5 @@
 #include "CentraalBesturingssysteemRPIBUS.h"
 #include "SysteemConfig.h"
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QByteArray>
 
 CentraalBesturingssysteemRPIBUS::CentraalBesturingssysteemRPIBUS(QObject *parent)
@@ -26,14 +24,13 @@ void CentraalBesturingssysteemRPIBUS::verwerkCanSensorData(uint32_t stmId, const
         huidigLucht = waarde;
     }
 
-    // 2. Bouw het JSON-bericht om de live-data ook naar de andere Pi door te sturen
-    QJsonObject json;
-    json["type"] = "sensor";
-    json["nodeId"] = static_cast<int>(stmId);
-    json["sensorId"] = sensorType;
-    json["waarde"] = waarde;
-
-    emit stuurNetwerkData(QJsonDocument(json).toJson(QJsonDocument::Compact) + "\n");
+    // 2. Stuur de live-data als eigen Bifrost-regel naar de andere Pi (geen JSON-library):
+    //    "SENSOR <nodeId> <sensorId> <waarde>"
+    QString bericht = QString("SENSOR %1 %2 %3\n")
+                          .arg(static_cast<int>(stmId))
+                          .arg(sensorType)
+                          .arg(waarde);
+    emit stuurNetwerkData(bericht);
 
     // 3. Evalueer direct de limieten met de nieuwste meetwaarden
     controleerLimieten();
@@ -96,11 +93,10 @@ void CentraalBesturingssysteemRPIBUS::controleerLimieten() {
 }
 
 void CentraalBesturingssysteemRPIBUS::verzendSysteemStatus() {
-    QJsonObject status;
-    status["type"] = "status";
-    status["brandAlarm"] = isBrandAlarmActief;
-    status["overrule"] = isOverruleActief;
-    status["ventilator"] = isVentilatorAan;
-
-    emit stuurNetwerkData(QJsonDocument(status).toJson(QJsonDocument::Compact) + "\n");
+    // Eigen Bifrost-regel (geen JSON-library): "STATUS <brand> <overrule> <ventilator>" met 1/0.
+    QString bericht = QString("STATUS %1 %2 %3\n")
+                          .arg(isBrandAlarmActief ? 1 : 0)
+                          .arg(isOverruleActief ? 1 : 0)
+                          .arg(isVentilatorAan ? 1 : 0);
+    emit stuurNetwerkData(bericht);
 }
