@@ -253,11 +253,19 @@ Zet de onderdelen in deze volgorde aan, anders missen verbindingen elkaar:
 
 ---
 
-## Bijlage A — Het Bifrost-protocol (Pi ↔ Wemos)
+## Bijlage A — Het Bifrost-protocol
 
-Bifrost is ons eigen, minimale protocol bovenop een gewone TCP-verbinding — geen
-MQTT, geen broker, geen messaging-library. Het werkt identiek over kabel (RJ45)
-en WiFi.
+Bifrost is ons eigen, zelfgeschreven protocol over een gewone TCP-verbinding —
+geen MQTT, geen broker, geen messaging-library. De **framing** is overal gelijk:
+elk bericht is precies één tekstregel afgesloten met `\n`, en de ontvanger haalt
+die regel met `split()` uit elkaar (handmatig, zonder library). Het werkt identiek
+over kabel (RJ45) en WiFi.
+
+Bifrost loopt op **beide** socket-verbindingen, met elk een eigen berichtset:
+- **A.1 — Pi ↔ Wemos:** `topic payload`-berichten (Heimdall ↔ SocketWemos).
+- **A.2 — Pi ↔ Pi:** sleutelwoord + velden (RPI-BUS ↔ RPI-WEMOS).
+
+### A.1 — Bifrost op de Pi ↔ Wemos-link
 
 **Rollen**
 - **Heimdall** = de server. Draait op de RPI-WEMOS-Pi en luistert op poort `9000`
@@ -291,8 +299,38 @@ topic<spatie>payload\n
 - Inkomend gaat elke Rune van een Wemos naar het dashboard.
 
 Zo gedraagt Bifrost zich als MQTT's publish/subscribe, maar volledig met eigen
-code en zonder broker. De andere twee verbindingen (BUS↔WEMOS en STM32↔BUS)
-staan hier los van — zie Bijlage B.
+code en zonder broker.
+
+### A.2 — Bifrost op de Pi ↔ Pi-link (RPI-BUS ↔ RPI-WEMOS)
+
+Dezelfde Bifrost-framing (één regel + `\n` + `split`), maar met een eigen
+berichtset omdat deze berichten meerdere waarden tegelijk dragen. Vroeger ging dit
+via JSON (`QJsonDocument`); nu is het een eigen tekstregel-formaat — dus géén
+JSON-library meer.
+
+**Berichtformaat — elke regel begint met een sleutelwoord, velden gescheiden door
+spaties, afgesloten met `\n`:**
+
+| Regel | Richting | Velden | Betekenis |
+|---|---|---|---|
+| `SENSOR <nodeId> <type> <waarde>` | BUS → WEMOS | `type` = `CO2`/`TEMP`/`HUM` | één sensormeting, bv. `SENSOR 256 CO2 750` |
+| `STATUS <brand> <overrule> <ventilator>` | BUS → WEMOS | elk veld `1` of `0` | systeemstatus, bv. `STATUS 0 0 1` (ventilator aan) |
+| `HEARTBEAT` | BUS → WEMOS | — | levensteken, elke 2 s; houdt de status-LED van de socketverbinding groen |
+| `COMMAND: ALARM_OVERRULED` | WEMOS → BUS | — | gebruiker heft het brandalarm handmatig op |
+
+**Verwerking aan de WEMOS-kant** (`updateScherm`):
+1. Splits de regel op spaties.
+2. Kijk naar het eerste woord (`HEARTBEAT` / `SENSOR` / `STATUS`).
+3. Lees de velden op vaste posities uit (bv. `delen[3]` = sensorwaarde) en update
+   de grafieken, LCD's en status-LED's.
+
+**Waarom hier sleutelwoord + velden i.p.v. `topic payload` (zoals A.1)?** De
+BUS↔WEMOS-berichten dragen meerdere waarden tegelijk (een status = 3 booleans, een
+meting = type + waarde). Een sleutelwoord + vaste velden is daarvoor handiger,
+terwijl het dezelfde Bifrost-framing en parsing (split, geen library) houdt.
+
+> De derde verbinding, **STM32 ↔ RPI-BUS**, loopt niet over tekstregels maar over
+> de CAN-bus (binaire frames). Zie Bijlage B voor het volledige overzicht.
 
 ---
 
@@ -316,8 +354,8 @@ RPI-BUS  ── TCP 8080 (sensordata, tekstregels) ──►  RPI-WEMOS (dashboa
 | Verbinding | Techniek | Aan beide kanten |
 |---|---|---|
 | **STM32 ↔ RPI-BUS** | CAN-bus | STM32: HAL CAN1 · Pi: QtSerialBus + SocketCAN (`can0`) via `CanBusCommunicatieRPIBUS` |
-| **RPI-BUS ↔ RPI-WEMOS** | eigen rauwe POSIX-sockets | `SocketCommunicatieRPIBUS` ↔ `SocketCommunicatieRPIWEMOS` · eigen tekstregels · poort 8080/8081 |
-| **RPI-WEMOS ↔ Wemos** | Bifrost over TCP | Pi: rauwe POSIX-socket (`Heimdall`) · Wemos: `WiFiClient` (`SocketWemos`) · poort 9000 |
+| **RPI-BUS ↔ RPI-WEMOS** | Bifrost over TCP (POSIX-sockets) | `SocketCommunicatieRPIBUS` ↔ `SocketCommunicatieRPIWEMOS` · berichtset A.2 · poort 8080/8081 |
+| **RPI-WEMOS ↔ Wemos** | Bifrost over TCP | Pi: POSIX-socket (`Heimdall`) · Wemos: `WiFiClient` (`SocketWemos`) · berichtset A.1 · poort 9000 |
 
 **Over de transportlagen:**
 - Op de Pi's gebruiken we kale POSIX-sockets (`socket()/bind()/listen()/...`) met
@@ -330,15 +368,6 @@ RPI-BUS  ── TCP 8080 (sensordata, tekstregels) ──►  RPI-WEMOS (dashboa
 (little-endian 32-bit float):
 `0x100` = CO2 · `0x101` = temperatuur · `0x102` = luchtvochtigheid.
 
-**Berichtformaat RPI-BUS ↔ RPI-WEMOS** (eigen tekstregels, handmatig geparset met
-splitsen op spaties — géén JSON-library):
-
-| Regel | Richting | Betekenis |
-|---|---|---|
-| `SENSOR <nodeId> <type> <waarde>` | BUS → WEMOS | sensormeting, bv. `SENSOR 256 CO2 750` |
-| `STATUS <brand> <overrule> <ventilator>` | BUS → WEMOS | systeemstatus met 1/0, bv. `STATUS 0 0 1` |
-| `HEARTBEAT` | BUS → WEMOS | levensteken (elke 2 s) → status-LED van de socketverbinding |
-| `COMMAND: ALARM_OVERRULED` | WEMOS → BUS | gebruiker heft het brandalarm op |
-
-Net als Bifrost is elke regel met `\n` afgesloten en wordt hij bij de ontvanger
-met een simpele `split()` uit elkaar gehaald.
+RPI-BUS verpakt die CAN-waarden vervolgens als eigen tekstregels
+(`SENSOR …` / `STATUS …`) voor het dashboard — het volledige berichtformaat van de
+BUS↔WEMOS-link staat in **Bijlage A.2**.
