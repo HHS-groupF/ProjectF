@@ -63,9 +63,6 @@ void Error_Handler(void);
 #define VCP_TX_GPIO_Port GPIOA
 #define VENTILATOR_Pin GPIO_PIN_0
 #define VENTILATOR_GPIO_Port GPIOB
-#define DRUKKNOP_Pin GPIO_PIN_12
-#define DRUKKNOP_GPIO_Port GPIOA
-#define DRUKKNOP_EXTI_IRQn EXTI15_10_IRQn
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
