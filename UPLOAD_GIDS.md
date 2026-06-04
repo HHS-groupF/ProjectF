@@ -19,6 +19,11 @@ juiste hardware zet. Werk de onderdelen bij voorkeur in de aangegeven volgorde a
 > `Lichtkran/`) zijn verwijderd. Het actieve systeem bestaat uit de vier mappen
 > hierboven; de lichtkrant zit nu in de Wemos-tafel sketch.
 
+**Dataketen in het kort** (volledig schema in Bijlage B):
+```
+STM32 ──CAN──► RPI-BUS ──TCP 8080/8081──► RPI-WEMOS ──Bifrost 9000──► 2× Wemos
+```
+
 ---
 
 ## 2. Netwerk & poorten — eerst alle adressen gelijkzetten
@@ -34,6 +39,7 @@ gebruiken. Dit zijn de plekken die **moeten kloppen**:
 | WiFi-naam + wachtwoord | `Wemos-tafel/.../config.h` → `WIFI_SSID` / `WIFI_PASSWORD` | jouw netwerk |
 | TCP-poorten (BUS↔WEMOS) | `SysteemConfig.h` (beide) | `8080` (data), `8081` (commando's) |
 | Bifrost-poort (Pi↔Wemos) | `RPI-WEMOS/SysteemConfig.h` → `POORT_BIFROST` + Wemos `config.h` → `BIFROST_POORT` | `9000` |
+| CAN-interface (STM32↔BUS) | `RPI-BUS/main.cpp` → `canBus.start("can0")` | `can0`, 500 kbit/s |
 
 > **Let op:** de Qt-config staat standaard op `127.0.0.1`. Dat werkt alleen als
 > alles op één machine draait. Vul de echte IP-adressen in zodra de Pi's en
@@ -45,8 +51,16 @@ gebruiken. Dit zijn de plekken die **moeten kloppen**:
 
 - **Raspberry Pi's:** Raspberry Pi OS geïnstalleerd, op het netwerk, SSH of
   toetsenbord/scherm beschikbaar.
-- **Qt:** Qt6 met de modules **Widgets en Charts**. (Geen QtMqtt of QtNetwork
-  nodig — alle netwerkcommunicatie loopt over onze eigen rauwe sockets.)
+- **Qt:** Qt6 met **Widgets + Charts** (voor RPI-WEMOS) en **SerialBus** (voor de
+  CAN-bus in RPI-BUS). Geen QtMqtt of QtNetwork nodig — alle netwerkcommunicatie
+  loopt over onze eigen sockets. SerialBus installeer je op de Pi met
+  `sudo apt install qt6-serialbus-dev`.
+- **CAN-bus op de BUS-Pi:** een CAN-controller (bijv. MCP2515 via SPI) als
+  SocketCAN-interface `can0`. Zet die omhoog vóór je RPI-BUS start:
+  ```bash
+  sudo ip link set can0 up type can bitrate 500000
+  ```
+  (500 kbit/s = dezelfde snelheid als de STM32, zie §9). Check met `ip -details link show can0`.
 - **Arduino IDE:** met ESP8266-board-ondersteuning
   (Boardmanager-URL: `http://arduino.esp8266.com/stable/package_esp8266com_index.json`).
 - **STM32CubeIDE** voor het STM32-deel.
@@ -66,10 +80,14 @@ Wemos-en (zie §10).
 
 ## 5. RPI-BUS (Qt6) op de BUS-Pi
 
+RPI-BUS is de schakel tussen de STM32 (CAN) en het dashboard (TCP). Hij leest de
+sensordata van de STM32 over `can0` en stuurt die als JSON door naar RPI-WEMOS.
+
 1. Kopieer de map `RPI-BUS/` naar de BUS-Pi.
-2. Open `RPI-BUS/CMakeLists.txt` in **Qt Creator** (of build via terminal).
-3. Controleer `RPI-BUS/SysteemConfig.h`: vul `RPI_WEMOS_IP` in (IP van de WEMOS-Pi).
-4. Build & run.
+2. Zorg dat `can0` omhoog staat (zie §3) — anders verbindt de CAN-laag niet.
+3. Open `RPI-BUS/CMakeLists.txt` in **Qt Creator** (of build via terminal).
+4. Controleer `RPI-BUS/SysteemConfig.h`: vul `RPI_WEMOS_IP` in (IP van de WEMOS-Pi).
+5. Build & run.
 
 **Bouwen via terminal (zonder Qt Creator):**
 ```bash
@@ -78,7 +96,10 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ./build/RPI-BUS
 ```
-Verwacht: `"[RPI-BUS] Server luistert naar commando's op poort 8081"`.
+Verwacht in de console:
+- `"[RPI-BUS] Server luistert naar commando's op poort 8081"`
+- `"[CAN-BUS] Succesvol verbonden met can0"`
+- bij inkomende STM32-frames: `"[CAN-BUS] Geparseerde Data - ... | Type: CO2 | Waarde: ..."`
 
 ---
 
@@ -117,7 +138,7 @@ code te flashen; de lichtkrant-functionaliteit komt automatisch mee.
 als tabbladen).
 
 **Benodigde libraries** (Library Manager) — **geen MQTT-library (PubSubClient)
-meer**; Bifrost gebruikt de kale sockets uit de ESP8266-core. De matrix-libraries
+meer**; Bifrost draait op `WiFiClient` uit de ESP8266-core. De matrix-libraries
 blijven nodig omdat de lichtkrant in deze sketch zit:
 - `ESP8266WiFi` (komt met de ESP8266-board-package)
 - `MD_Parola`
@@ -147,7 +168,7 @@ blijven nodig omdat de lichtkrant in deze sketch zit:
 **Map:** `Wemos-tafel/Sensor/` (open `Sensor.ino`).
 
 **Benodigde libraries:** alleen `ESP8266WiFi` (geen PubSubClient meer — Bifrost
-gebruikt de kale core-sockets).
+draait op `WiFiClient` uit de core).
 
 **Aansluitingen (`config.h`):**
 - PIR-sensor → `D1`
@@ -164,20 +185,30 @@ gebruikt de kale core-sockets).
 
 **Map:** `Ventilator/`.
 
+De STM32 leest de klimaatsensoren via I²C en stuurt de waarden over de **CAN-bus**
+naar RPI-BUS.
+
 **Hardware:** STM32 (L4-serie, gebruikt `stm32l4xx_hal.h`).
 - I2C1 → SGP30 CO2-sensor (adres `0x58`) en SHT3x temp/vocht (adres `0x44`)
+- CAN1 → de CAN-bus; **een CAN-transceiver nodig** (bijv. SN65HVD230 of MCP2551)
+  tussen `CAN1_TX`/`CAN1_RX` en de bus. Bitrate **500 kbit/s**.
 - USART2 → 115200 baud (debug/print)
-- TIM2 → timing van de metingen
+- TIM2 → timing van de I²C-metingen
 - Ventilator-uitgang → `PB0`, statusled `LD3` → `PB3`, noodstop-drukknop → `PA12`
 
+**Wat er over CAN gaat (STM32 → Pi):** per sensor één CAN-ID met 4 databytes
+(little-endian 32-bit float):
+- `0x100` = CO2 · `0x101` = temperatuur · `0x102` = luchtvochtigheid
+
 **Stappen:**
-1. Importeer het project in **STM32CubeIDE** (`File → Import → Existing Projects`),
-   of voeg de `.c`/`.h`-bestanden toe aan je bestaande CubeIDE-project met de
-   bijbehorende `.ioc` (I2C1, USART2, TIM2, GPIO zoals hierboven).
-2. Sluit de STM32 via ST-Link/USB aan.
-3. Build (hamer-icoon) → Run/Debug om te flashen.
-4. Open een seriële terminal op **115200 baud**; je zou moeten zien:
-   `"[INFO] Systeem succesvol opgestart in C met Hardware Timer!"`
+1. Importeer het project in **STM32CubeIDE** met de bijbehorende `.ioc`
+   (I2C1, CAN1, USART2, TIM2, GPIO zoals hierboven).
+2. Sluit de STM32 via ST-Link/USB aan en koppel de CAN-transceiver aan dezelfde
+   bus als de BUS-Pi (gemeenschappelijke GND, 120 Ω terminering aan beide uiteinden).
+3. Build → Run/Debug om te flashen.
+4. Seriële terminal op **115200 baud**; verwacht:
+   `"[INFO] STM32 CAN-Sensor Node opgestart (TX & RX Actief)!"` en daarna
+   `"[TX] Verzenden -> CO2: ... | Temp: ... | Vocht: ..."`
 
 ---
 
@@ -185,12 +216,14 @@ gebruikt de kale core-sockets).
 
 Zet de onderdelen in deze volgorde aan, anders missen verbindingen elkaar:
 
-1. **RPI-WEMOS** (Qt dashboard) — start de Bifrost-server (Heimdall) op poort 9000 en verbindt met de BUS. Moet draaien vóór de Wemos-en.
-2. **RPI-BUS** (Qt) — begint sensordata te genereren en luistert op 8081.
-3. **Wemos #1 en #2** — verbinden met WiFi en daarna met Heimdall (de Pi).
-4. **STM32 / Ventilator** — start de klimaatregeling.
+0. **CAN-interface `can0`** op de BUS-Pi omhoog zetten (zie §3).
+1. **RPI-WEMOS** (Qt dashboard) — start Heimdall (poort 9000) en luistert op 8080. Moet draaien vóór de Wemos-en.
+2. **RPI-BUS** (Qt) — verbindt met `can0` + RPI-WEMOS; leest STM32-data en stuurt die door, luistert op 8081 voor commando's.
+3. **STM32 / Ventilator** — meet de sensoren en stuurt de waarden over CAN.
+4. **Wemos #1 en #2** — verbinden met WiFi en daarna met Heimdall (de Pi).
 
 **Snelle test:**
+- STM32 aan → de grafieken (CO2/temp/vocht) op het dashboard beginnen te lopen (data via CAN → RPI-BUS → socket).
 - Druk op de tafelknop (Wemos #1) → dashboard toont "Tafel 1 vraagt hulp" + LED.
 - Beweeg voor de PIR (Wemos #2) → sfeerlicht-status wordt groen op het dashboard.
 - In het dashboard "Reset Tafel" / "Update Lichtkrant" / "Stel In" (RGB) testen.
@@ -203,67 +236,96 @@ Zet de onderdelen in deze volgorde aan, anders missen verbindingen elkaar:
 - [ ] RPI-WEMOS draait (Heimdall luistert op 9000) **vóór** je de Wemos-en aanzet.
 - [ ] `PI_IP_ADRES` op de Wemos-en = IP van de RPI-WEMOS-Pi; poort 9000 aan beide kanten.
 - [ ] WiFi-SSID/wachtwoord kloppen (Serial Monitor toont "WiFi verbonden!").
-- [ ] Qt-module Charts geïnstalleerd (anders faalt CMake bij `find_package`).
+- [ ] Qt-modules Charts (RPI-WEMOS) + SerialBus (RPI-BUS) geïnstalleerd.
+- [ ] `can0` staat omhoog op 500 kbit/s (`ip link show can0`), zelfde bitrate als de STM32.
 - [ ] Wemos-board en poort correct gekozen in Arduino IDE.
 - [ ] STM32 seriële poort op 115200 baud.
 
 | Probleem | Waarschijnlijke oorzaak |
 |---|---|
 | Dashboard-LED "Socketverbinding" blijft rood | RPI-BUS draait niet of verkeerd IP in `SysteemConfig.h` |
+| `[CAN-BUS] Kan niet verbinden met interface can0` | `can0` niet omhoog of geen CAN-controller → `sudo ip link set can0 up type can bitrate 500000` |
 | Wemos meldt `[Bifrost] verbinden met Heimdall mislukt` | RPI-WEMOS draait niet, of `PI_IP_ADRES`/`BIFROST_POORT` klopt niet |
 | Wemos blijft op "." in Serial Monitor | WiFi-SSID/wachtwoord fout |
 | Tafelknop/RGB doet niets op het dashboard | Wemos niet verbonden met Heimdall (check serial: "verbonden met Heimdall") |
-| Geen sensordata in grafieken | RPI-BUS niet verbonden met WEMOS poort 8080 |
+| Geen sensordata in grafieken | STM32 stuurt niet (transceiver/terminering/bitrate), of RPI-BUS niet verbonden met WEMOS poort 8080 |
 
 ---
 
-## Bijlage A — Hoe het Bifrost-protocol werkt (kort)
+## Bijlage A — Het Bifrost-protocol (Pi ↔ Wemos)
 
-Bifrost is ons eigen, minimale protocol over **rauwe TCP/IP-sockets** (geen MQTT,
-geen libraries). Het werkt identiek over kabel (RJ45) en WiFi.
+Bifrost is ons eigen, minimale protocol bovenop een gewone TCP-verbinding — geen
+MQTT, geen broker, geen messaging-library. Het werkt identiek over kabel (RJ45)
+en WiFi.
 
 **Rollen**
-- **Heimdall** = de server. Draait op de RPI-WEMOS-Pi, luistert op poort `9000`
-  (op alle netwerkkaarten, dus zowel eth0/RJ45 als WiFi).
+- **Heimdall** = de server. Draait op de RPI-WEMOS-Pi en luistert op poort `9000`
+  (op alle interfaces). Meerdere Wemos-en mogen tegelijk verbonden zijn.
 - **SocketWemos** (Valkyrie-rol) = de client. Draait op elke Wemos en verbindt
   naar Heimdall.
 
-**Bericht = een "Rune": één tekstregel**, afgesloten met een newline:
+**Berichtformaat — een "Rune" is precies één tekstregel:**
 ```
 topic<spatie>payload\n
 ```
-Voorbeelden:
-```
-tafel/1/status HELP          (Wemos → Pi: tafel 1 vraagt hulp)
-tafel/1/reset RESET          (Pi → Wemos: zet tafel 1 terug)
-sensor/beweging JA           (Wemos → Pi: beweging gedetecteerd)
-sensor/rgb/set 255,120,20    (Pi → Wemos: zet sfeerlicht warm-oranje)
-wemos/lichtkrant MSG:Welkom  (Pi → Wemos: tekst op de lichtkrant)
-```
-De ontvanger splitst elke regel op de **eerste spatie**: alles ervoor is het
-`topic`, alles erna de `payload` (mag spaties bevatten).
+- Alles vóór de eerste spatie = het **topic** (bevat zelf nooit een spatie).
+- Alles erna = de **payload** (mag spaties bevatten).
+- De `\n` markeert het einde; de ontvanger buffert binnenkomende bytes tot hij een
+  `\n` ziet en verwerkt dan die regel. Zo blijven berichten netjes gescheiden,
+  ook als TCP ze samenvoegt of opsplitst.
+
+**Alle topics in het systeem:**
+
+| Topic | Richting | Payload | Betekenis |
+|---|---|---|---|
+| `tafel/<id>/status` | Wemos → Pi | `HELP` / `OK` | tafel vraagt hulp / is geholpen |
+| `tafel/<id>/reset`  | Pi → Wemos | `RESET` | zet de tafel-LED uit |
+| `sensor/beweging`   | Wemos → Pi | `JA` / `NEE` | PIR detecteert (geen) beweging |
+| `sensor/rgb/set`    | Pi → Wemos | `R,G,B` of `UIT` | sfeerlicht instellen |
+| `wemos/lichtkrant`  | Pi → Wemos | `MENU:<tekst>` / `MSG:<tekst>` | vaste loop / eenmalige melding |
 
 **Routing (bewust simpel gehouden)**
-- Heimdall stuurt elk uitgaand bericht naar **alle** verbonden Wemos-en (broadcast);
-  elke Wemos kijkt zelf of het topic voor hem bedoeld is en negeert de rest.
-- Inkomende berichten van een Wemos gaan naar het dashboard.
+- Uitgaand stuurt Heimdall elke Rune naar **alle** verbonden Wemos-en (broadcast);
+  elke Wemos filtert zelf op het topic dat hij nodig heeft en negeert de rest.
+- Inkomend gaat elke Rune van een Wemos naar het dashboard.
 
-Dit gedraagt zich als MQTT's publish/subscribe, maar met eigen code en zonder
-broker. De BUS↔WEMOS-verbinding (zie Bijlage B) staat hier los van.
+Zo gedraagt Bifrost zich als MQTT's publish/subscribe, maar volledig met eigen
+code en zonder broker. De andere twee verbindingen (BUS↔WEMOS en STM32↔BUS)
+staan hier los van — zie Bijlage B.
 
 ---
 
-## Bijlage B — De twee socketverbindingen (allebei eigen implementatie)
+## Bijlage B — Architectuur & de drie verbindingen
 
-Het hele systeem gebruikt **geen kant-en-klare netwerk-libraries** (geen MQTT,
-geen `QTcpSocket`). Beide verbindingen zijn met **rauwe BSD-sockets**
-(`socket()/bind()/listen()/accept()/connect()/send()/recv()`) zelf geschreven:
+De volledige dataketen, allemaal met **eigen implementaties** (geen kant-en-klare
+netwerk- of messaging-libraries):
 
-| Verbinding | Klassen | Poort(en) | Berichtformaat |
-|---|---|---|---|
-| **Pi ↔ Wemos** | `Heimdall` (server, Pi) ↔ `SocketWemos` (client, ESP8266) | `9000` | Bifrost-Runes: `topic payload\n` (Bijlage A) |
-| **Pi ↔ Pi** (BUS ↔ WEMOS) | `SocketCommunicatieRPIBUS` ↔ `SocketCommunicatieRPIWEMOS` | `8080` (sensordata), `8081` (commando's) | JSON-regels, bv. `{"type":"sensor","sensorId":"CO2","waarde":750}` |
+```
+STM32 (Ventilator)
+   │  CAN-bus  (can0, 500 kbit/s) — 32-bit float per CAN-ID
+   ▼
+RPI-BUS  ── TCP 8080 (sensordata, JSON) ─────────►  RPI-WEMOS (dashboard)
+         ◄─ TCP 8081 (commando's) ──────────────────┘
+                                                     │  Bifrost / TCP 9000
+                                                     ▼
+                                           Wemos #1 (tafel + lichtkrant)
+                                           Wemos #2 (PIR + RGB)
+```
 
-- Op de Pi's gebruiken we POSIX-sockets; op de ESP8266 de lwIP-BSD-sockets uit
-  de board-core. In beide gevallen draait het lezen in een eigen achtergrond-thread.
-- Alles loopt over TCP/IP en werkt daardoor identiek over kabel (RJ45) en WiFi.
+| Verbinding | Techniek | Aan beide kanten |
+|---|---|---|
+| **STM32 ↔ RPI-BUS** | CAN-bus | STM32: HAL CAN1 · Pi: QtSerialBus + SocketCAN (`can0`) via `CanBusCommunicatieRPIBUS` |
+| **RPI-BUS ↔ RPI-WEMOS** | eigen rauwe POSIX-sockets | `SocketCommunicatieRPIBUS` ↔ `SocketCommunicatieRPIWEMOS` · JSON-regels · poort 8080/8081 |
+| **RPI-WEMOS ↔ Wemos** | Bifrost over TCP | Pi: rauwe POSIX-socket (`Heimdall`) · Wemos: `WiFiClient` (`SocketWemos`) · poort 9000 |
+
+**Over de transportlagen:**
+- Op de Pi's gebruiken we kale POSIX-sockets (`socket()/bind()/listen()/...`) met
+  een eigen achtergrond-thread voor het lezen.
+- Op de ESP8266 levert **`WiFiClient`** de TCP-bytestream — de core-tegenhanger van
+  een socket. (De échte lwIP-socket-API is op die core niet beschikbaar; vandaar
+  WiFiClient.) Het *protocol* erbovenop, Bifrost, is volledig eigen code.
+
+**CAN-payload (STM32 → Pi):** elke sensor is een eigen CAN-ID met 4 databytes
+(little-endian 32-bit float):
+`0x100` = CO2 · `0x101` = temperatuur · `0x102` = luchtvochtigheid.
+RPI-BUS verpakt die waarden vervolgens als JSON-regels voor het dashboard.
