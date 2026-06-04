@@ -27,7 +27,12 @@ SocketCommunicatieRPIBUS::~SocketCommunicatieRPIBUS() {
 }
 
 void SocketCommunicatieRPIBUS::start() {
-    // 1. Luister-socket voor binnenkomende commando's.
+    // --- SAFEGUARD: Voorkom dubbel starten en crashen ---
+    if (luisterThread.joinable()) {
+        qDebug() << "[RPI-BUS] Server is al gestart! Tweede startpoging genegeerd.";
+        return;
+    }
+
     serverFd = ::socket(AF_INET, SOCK_STREAM, 0);
     if (serverFd < 0) { qDebug() << "[RPI-BUS] socket() mislukt"; return; }
 
@@ -46,14 +51,21 @@ void SocketCommunicatieRPIBUS::start() {
     if (::listen(serverFd, 4) < 0) {
         qDebug() << "[RPI-BUS] listen mislukt"; ::close(serverFd); serverFd = -1; return;
     }
+
     qDebug() << "[RPI-BUS] Server luistert naar commando's op poort" << Config::POORT_RPIBUS_COMMANDS;
 
+    // Start de luister thread één keer
     luisterThread = std::thread(&SocketCommunicatieRPIBUS::luisterLus, this);
 
-    // 2. Probeer alvast de sensor-verbinding op te zetten (mag falen; wordt
-    //    bij de eerste verzendData opnieuw geprobeerd).
+    // Probeer de verbinding op te zetten
     zorgVoorSensorVerbinding();
+
+    // --- HEARTBEAT TIMER STARTEN ---
+    heartbeatTimer = new QTimer(this);
+    connect(heartbeatTimer, &QTimer::timeout, this, &SocketCommunicatieRPIBUS::verzendHeartbeat);
+    heartbeatTimer->start(2000); // Stuur elke 2 seconden een heartbeat
 }
+
 
 void SocketCommunicatieRPIBUS::luisterLus() {
     while (!gestopt) {
@@ -127,4 +139,8 @@ void SocketCommunicatieRPIBUS::verzendData(const QString &bericht) {
             ::send(sensorFd, data.constData(), data.size(), MSG_NOSIGNAL);
         }
     }
+}
+
+void SocketCommunicatieRPIBUS::verzendHeartbeat() {
+    verzendData("HEARTBEAT\n");
 }

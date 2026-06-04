@@ -35,35 +35,48 @@ void CanBusCommunicatieRPIBUS::ontvangCanBerichten() {
     while (canDevice->framesAvailable()) {
         const QCanBusFrame frame = canDevice->readFrame();
 
-        // Voorbeeld protocol interpretatie:
-        // Frame ID = STM32 Node ID (bijv. 0x10, 0x11)
-        // Byte 0: Sensor Type (0x01 = TEMP, 0x02 = CO2, 0x03 = HUM)
-        // Byte 1-4: Float waarde van de sensor
-
         uint32_t stmId = frame.frameId();
         QByteArray payload = frame.payload();
 
-        if (payload.size() >= 5) {
-            char typeByte = payload.at(0);
-            QString sensorType;
-            if (typeByte == 0x01) sensorType = "TEMP";
-            else if (typeByte == 0x02) sensorType = "CO2";
-            else if (typeByte == 0x03) sensorType = "HUM";
-            else continue; // Onbekend type
+        // 1. Print het onbewerkte bericht
+        qDebug() << "[CAN-BUS] RAW Frame Ontvangen - ID:" << Qt::hex << stmId
+                 << "| Payload:" << payload.toHex()
+                 << "| Lengte:" << payload.size();
 
-            // Converteer de volgende 4 bytes naar een double/float
+        // 2. STM32 verstuurt exact 4 bytes per id (alleen de float)
+        if (payload.size() == 4) {
+            QString sensorType;
+
+            // Bepaal het type sensor op basis van het STM32 CAN ID
+            if (stmId == 0x100) sensorType = "CO2";
+            else if (stmId == 0x101) sensorType = "TEMP";
+            else if (stmId == 0x102) sensorType = "HUM";
+            else {
+                qDebug() << "[CAN-BUS] Genegeerd: Onbekend CAN ID:" << Qt::hex << stmId;
+                continue; // Geen relevant id, ga door
+            }
+
+            // Converteer de 4 bytes direct naar een float
             float sensorWaarde;
-            QDataStream stream(payload.mid(1, 4));
-            stream.setByteOrder(QDataStream::LittleEndian); // Pas aan op basis van je STM32 byte order
+            QDataStream stream(payload);
+            stream.setByteOrder(QDataStream::LittleEndian); // STM32 ARM processors zijn Little Endian
+            stream.setFloatingPointPrecision(QDataStream::SinglePrecision); // Zorg ervoor dat hij 32-bit float pakt
             stream >> sensorWaarde;
 
+            // 3. Print de succesvol geparseerde data
+            qDebug() << "[CAN-BUS] Geparseerde Data - ID:" << Qt::hex << stmId
+                     << "| Type:" << sensorType
+                     << "| Waarde:" << sensorWaarde;
+
             emit inkomendeSensorData(stmId, sensorType, static_cast<double>(sensorWaarde));
+        } else {
+            qDebug() << "[CAN-BUS] Genegeerd: Payload heeft een onverwachte lengte (is" << payload.size() << "bytes, verwacht 4)";
         }
     }
 }
 
 void CanBusCommunicatieRPIBUS::verstuurCommandoNaarSTM(uint32_t stmId, const QByteArray &data) {
-    if (!canDevice || !canDevice->state() == QCanBusDevice::ConnectedState) return;
+    if (!canDevice || canDevice->state() != QCanBusDevice::ConnectedState) return;
 
     QCanBusFrame frame;
     frame.setFrameId(stmId);

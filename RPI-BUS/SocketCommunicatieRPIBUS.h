@@ -6,6 +6,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <QTimer>
 
 // ============================================================================
 //  SocketCommunicatieRPIBUS — eigen socket-implementatie (rauwe BSD-sockets,
@@ -27,7 +28,8 @@ public:
 
 signals:
     void inkomendCommando(const QString &commando);
-
+private slots:
+    void verzendHeartbeat();
 private:
     void luisterLus();                // accepteert + leest commando's (eigen thread)
     bool zorgVoorSensorVerbinding();  // (her)verbindt de sensor-socket naar RPI-WEMOS
@@ -38,6 +40,8 @@ private:
     std::atomic<bool> gestopt{false};
     std::thread luisterThread;
     std::mutex sensorMutex;
+
+    QTimer *heartbeatTimer = nullptr;
 };
 
 #endif // SOCKETCOMMUNICATIERPIBUS_H

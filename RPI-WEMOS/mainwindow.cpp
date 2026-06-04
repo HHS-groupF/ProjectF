@@ -20,13 +20,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     socketComm = new SocketCommunicatieRPIWEMOS(this);
 
+    // --- AANGEPAST: Socket logs gaan nu naar textBrowser_Socket ---
     connect(socketComm, &SocketCommunicatieRPIWEMOS::nieuwLogBericht, this, [this](QString bericht) {
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-        ui->textBrowser_Logboek->append(tijd + " - " + bericht);
+        ui->textBrowser_Socket->append(tijd + " - " + bericht);
     });
 
     if (socketComm->verbind()) {
-        ui->textBrowser_Logboek->append("Netwerk backend gestart. Luistert naar poort " + QString::number(Config::POORT_WEMOS_DATA) + "...");
+        ui->textBrowser_Socket->append("Netwerk backend gestart. Luistert naar poort " + QString::number(Config::POORT_WEMOS_DATA) + "...");
     }
 
     // --- Bifrost-server (Heimdall): communicatie richting de Wemos-devices ---
@@ -148,6 +149,13 @@ void MainWindow::updateScherm()
         for (const QString& ruwBericht : berichten) {
             QString schoonBericht = ruwBericht.trimmed();
             if (schoonBericht.isEmpty()) continue;
+
+            // --- AANGEPAST: HEARTBEAT OMLEIDING ---
+            if (schoonBericht == "HEARTBEAT") {
+                QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+                ui->textBrowser_Socket->append(tijd + " - ❤️ HEARTBEAT ONTVANGEN");
+                continue;
+            }
 
             QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
             ui->textBrowser_Logboek->append(tijd + " - Inkomend: " + schoonBericht);

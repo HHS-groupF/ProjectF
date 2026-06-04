@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTimer>
 
 class CentraalBesturingssysteemRPIBUS : public QObject {
     Q_OBJECT
@@ -33,7 +34,7 @@ private:
     bool isOverruleActief = false;
 
     // Constante voor het CAN ID van de STM32 waar de ventilator (LED) fysiek aan gekoppeld zit
-    const uint32_t STM32_VENTILATOR_ID = 0x20;
+    const uint32_t STM32_VENTILATOR_ID = 0x200;
 
     void controleerLimieten();
     void verzendSysteemStatus();
