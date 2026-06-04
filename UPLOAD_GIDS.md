@@ -250,5 +250,21 @@ De ontvanger splitst elke regel op de **eerste spatie**: alles ervoor is het
 - Inkomende berichten van een Wemos gaan naar het dashboard.
 
 Dit gedraagt zich als MQTT's publish/subscribe, maar met eigen code en zonder
-broker. De BUS↔WEMOS-verbinding staat hier los van en gebruikt zijn eigen socket
-(poorten 8080/8081).
+broker. De BUS↔WEMOS-verbinding (zie Bijlage B) staat hier los van.
+
+---
+
+## Bijlage B — De twee socketverbindingen (allebei eigen implementatie)
+
+Het hele systeem gebruikt **geen kant-en-klare netwerk-libraries** (geen MQTT,
+geen `QTcpSocket`). Beide verbindingen zijn met **rauwe BSD-sockets**
+(`socket()/bind()/listen()/accept()/connect()/send()/recv()`) zelf geschreven:
+
+| Verbinding | Klassen | Poort(en) | Berichtformaat |
+|---|---|---|---|
+| **Pi ↔ Wemos** | `Heimdall` (server, Pi) ↔ `SocketWemos` (client, ESP8266) | `9000` | Bifrost-Runes: `topic payload\n` (Bijlage A) |
+| **Pi ↔ Pi** (BUS ↔ WEMOS) | `SocketCommunicatieRPIBUS` ↔ `SocketCommunicatieRPIWEMOS` | `8080` (sensordata), `8081` (commando's) | JSON-regels, bv. `{"type":"sensor","sensorId":"CO2","waarde":750}` |
+
+- Op de Pi's gebruiken we POSIX-sockets; op de ESP8266 de lwIP-BSD-sockets uit
+  de board-core. In beide gevallen draait het lezen in een eigen achtergrond-thread.
+- Alles loopt over TCP/IP en werkt daardoor identiek over kabel (RJ45) en WiFi.
