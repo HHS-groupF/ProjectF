@@ -10,10 +10,9 @@
 #include <QLineSeries>
 #include <QValueAxis>
 
-#include <QMqttClient>
-
 #include "SocketCommunicatieRPIWEMOS.h"
 #include "CentraalBesturingssysteemRPIWEMOS.h"
+#include "Heimdall.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,7 +38,7 @@ private:
 
     SocketCommunicatieRPIWEMOS *socketComm;
     CentraalBesturingssysteemRPIWEMOS *centraalSysteem;
-    QMqttClient *mqttClient;
+    Heimdall *heimdall;   // Bifrost-server richting de Wemos-devices
 
     QTimer *uiTimer;
     QElapsedTimer timerSindsStart;

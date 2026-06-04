@@ -1,7 +1,7 @@
 #include "Tafel.h"
 
-Tafel::Tafel(int bPin, int lPin, int id, NetwerkManager& netwerkManager) 
-  : _netwerk(netwerkManager) { 
+Tafel::Tafel(int bPin, int lPin, int id, SocketWemos& netwerkManager)
+  : _netwerk(netwerkManager) {
   _buttonPin = bPin;
   _ledPin = lPin;
   _id = id;

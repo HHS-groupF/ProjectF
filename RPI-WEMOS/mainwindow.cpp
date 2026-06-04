@@ -8,8 +8,6 @@
 #include <QPen>
 #include <QColor>
 #include <QDebug>
-#include <QMqttTopicFilter>
-#include <QMqttTopicName>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,19 +29,15 @@ MainWindow::MainWindow(QWidget *parent)
         ui->textBrowser_Logboek->append("Netwerk backend gestart. Luistert naar poort " + QString::number(Config::POORT_WEMOS_DATA) + "...");
     }
 
-    mqttClient = new QMqttClient(this);
-    mqttClient->setHostname(Config::MQTT_BROKER);
-    mqttClient->setPort(Config::MQTT_PORT);
+    // --- Bifrost-server (Heimdall): vervangt MQTT richting de Wemos-devices ---
+    heimdall = new Heimdall(this);
 
-    connect(mqttClient, &QMqttClient::connected, this, [this]() {
-        ui->textBrowser_Logboek->append("MQTT verbonden met broker.");
-        mqttClient->subscribe(QMqttTopicFilter("tafel/+/status"));
-        mqttClient->subscribe(QMqttTopicFilter("sensor/beweging"));
+    connect(heimdall, &Heimdall::logBericht, this, [this](QString bericht) {
+        QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+        ui->textBrowser_Logboek->append(tijd + " - " + bericht);
     });
 
-    connect(mqttClient, &QMqttClient::messageReceived, this, [this](const QByteArray &bericht, const QMqttTopicName &topic) {
-        QString topicStr = topic.name();
-        QString payload  = QString::fromUtf8(bericht);
+    connect(heimdall, &Heimdall::runeOntvangen, this, [this](QString topicStr, QString payload) {
         QStringList delen = topicStr.split('/');
 
         if (delen.size() == 3 && delen[0] == "tafel" && delen[2] == "status") {
@@ -77,12 +71,11 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    connect(mqttClient, &QMqttClient::disconnected, this, [this]() {
-        ui->textBrowser_Logboek->append("MQTT verbinding verbroken. Opnieuw verbinden...");
-        mqttClient->connectToHost();
-    });
-
-    mqttClient->connectToHost();
+    if (heimdall->start(Config::POORT_BIFROST)) {
+        ui->textBrowser_Logboek->append("Bifrost (Heimdall) luistert op poort " + QString::number(Config::POORT_BIFROST) + "...");
+    } else {
+        ui->textBrowser_Logboek->append("FOUT: kon Bifrost-server niet starten op poort " + QString::number(Config::POORT_BIFROST));
+    }
 
     centraalSysteem = new CentraalBesturingssysteemRPIWEMOS(this);
 
@@ -236,7 +229,7 @@ void MainWindow::on_pushButton_RGB_Set_clicked()
     else if (kleurNaam == "Blauw") { kleurWaarde = Config::RGB_BLAUW; labelKleur = QColor(0, 0, 255);     }
     else if (kleurNaam == "Groen") { kleurWaarde = Config::RGB_GROEN; labelKleur = QColor(0, 255, 0);     }
 
-    mqttClient->publish(QMqttTopicName("sensor/rgb/set"), kleurWaarde.toUtf8());
+    heimdall->publiceer("sensor/rgb/set", kleurWaarde);
 
     ui->label_Status_Verlichting_RGB->setStyleSheet(
         QString("background-color: rgb(%1,%2,%3); border-radius: 45px;")
@@ -248,7 +241,7 @@ void MainWindow::on_pushButton_RGB_Set_clicked()
 
 void MainWindow::on_pushButton_RGB_Uit_clicked()
 {
-    mqttClient->publish(QMqttTopicName("sensor/rgb/set"), "UIT");
+    heimdall->publiceer("sensor/rgb/set", "UIT");
 
     ui->label_Status_Verlichting_RGB->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
     ui->label_Status_Verlichting_LED->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
@@ -260,17 +253,17 @@ void MainWindow::on_pushButton_RGB_Uit_clicked()
 void MainWindow::on_pushButton_Reset_Tafel_clicked()
 {
     int tafelId = ui->spinBox_Tafel_ID->value();
-    mqttClient->publish(QMqttTopicName("tafel/" + QString::number(tafelId) + "/reset"), "RESET");
+    heimdall->publiceer("tafel/" + QString::number(tafelId) + "/reset", "RESET");
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
     ui->textBrowser_Logboek->append(tijd + " - Reset gestuurd naar tafel " + QString::number(tafelId) + ".");
-    // label_Status_Drukknop_1 wordt bijgewerkt via de inkomende MQTT "OK" van de Wemos
+    // label_Status_Drukknop_1 wordt bijgewerkt via de inkomende Bifrost "OK" van de Wemos
 }
 
 void MainWindow::on_pushButton_Stuur_Menu_clicked()
 {
     QString nieuweTekst = ui->lineEdit_Lichtkrant_Nieuw->text();
-    mqttClient->publish(QMqttTopicName("wemos/lichtkrant"), ("MENU:" + nieuweTekst).toUtf8());
+    heimdall->publiceer("wemos/lichtkrant", "MENU:" + nieuweTekst);
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
     ui->textBrowser_Logboek->append(tijd + " - Menu loop ingesteld op: " + nieuweTekst);
@@ -282,8 +275,8 @@ void MainWindow::on_pushButton_Update_Lichtkrant_clicked()
 {
     QString nieuweTekst = ui->lineEdit_Lichtkrant_Nieuw->text();
 
-    // Stuur naar Wemos lichtkrant via MQTT
-    mqttClient->publish(QMqttTopicName("wemos/lichtkrant"), ("MSG:" + nieuweTekst).toUtf8());
+    // Stuur naar Wemos lichtkrant via Bifrost
+    heimdall->publiceer("wemos/lichtkrant", "MSG:" + nieuweTekst);
 
     // Stuur ook naar RPI-BUS via TCP (voor toekomstig gebruik)
     socketComm->verzendData("LICHTKRANT:" + nieuweTekst + "\n");

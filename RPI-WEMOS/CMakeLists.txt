@@ -13,7 +13,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 find_package(Qt6 REQUIRED COMPONENTS Network)
-find_package(Qt6 REQUIRED COMPONENTS Mqtt)
+find_package(Threads REQUIRED)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -30,6 +30,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         SocketCommunicatieRPIWEMOS.cpp
         CentraalBesturingssysteemRPIWEMOS.h
         CentraalBesturingssysteemRPIWEMOS.cpp
+        Heimdall.h
+        Heimdall.cpp
         SysteemConfig.h
     )
 # Define target properties for Android with Qt 6 as:
@@ -50,7 +52,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(RPI-WEMOS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts Qt6::Network Qt6::Mqtt)
+target_link_libraries(RPI-WEMOS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts Qt6::Network Threads::Threads)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

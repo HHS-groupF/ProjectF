@@ -5,9 +5,9 @@
 #define WIFI_SSID       "Balls"
 #define WIFI_PASSWORD   "adminusee"
 
-// Raspberry Pi server instellingen
-#define PI_IP_ADRES     "172.16.221.246"
-#define MQTT_SERVER     PI_IP_ADRES
+// Raspberry Pi server (Heimdall / Bifrost) instellingen
+#define PI_IP_ADRES     "172.16.221.246"  // IP van de Pi waar Heimdall draait
+#define BIFROST_POORT   9000              // poort waarop Heimdall luistert
 
 // Statisch IP (verwijder commentaar hieronder om te activeren)
 // #define GEBRUIK_STATISCH_IP

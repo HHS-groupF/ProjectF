@@ -1,9 +1,9 @@
 #include "config.h"
-#include "NetwerkManager.h"
+#include "SocketWemos.h"
 #include "PirSensor.h"
 #include "RGBLampen.h"
 
-NetwerkManager netwerk(WIFI_SSID, WIFI_PASSWORD, MQTT_SERVER);
+SocketWemos netwerk(WIFI_SSID, WIFI_PASSWORD, PI_IP_ADRES, BIFROST_POORT);
 
 PirSensor sensor(PIR_PIN);
 RGBLampen rgb(RED_PIN, GREEN_PIN, BLUE_PIN);

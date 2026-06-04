@@ -2,7 +2,7 @@
 #define TAFEL_H
 
 #include <Arduino.h>
-#include "NetwerkManager.h" 
+#include "SocketWemos.h"
 
 class Tafel {
   private:
@@ -12,10 +12,10 @@ class Tafel {
     bool _helpNodig;                     
     int _laatsteKnopStatus;              
     unsigned long _laatsteDebounceTijd;
-    unsigned long _debounceDelay = 50;   
-    NetwerkManager& _netwerk; 
+    unsigned long _debounceDelay = 50;
+    SocketWemos& _netwerk;
   public:
-    Tafel(int bPin, int lPin, int id, NetwerkManager& netwerkManager);
+    Tafel(int bPin, int lPin, int id, SocketWemos& netwerkManager);
     void setup();
     void update();
     void zetLampAan();

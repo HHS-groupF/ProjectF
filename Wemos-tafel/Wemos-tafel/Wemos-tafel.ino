@@ -1,10 +1,10 @@
 #include "config.h"
 #include "tafel_config_unit1.h"
-#include "NetwerkManager.h"
+#include "SocketWemos.h"
 #include "Tafel.h"
 #include "Lichtkrant.h"
 
-NetwerkManager netwerk(WIFI_SSID, WIFI_PASSWORD, MQTT_SERVER);
+SocketWemos netwerk(WIFI_SSID, WIFI_PASSWORD, PI_IP_ADRES, BIFROST_POORT);
 Tafel tafels[] = {TAFEL_CONFIG(netwerk)};       
 const int aantalTafels = sizeof(tafels) / sizeof(Tafel); 
 
