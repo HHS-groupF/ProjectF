@@ -82,14 +82,15 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>: Main program body (C version with hardware timer sequencing)  
+<p>: Main program body (Pure C - CAN Sensor Node met TX &amp; RX)  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="main_8h_source.html">main.h</a>&quot;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;stdbool.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="CO2Sensor_8h_source.html">CO2Sensor.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="LuchtvochtigheidSensor_8h_source.html">LuchtvochtigheidSensor.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="TemperatuurSensor_8h_source.html">TemperatuurSensor.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Ventilator_8h_source.html">Ventilator.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -107,16 +108,17 @@ Functions</h2></td></tr>
 <tr class="memitem:a70af21c671abfcc773614a9a4f63d920" id="r_a70af21c671abfcc773614a9a4f63d920"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a70af21c671abfcc773614a9a4f63d920">SystemClock_Config</a> (void)</td></tr>
 <tr class="separator:a70af21c671abfcc773614a9a4f63d920"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a840291bc02cba5474a4cb46a9b9566fe" id="r_a840291bc02cba5474a4cb46a9b9566fe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a840291bc02cba5474a4cb46a9b9566fe">main</a> (void)</td></tr>
+<tr class="memdesc:a840291bc02cba5474a4cb46a9b9566fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">The application entry point.  <br /></td></tr>
 <tr class="separator:a840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a3b0ad512a6e6c6157440b68d395eac" id="r_a8a3b0ad512a6e6c6157440b68d395eac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a8a3b0ad512a6e6c6157440b68d395eac">HAL_TIM_PeriodElapsedCallback</a> (TIM_HandleTypeDef *htim)</td></tr>
 <tr class="separator:a8a3b0ad512a6e6c6157440b68d395eac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cd91fd3a9608559c2a87a8ba6cba55f" id="r_a0cd91fd3a9608559c2a87a8ba6cba55f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a0cd91fd3a9608559c2a87a8ba6cba55f">HAL_GPIO_EXTI_Callback</a> (uint16_t GPIO_Pin)</td></tr>
-<tr class="separator:a0cd91fd3a9608559c2a87a8ba6cba55f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1730ffe1e560465665eb47d9264826f9" id="r_a1730ffe1e560465665eb47d9264826f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a> (void)</td></tr>
 <tr class="separator:a1730ffe1e560465665eb47d9264826f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:a1618d731d18d69e906e8a357b7cd3c8d" id="r_a1618d731d18d69e906e8a357b7cd3c8d"><td class="memItemLeft" align="right" valign="top">CAN_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a1618d731d18d69e906e8a357b7cd3c8d">hcan1</a></td></tr>
+<tr class="separator:a1618d731d18d69e906e8a357b7cd3c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7b2c26e44dadaaa798a5c3d82914ba7" id="r_af7b2c26e44dadaaa798a5c3d82914ba7"><td class="memItemLeft" align="right" valign="top">I2C_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#af7b2c26e44dadaaa798a5c3d82914ba7">hi2c1</a></td></tr>
 <tr class="separator:af7b2c26e44dadaaa798a5c3d82914ba7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c80fd5510e2990a59a5c90d745c716c" id="r_a2c80fd5510e2990a59a5c90d745c716c"><td class="memItemLeft" align="right" valign="top">TIM_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a2c80fd5510e2990a59a5c90d745c716c">htim2</a></td></tr>
@@ -129,13 +131,13 @@ Variables</h2></td></tr>
 <tr class="separator:abccbe6737072d3e47e3f3c1ecec74fb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57fcd0183b27d40f319e55f47806a01a" id="r_a57fcd0183b27d40f319e55f47806a01a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTemperatuurSensor__t.html">TemperatuurSensor_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a></td></tr>
 <tr class="separator:a57fcd0183b27d40f319e55f47806a01a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38eb621755cf5a64c734e1d833703a25" id="r_a38eb621755cf5a64c734e1d833703a25"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structVentilator__t.html">Ventilator_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a38eb621755cf5a64c734e1d833703a25">vent</a></td></tr>
-<tr class="separator:a38eb621755cf5a64c734e1d833703a25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5096056be7dd1d614000bacca60867b" id="r_ad5096056be7dd1d614000bacca60867b"><td class="memItemLeft" align="right" valign="top">volatile bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#ad5096056be7dd1d614000bacca60867b">noodstopActief</a> = false</td></tr>
-<tr class="separator:ad5096056be7dd1d614000bacca60867b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ee6e13063b860648180eea65852cc71" id="r_a6ee6e13063b860648180eea65852cc71"><td class="memItemLeft" align="right" valign="top">CAN_RxHeaderTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a6ee6e13063b860648180eea65852cc71">RxHeader</a></td></tr>
+<tr class="separator:a6ee6e13063b860648180eea65852cc71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14629afcc7f0b2d62c2b617b07d98184" id="r_a14629afcc7f0b2d62c2b617b07d98184"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Ventilator_2main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a> [8]</td></tr>
+<tr class="separator:a14629afcc7f0b2d62c2b617b07d98184"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>: Main program body (C version with hardware timer sequencing) </p>
+<div class="textblock"><p>: Main program body (Pure C - CAN Sensor Node met TX &amp; RX) </p>
 </div><h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a12ca3c5ef7a39ba95fe5adada9124a8f" name="a12ca3c5ef7a39ba95fe5adada9124a8f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a12ca3c5ef7a39ba95fe5adada9124a8f">&#9670;&#160;</a></span>SystemState_t</h2>
@@ -210,24 +212,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a0cd91fd3a9608559c2a87a8ba6cba55f" name="a0cd91fd3a9608559c2a87a8ba6cba55f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0cd91fd3a9608559c2a87a8ba6cba55f">&#9670;&#160;</a></span>HAL_GPIO_EXTI_Callback()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void HAL_GPIO_EXTI_Callback </td>
-          <td>(</td>
-          <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>GPIO_Pin</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a8a3b0ad512a6e6c6157440b68d395eac" name="a8a3b0ad512a6e6c6157440b68d395eac"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8a3b0ad512a6e6c6157440b68d395eac">&#9670;&#160;</a></span>HAL_TIM_PeriodElapsedCallback()</h2>
 
@@ -262,6 +246,14 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>The application entry point. </p>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">int</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a70af21c671abfcc773614a9a4f63d920" name="a70af21c671abfcc773614a9a4f63d920"></a>
@@ -291,6 +283,20 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="structCO2Sensor__t.html">CO2Sensor_t</a> co2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1618d731d18d69e906e8a357b7cd3c8d" name="a1618d731d18d69e906e8a357b7cd3c8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1618d731d18d69e906e8a357b7cd3c8d">&#9670;&#160;</a></span>hcan1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">CAN_HandleTypeDef hcan1</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -353,14 +359,28 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ad5096056be7dd1d614000bacca60867b" name="ad5096056be7dd1d614000bacca60867b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5096056be7dd1d614000bacca60867b">&#9670;&#160;</a></span>noodstopActief</h2>
+<a id="a14629afcc7f0b2d62c2b617b07d98184" name="a14629afcc7f0b2d62c2b617b07d98184"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14629afcc7f0b2d62c2b617b07d98184">&#9670;&#160;</a></span>RxData</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">volatile bool noodstopActief = false</td>
+          <td class="memname">uint8_t RxData[8]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6ee6e13063b860648180eea65852cc71" name="a6ee6e13063b860648180eea65852cc71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ee6e13063b860648180eea65852cc71">&#9670;&#160;</a></span>RxHeader</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">CAN_RxHeaderTypeDef RxHeader</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -375,20 +395,6 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="structTemperatuurSensor__t.html">TemperatuurSensor_t</a> temp</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a38eb621755cf5a64c734e1d833703a25" name="a38eb621755cf5a64c734e1d833703a25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38eb621755cf5a64c734e1d833703a25">&#9670;&#160;</a></span>vent</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structVentilator__t.html">Ventilator_t</a> vent</td>
         </tr>
       </table>
 </div><div class="memdoc">

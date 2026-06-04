@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['noodstopactief_0',['noodstopActief',['../Ventilator_2main_8c.html#ad5096056be7dd1d614000bacca60867b',1,'main.c']]]
+  ['overrule_0',['overRule',['../structVentilator__t.html#a193d4ddafc6452ca1d486722bcf5b16a',1,'Ventilator_t']]]
 ];
