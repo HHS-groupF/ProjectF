@@ -2,7 +2,7 @@
 #define SOCKETWEMOS_H
 
 #include <Arduino.h>
-#include <ESP8266WiFi.h>   // nodig om te associeren met het WiFi-netwerk en een IP te krijgen
+#include <ESP8266WiFi.h>   // levert WiFi-associatie én WiFiClient (de TCP-transportlaag)
 
 // Callback-signatuur (char* topic, byte* payload, length) — bewust eenvoudig
 // gehouden zodat de .ino-callback klein en overzichtelijk blijft.
@@ -10,10 +10,10 @@ typedef void (*RuneCallback)(char* topic, uint8_t* payload, unsigned int length)
 
 // ===========================================================================
 //  SocketWemos — de Bifrost-client (Valkyrie-rol) op de Wemos.
-//  Praat via rauwe lwIP BSD-sockets met Heimdall (de Pi) over TCP/IP.
+//  Praat via TCP/IP met Heimdall (de Pi). Het Bifrost-protocol (de Rune-framing,
+//  het splitsen van topic/payload) is volledig eigen code; WiFiClient levert
+//  alleen de kale TCP-bytestream (de ESP8266-tegenhanger van een socket).
 //  Een Rune is één regel:  "topic<spatie>payload\n".
-//  WiFi-associatie gebeurt via ESP8266WiFi (nodig voor een IP); de TCP-laag
-//  zelf is een eigen implementatie met socket()/connect()/recv()/send().
 // ===========================================================================
 class SocketWemos {
   public:
@@ -35,7 +35,7 @@ class SocketWemos {
     const char* _serverIp;
     uint16_t _serverPoort;
 
-    int _sock = -1;
+    WiFiClient _client;
     RuneCallback _callback = nullptr;
     String _ontvangBuffer;
     unsigned long _laatsteHerverbindTijd = 0;

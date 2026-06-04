@@ -1,10 +1,5 @@
 #include "SocketWemos.h"
 
-// Rauwe lwIP BSD-sockets (onderdeel van de ESP8266-core, geen externe library).
-#include <lwip/sockets.h>
-#include <lwip/inet.h>
-#include <errno.h>
-
 SocketWemos::SocketWemos(const char* ssid, const char* password,
                          const char* serverIp, uint16_t serverPoort)
   : _ssid(ssid), _password(password), _serverIp(serverIp), _serverPoort(serverPoort) {}
@@ -29,34 +24,16 @@ void SocketWemos::verbindWifi() {
 }
 
 void SocketWemos::verbindServer() {
-  if (_sock >= 0) { lwip_close(_sock); _sock = -1; }
+  Serial.print("[Bifrost] verbinden met Heimdall ");
+  Serial.print(_serverIp); Serial.print(":"); Serial.println(_serverPoort);
 
-  _sock = lwip_socket(AF_INET, SOCK_STREAM, 0);
-  if (_sock < 0) {
-    Serial.println("[Bifrost] socket() mislukt");
+  if (_client.connect(_serverIp, _serverPoort)) {
+    _client.setNoDelay(true);   // geen Nagle-buffering: Runes meteen versturen
+    Serial.println("[Bifrost] verbonden met Heimdall.");
+  } else {
+    Serial.println("[Bifrost] verbinden mislukt, opnieuw proberen...");
     _laatsteHerverbindTijd = millis();
-    return;
   }
-
-  struct sockaddr_in serverAddr;
-  memset(&serverAddr, 0, sizeof(serverAddr));
-  serverAddr.sin_family = AF_INET;
-  serverAddr.sin_port = htons(_serverPoort);
-  serverAddr.sin_addr.s_addr = inet_addr(_serverIp);
-
-  if (lwip_connect(_sock, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
-    Serial.println("[Bifrost] verbinden met Heimdall mislukt, opnieuw proberen...");
-    lwip_close(_sock);
-    _sock = -1;
-    _laatsteHerverbindTijd = millis();
-    return;
-  }
-
-  // Zet de socket non-blocking zodat loop() niet blijft hangen op recv().
-  int nonblocking = 1;
-  lwip_ioctl(_sock, FIONBIO, &nonblocking);
-
-  Serial.println("[Bifrost] verbonden met Heimdall.");
 }
 
 void SocketWemos::loop() {
@@ -64,7 +41,7 @@ void SocketWemos::loop() {
     verbindWifi();
   }
 
-  if (_sock < 0) {
+  if (!_client.connected()) {
     // Niet-blokkerende herverbind: één poging per 3 seconden.
     if (millis() - _laatsteHerverbindTijd >= 3000) verbindServer();
     return;
@@ -74,17 +51,13 @@ void SocketWemos::loop() {
 }
 
 void SocketWemos::leesData() {
-  uint8_t temp[256];
-  int n = lwip_recv(_sock, temp, sizeof(temp), 0);
+  // Lees byte voor byte; een Rune is compleet bij een newline.
+  while (_client.available()) {
+    char c = (char)_client.read();
 
-  if (n > 0) {
-    for (int i = 0; i < n; i++) _ontvangBuffer += (char)temp[i];
-
-    // Verwerk volledige regels (Runes) uit de buffer.
-    int nl;
-    while ((nl = _ontvangBuffer.indexOf('\n')) >= 0) {
-      String regel = _ontvangBuffer.substring(0, nl);
-      _ontvangBuffer = _ontvangBuffer.substring(nl + 1);
+    if (c == '\n') {
+      String regel = _ontvangBuffer;
+      _ontvangBuffer = "";
       regel.trim();
       if (regel.length() == 0) continue;
 
@@ -98,25 +71,21 @@ void SocketWemos::leesData() {
         topic.toCharArray(topicBuf, sizeof(topicBuf));
         _callback(topicBuf, (uint8_t*)payload.c_str(), payload.length());
       }
-    }
-  } else if (n == 0) {
-    // Server heeft de verbinding gesloten.
-    Serial.println("[Bifrost] verbinding gesloten door server.");
-    lwip_close(_sock); _sock = -1; _laatsteHerverbindTijd = millis();
-  } else {
-    // n < 0: EWOULDBLOCK/EAGAIN = gewoon geen data; andere fout = verbinding kwijt.
-    if (errno != EWOULDBLOCK && errno != EAGAIN) {
-      lwip_close(_sock); _sock = -1; _laatsteHerverbindTijd = millis();
+    } else if (c != '\r') {
+      _ontvangBuffer += c;
     }
   }
 }
 
 void SocketWemos::stuurBericht(const char* topic, const char* bericht) {
-  if (_sock < 0) return;
-  String rune = String(topic) + " " + String(bericht) + "\n";
-  lwip_send(_sock, rune.c_str(), rune.length(), 0);
+  if (!_client.connected()) return;
+  // Rune = "topic<spatie>payload\n"
+  _client.print(topic);
+  _client.print(' ');
+  _client.print(bericht);
+  _client.print('\n');
 }
 
 bool SocketWemos::isVerbonden() {
-  return _sock >= 0 && WiFi.status() == WL_CONNECTED;
+  return _client.connected() && WiFi.status() == WL_CONNECTED;
 }
