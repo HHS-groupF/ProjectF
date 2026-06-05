@@ -5,8 +5,8 @@
 
 namespace Config {
 // Netwerkinstellingen
-const QString RPI_WEMOS_IP = "127.0.0.1";
-const QString RPI_BUS_IP   = "127.0.0.1";
+const QString RPI_WEMOS_IP = "145.52.127.190";
+const QString RPI_BUS_IP   = "145.52.127.183";
 
 // Bifrost (eigen socket-protocol naar de Wemos-devices)
 constexpr int POORT_BIFROST         = 9000; // Waar Heimdall op luistert (Wemos-clients verbinden hier)
