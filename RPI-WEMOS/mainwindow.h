@@ -35,6 +35,7 @@ private slots:
     void on_pushButton_RGB_Uit_clicked();
 private:
     Ui::MainWindow *ui;
+    QString netwerkBuffer;
 
     SocketCommunicatieRPIWEMOS *socketComm;
     CentraalBesturingssysteemRPIWEMOS *centraalSysteem;
