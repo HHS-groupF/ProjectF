@@ -7,12 +7,18 @@
 #include <QColor>
 #include <QDebug>
 #include <QRegularExpression>
+#include <QFile>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // TOEGEVOEGD: Beperk het RAM-geheugen van de textbrowsers tot 100 regels
+    ui->textBrowser_Logboek->document()->setMaximumBlockCount(100);
+    ui->textBrowser_Socket->document()->setMaximumBlockCount(100);
 
     setupGrafieken();
     timerSindsStart.start();
@@ -22,11 +28,15 @@ MainWindow::MainWindow(QWidget *parent)
     // --- Socket logs gaan naar textBrowser_Socket ---
     connect(socketComm, &SocketCommunicatieRPIWEMOS::nieuwLogBericht, this, [this](QString bericht) {
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-        ui->textBrowser_Socket->append(tijd + " - " + bericht);
+        QString logRegel = tijd + " - " + bericht;
+        ui->textBrowser_Socket->append(logRegel);
+        schrijfNaarLog(logRegel);
     });
 
     if (socketComm->verbind()) {
-        ui->textBrowser_Socket->append("Netwerk backend gestart. Luistert naar poort " + QString::number(Config::POORT_WEMOS_DATA) + "...");
+        QString startMsg = "Netwerk backend gestart. Luistert naar poort " + QString::number(Config::POORT_WEMOS_DATA) + "...";
+        ui->textBrowser_Socket->append(startMsg);
+        schrijfNaarLog(startMsg);
     }
 
     // --- Bifrost-server (Heimdall): communicatie richting de Wemos-devices ---
@@ -34,7 +44,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(heimdall, &Heimdall::logBericht, this, [this](QString bericht) {
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-        ui->textBrowser_Logboek->append(tijd + " - " + bericht);
+        QString logRegel = tijd + " - " + bericht;
+        ui->textBrowser_Logboek->append(logRegel);
+        schrijfNaarLog(logRegel);
     });
 
     connect(heimdall, &Heimdall::runeOntvangen, this, [this](QString topicStr, QString payload) {
@@ -47,9 +59,12 @@ MainWindow::MainWindow(QWidget *parent)
 
             if (hulpNodig) {
                 ui->textBrowser_Logboek->append("<b>" + tijd + " - [TAFEL] Tafel " + tafelId + " vraagt hulp!</b>");
+                schrijfNaarLog(tijd + " - [TAFEL] Tafel " + tafelId + " vraagt hulp!");
                 beheerWaarschuwing("Tafel " + tafelId + " vraagt hulp!", true);
             } else if (payload == "OK") {
-                ui->textBrowser_Logboek->append(tijd + " - [TAFEL] Tafel " + tafelId + " is geholpen.");
+                QString logRegel = tijd + " - [TAFEL] Tafel " + tafelId + " is geholpen.";
+                ui->textBrowser_Logboek->append(logRegel);
+                schrijfNaarLog(logRegel);
                 beheerWaarschuwing("Tafel " + tafelId + " vraagt hulp!", false);
             }
 
@@ -72,9 +87,13 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     if (heimdall->start(Config::POORT_BIFROST)) {
-        ui->textBrowser_Logboek->append("Bifrost (Heimdall) luistert op poort " + QString::number(Config::POORT_BIFROST) + "...");
+        QString logRegel = "Bifrost (Heimdall) luistert op poort " + QString::number(Config::POORT_BIFROST) + "...";
+        ui->textBrowser_Logboek->append(logRegel);
+        schrijfNaarLog(logRegel);
     } else {
-        ui->textBrowser_Logboek->append("FOUT: kon Bifrost-server niet starten op poort " + QString::number(Config::POORT_BIFROST));
+        QString logRegel = "FOUT: kon Bifrost-server niet starten op poort " + QString::number(Config::POORT_BIFROST);
+        ui->textBrowser_Logboek->append(logRegel);
+        schrijfNaarLog(logRegel);
     }
 
     centraalSysteem = new CentraalBesturingssysteemRPIWEMOS(this);
@@ -99,6 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::logBerichtGegenereerd, this, [this](QString bericht) {
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
         ui->textBrowser_Logboek->append("<b>" + tijd + " - " + bericht + "</b>");
+        schrijfNaarLog(tijd + " - " + bericht);
     });
 
     connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::stuurNetwerkCommando, socketComm, &SocketCommunicatieRPIWEMOS::verzendData);
@@ -106,6 +126,19 @@ MainWindow::MainWindow(QWidget *parent)
     uiTimer = new QTimer(this);
     connect(uiTimer, &QTimer::timeout, this, &MainWindow::updateScherm);
     uiTimer->start(Config::UI_TIMER_INTERVAL);
+}
+
+void MainWindow::schrijfNaarLog(const QString &bericht)
+{
+    // Open (of maak) het bestand log.txt in de map waar de app draait
+    QFile bestand("log.txt");
+    
+    // Open in Append-modus (toevoegen aan het einde)
+    if (bestand.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        QTextStream stream(&bestand);
+        stream << bericht << "\n";
+        bestand.close();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -160,11 +193,14 @@ void MainWindow::updateScherm()
         if (schoonBericht == "HEARTBEAT") {
             QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
             ui->textBrowser_Socket->append(tijd + " - ❤️ HEARTBEAT ONTVANGEN");
+            // LET OP: Bewust NIET naar de SD-kaart/log.txt geschreven om deze te sparen
             continue;
         }
 
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-        ui->textBrowser_Logboek->append(tijd + " - Inkomend: " + schoonBericht);
+        QString logRegel = tijd + " - Inkomend: " + schoonBericht;
+        ui->textBrowser_Logboek->append(logRegel);
+        schrijfNaarLog(logRegel);
 
         // --- Parser: splits op alle vormen van witruimte (zowel spaties als tabs) ---
         QStringList delen = schoonBericht.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
@@ -245,7 +281,9 @@ void MainWindow::on_pushButton_RGB_Set_clicked()
             .arg(labelKleur.red()).arg(labelKleur.green()).arg(labelKleur.blue()));
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-    ui->textBrowser_Logboek->append(tijd + " - Sfeerlicht ingesteld op: " + kleurNaam);
+    QString logRegel = tijd + " - Sfeerlicht ingesteld op: " + kleurNaam;
+    ui->textBrowser_Logboek->append(logRegel);
+    schrijfNaarLog(logRegel);
 }
 
 void MainWindow::on_pushButton_RGB_Uit_clicked()
@@ -256,7 +294,9 @@ void MainWindow::on_pushButton_RGB_Uit_clicked()
     ui->label_Status_Verlichting_LED->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-    ui->textBrowser_Logboek->append(tijd + " - Sfeerlicht uitgeschakeld.");
+    QString logRegel = tijd + " - Sfeerlicht uitgeschakeld.";
+    ui->textBrowser_Logboek->append(logRegel);
+    schrijfNaarLog(logRegel);
 }
 
 void MainWindow::on_pushButton_Reset_Tafel_clicked()
@@ -265,7 +305,9 @@ void MainWindow::on_pushButton_Reset_Tafel_clicked()
     heimdall->publiceer("tafel/" + QString::number(tafelId) + "/reset", "RESET");
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-    ui->textBrowser_Logboek->append(tijd + " - Reset gestuurd naar tafel " + QString::number(tafelId) + ".");
+    QString logRegel = tijd + " - Reset gestuurd naar tafel " + QString::number(tafelId) + ".";
+    ui->textBrowser_Logboek->append(logRegel);
+    schrijfNaarLog(logRegel);
 }
 
 void MainWindow::on_pushButton_Stuur_Menu_clicked()
@@ -274,7 +316,9 @@ void MainWindow::on_pushButton_Stuur_Menu_clicked()
     heimdall->publiceer("wemos/lichtkrant", "MENU:" + nieuweTekst);
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-    ui->textBrowser_Logboek->append(tijd + " - Menu loop ingesteld op: " + nieuweTekst);
+    QString logRegel = tijd + " - Menu loop ingesteld op: " + nieuweTekst;
+    ui->textBrowser_Logboek->append(logRegel);
+    schrijfNaarLog(logRegel);
     ui->label_Lichtkrant_Huidig->setText(nieuweTekst);
     ui->lineEdit_Lichtkrant_Nieuw->clear();
 }
@@ -290,7 +334,9 @@ void MainWindow::on_pushButton_Update_Lichtkrant_clicked()
     socketComm->verzendData("LICHTKRANT:" + nieuweTekst + "\n");
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-    ui->textBrowser_Logboek->append(tijd + " - Lichtkrant ingesteld op: " + nieuweTekst);
+    QString logRegel = tijd + " - Lichtkrant ingesteld op: " + nieuweTekst;
+    ui->textBrowser_Logboek->append(logRegel);
+    schrijfNaarLog(logRegel);
     ui->label_Lichtkrant_Huidig->setText(nieuweTekst);
     ui->lineEdit_Lichtkrant_Nieuw->clear();
 }
