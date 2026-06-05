@@ -16,7 +16,7 @@ constexpr int POORT_RPIBUS_COMMANDS = 8081; // Waar RPI-BUS op luistert (binnenk
 
 // Sensor Drempelwaarden (Limieten)
 constexpr double TEMP_WAARSCHUWING = 28.0;
-constexpr double TEMP_BRAND        = 45.0;
+constexpr double TEMP_BRAND        = 30.0;
 
 constexpr double CO2_WAARSCHUWING  = 1200.0;
 constexpr double CO2_BRAND         = 1500.0;
