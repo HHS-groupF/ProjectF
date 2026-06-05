@@ -27,6 +27,9 @@ int main(int argc, char *argv[])
     // NIEUW: Systeem -> CAN (Uitgaande STM32 Commando's)
     QObject::connect(&systeem, &CentraalBesturingssysteemRPIBUS::stuurCanCommando,
                      &canBus, &CanBusCommunicatieRPIBUS::verstuurCommandoNaarSTM);
+
+    QObject::connect(&canBus, &CanBusCommunicatieRPIBUS::noodstopVrijgegeven, &systeem, &CentraalBesturingssysteemRPIBUS::verwerkStmNoodstopReset);
+
     // Start de servers/clients
     socket.start();
     canBus.start("can0");
