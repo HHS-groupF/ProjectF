@@ -1,6 +1,7 @@
 #include "CentraalBesturingssysteemRPIBUS.h"
-#include "SysteemConfig.h" // Zorg dat STM32_VENTILATOR_ID en limieten hierin staan
+#include "SysteemConfig.h"
 #include <QByteArray>
+#include <QTimer>
 
 CentraalBesturingssysteemRPIBUS::CentraalBesturingssysteemRPIBUS(QObject *parent)
     : QObject(parent)
@@ -28,6 +29,13 @@ void CentraalBesturingssysteemRPIBUS::verwerkCommando(const QString &commando) {
         if (isBrandAlarmActief) {
             isBrandAlarmActief = false;
             isOverruleActief = true;
+
+            // Schakel na 5 seconden (5000 milliseconden) de overrule automatisch weer uit
+            QTimer::singleShot(5000, this, [this]() {
+                isOverruleActief = false;
+                controleerLimieten(); // Herbereken de status om de normale monitoring te hervatten
+            });
+
             controleerLimieten(); 
         }
     }
@@ -35,15 +43,18 @@ void CentraalBesturingssysteemRPIBUS::verwerkCommando(const QString &commando) {
 
 void CentraalBesturingssysteemRPIBUS::verwerkStmNoodstopReset() {
     // Dit wordt getriggerd door de fysieke STM32 knop (ID 0x300)
-    // Zelfs als er geen actief alarm is, zetten we de overrule preventief aan
     isBrandAlarmActief = false;
-    isOverruleActief = true; 
+    isOverruleActief = true;
     
-    // Stuur een specifieke log naar het WEMOS dashboard zodat de gebruiker ziet wat er gebeurt
+    // Stuur een melding naar de WEMOS zodat de actie in het logboek verschijnt
     emit stuurNetwerkData("LOG STM32 Fysieke brandoverrule-knop ingedrukt!\n");
     
-    // Herbereken de limieten. Dit stuurt automatisch de nieuwe status (STATUS 0 1 <vent>) 
-    // naar de socket, wat de GUI op de WEMOS zal updaten!
+    // Start exact dezelfde timer van 5 seconden voor de fysieke knop
+    QTimer::singleShot(5000, this, [this]() {
+        isOverruleActief = false;
+        controleerLimieten(); // Herbereken de status om de normale monitoring te hervatten
+    });
+
     controleerLimieten();
 }
 
