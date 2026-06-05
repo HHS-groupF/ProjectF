@@ -197,6 +197,15 @@ void MainWindow::updateScherm()
             continue;
         }
 
+        // --- HARDWARE LOG OMLEIDING (Voor fysieke STM32 brandoverrule meldingen) ---
+        if (schoonBericht.startsWith("LOG ")) {
+            QString logBericht = schoonBericht.mid(4); // Haal het woordje "LOG " van de regel af
+            QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+            ui->textBrowser_Logboek->append("<b><span style='color:#e67e22'>" + tijd + " - " + logBericht + "</span></b>");
+            schrijfNaarLog(tijd + " - " + logBericht);
+            continue; // Stop verdere parsing voor deze specifieke regel
+        }
+
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString logRegel = tijd + " - Inkomend: " + schoonBericht;
         ui->textBrowser_Logboek->append(logRegel);
