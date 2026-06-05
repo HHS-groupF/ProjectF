@@ -54,9 +54,10 @@ void CentraalBesturingssysteemRPIBUS::controleerLimieten() {
         if (!isOverruleActief) {
             isBrandAlarmActief = true;
         }
-    }
-
-    if (!brandGevaar && isOverruleActief) {
+    } else {
+        // Zodra de waarden weer veilig zijn (geen brandgevaar), 
+        // zet het alarm én de eventuele overrule direct weer uit.
+        isBrandAlarmActief = false;
         isOverruleActief = false;
     }
 
