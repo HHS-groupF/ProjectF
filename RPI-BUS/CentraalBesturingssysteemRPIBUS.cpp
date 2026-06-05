@@ -34,11 +34,17 @@ void CentraalBesturingssysteemRPIBUS::verwerkCommando(const QString &commando) {
 }
 
 void CentraalBesturingssysteemRPIBUS::verwerkStmNoodstopReset() {
-    if (isBrandAlarmActief) {
-        isBrandAlarmActief = false;
-        isOverruleActief = false;
-        controleerLimieten();
-    }
+    // Dit wordt getriggerd door de fysieke STM32 knop (ID 0x300)
+    // Zelfs als er geen actief alarm is, zetten we de overrule preventief aan
+    isBrandAlarmActief = false;
+    isOverruleActief = true; 
+    
+    // Stuur een specifieke log naar het WEMOS dashboard zodat de gebruiker ziet wat er gebeurt
+    emit stuurNetwerkData("LOG STM32 Fysieke brandoverrule-knop ingedrukt!\n");
+    
+    // Herbereken de limieten. Dit stuurt automatisch de nieuwe status (STATUS 0 1 <vent>) 
+    // naar de socket, wat de GUI op de WEMOS zal updaten!
+    controleerLimieten();
 }
 
 void CentraalBesturingssysteemRPIBUS::controleerLimieten() {
@@ -51,10 +57,13 @@ void CentraalBesturingssysteemRPIBUS::controleerLimieten() {
         }
     }
 
-    if (isBrandAlarmActief && !vorigeBrandAlarmStaat) {
+    // Controleer of de status is VERANDERD (dus ook als hij UIT gaat door een overrule)
+    if (isBrandAlarmActief != vorigeBrandAlarmStaat) {
         QByteArray alarmPayload;
-        alarmPayload.append(static_cast<char>(0x01));
-        emit stuurCanCommando(0x400, alarmPayload); 
+        // Stuur 0x01 als het alarm afgaat, stuur 0x00 als het overruled/uit is
+        alarmPayload.append(static_cast<char>(isBrandAlarmActief ? 0x01 : 0x00));
+        // Gebruik het nieuwe, hoge-prioriteit CAN ID
+        emit stuurCanCommando(Config::STM32_BRANDALARM_ID, alarmPayload); 
     }
 
     bool teWarm = (huidigTemp > Config::TEMP_WAARSCHUWING);
@@ -71,10 +80,8 @@ void CentraalBesturingssysteemRPIBUS::controleerLimieten() {
 
     if (isVentilatorAan != vorigeVentilatorStaat) {
         QByteArray canPayload;
-        if (isVentilatorAan) canPayload.append(static_cast<char>(0x01)); 
-        else canPayload.append(static_cast<char>(0x00)); 
-        
-        emit stuurCanCommando(STM32_VENTILATOR_ID, canPayload);
+        canPayload.append(static_cast<char>(isVentilatorAan ? 0x01 : 0x00)); 
+        emit stuurCanCommando(Config::STM32_VENTILATOR_ID, canPayload);
     }
 
     verzendSysteemStatus();
