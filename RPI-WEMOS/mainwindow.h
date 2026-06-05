@@ -37,6 +37,8 @@ private:
     Ui::MainWindow *ui;
     QString netwerkBuffer;
 
+    void schrijfNaarLog(const QString &bericht);
+
     SocketCommunicatieRPIWEMOS *socketComm;
     CentraalBesturingssysteemRPIWEMOS *centraalSysteem;
     Heimdall *heimdall;   // Bifrost-server richting de Wemos-devices
