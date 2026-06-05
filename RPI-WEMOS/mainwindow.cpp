@@ -6,6 +6,7 @@
 #include <QPen>
 #include <QColor>
 #include <QDebug>
+#include <QRegularExpression>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     socketComm = new SocketCommunicatieRPIWEMOS(this);
 
-    // --- AANGEPAST: Socket logs gaan nu naar textBrowser_Socket ---
+    // --- Socket logs gaan naar textBrowser_Socket ---
     connect(socketComm, &SocketCommunicatieRPIWEMOS::nieuwLogBericht, this, [this](QString bericht) {
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
         ui->textBrowser_Socket->append(tijd + " - " + bericht);
@@ -133,87 +134,93 @@ void MainWindow::beheerWaarschuwing(const QString &msg, bool actief)
 
 void MainWindow::updateScherm()
 {
+    // 1. Update de verbindingsstatus indicator in de UI
     if (socketComm->checkConnectieStatus()) {
         ui->label_Status_Socketverbinding->setStyleSheet("background-color: green; border-radius: 45px;");
     } else {
         ui->label_Status_Socketverbinding->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
     }
 
+    // 2. Haal nieuwe netwerkdata op en voeg deze toe aan de buffer
     QString inkomend = socketComm->ontvangData();
-
     if (!inkomend.isEmpty()) {
-        QStringList berichten = inkomend.split('\n', Qt::SkipEmptyParts);
+        netwerkBuffer += inkomend;
+    }
 
-        for (const QString& ruwBericht : berichten) {
-            QString schoonBericht = ruwBericht.trimmed();
-            if (schoonBericht.isEmpty()) continue;
+    // 3. Verwerk alle volledige regels die momenteel in de buffer zitten (TCP stream-safe)
+    while (netwerkBuffer.contains('\n')) {
+        int pos = netwerkBuffer.indexOf('\n');
+        QString ruwBericht = netwerkBuffer.left(pos);
+        netwerkBuffer.remove(0, pos + 1); // Verwijder de verwerkte regel inclusief de '\n'
 
-            // --- AANGEPAST: HEARTBEAT OMLEIDING ---
-            if (schoonBericht == "HEARTBEAT") {
-                QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-                ui->textBrowser_Socket->append(tijd + " - ❤️ HEARTBEAT ONTVANGEN");
-                continue;
-            }
+        QString schoonBericht = ruwBericht.trimmed();
+        if (schoonBericht.isEmpty()) continue;
 
+        // --- HEARTBEAT OMLEIDING ---
+        if (schoonBericht == "HEARTBEAT") {
             QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-            ui->textBrowser_Logboek->append(tijd + " - Inkomend: " + schoonBericht);
+            ui->textBrowser_Socket->append(tijd + " - ❤️ HEARTBEAT ONTVANGEN");
+            continue;
+        }
 
-            // --- Eigen Bifrost-stijl parser (geen JSON-library): splits op spaties. ---
-            QStringList delen = schoonBericht.split(' ', Qt::SkipEmptyParts);
-            if (delen.isEmpty()) continue;
-            const QString type = delen[0];
+        QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+        ui->textBrowser_Logboek->append(tijd + " - Inkomend: " + schoonBericht);
 
-            // STATUS <brand> <overrule> <ventilator>   (1/0)
-            if (type == "STATUS" && delen.size() >= 4) {
-                bool brand      = (delen[1] == "1");
-                bool overrule   = (delen[2] == "1");
-                bool ventilator = (delen[3] == "1");
+        // --- Parser: splits op alle vormen van witruimte (zowel spaties als tabs) ---
+        QStringList delen = schoonBericht.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+        if (delen.isEmpty()) continue;
+        const QString type = delen[0];
 
-                centraalSysteem->verwerkInkomendeStatus(brand, overrule, ventilator);
+        // STATUS <brand> <overrule> <ventilator>   (1/0)
+        if (type == "STATUS" && delen.size() >= 4) {
+            bool brand      = (delen[1] == "1");
+            bool overrule   = (delen[2] == "1");
+            bool ventilator = (delen[3] == "1");
 
-                beheerWaarschuwing("🔥 NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
-                beheerWaarschuwing("⚠️ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
+            centraalSysteem->verwerkInkomendeStatus(brand, overrule, ventilator);
+
+            beheerWaarschuwing("🔥 NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
+            beheerWaarschuwing("⚠️ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
+        }
+
+        // SENSOR <nodeId> <sensorId> <waarde>
+        else if (type == "SENSOR" && delen.size() >= 4) {
+            QString id = delen[2];
+            double waarde = delen[3].toDouble();
+            double secondenGeleden = timerSindsStart.elapsed() / 1000.0;
+            double windowSize = 60.0;
+
+            if (id == "CO2") {
+                ui->lcdNumber_CO2->display(waarde);
+                seriesCO2->append(secondenGeleden, waarde);
+
+                if (secondenGeleden > windowSize) asX_CO2->setRange(secondenGeleden - windowSize, secondenGeleden);
+                if (waarde > asY_CO2->max()) asY_CO2->setMax(waarde + 200);
+                if (waarde < asY_CO2->min()) asY_CO2->setMin(qMax(0.0, waarde - 100));
+
+                QString msg = "⚠️ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
+                beheerWaarschuwing(msg, waarde > Config::CO2_WAARSCHUWING);
             }
+            else if (id == "TEMP") {
+                ui->lcdNumber_Temperatuur->display(waarde);
+                seriesTemp->append(secondenGeleden, waarde);
 
-            // SENSOR <nodeId> <sensorId> <waarde>
-            else if (type == "SENSOR" && delen.size() >= 4) {
-                QString id = delen[2];
-                double waarde = delen[3].toDouble();
-                double secondenGeleden = timerSindsStart.elapsed() / 1000.0;
-                double windowSize = 60.0;
+                if (secondenGeleden > windowSize) asX_Temp->setRange(secondenGeleden - windowSize, secondenGeleden);
+                if (waarde > asY_Temp->max()) asY_Temp->setMax(waarde + 5);
+                if (waarde < asY_Temp->min()) asY_Temp->setMin(waarde - 5);
 
-                if (id == "CO2") {
-                    ui->lcdNumber_CO2->display(waarde);
-                    seriesCO2->append(secondenGeleden, waarde);
+                QString msg = "⚠️ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "°C) -> Actie: Ventilator AAN";
+                beheerWaarschuwing(msg, waarde > Config::TEMP_WAARSCHUWING);
+            }
+            else if (id == "HUM") {
+                ui->lcdNumber_Luchtvochtigheid->display(waarde);
+                seriesLucht->append(secondenGeleden, waarde);
 
-                    if (secondenGeleden > windowSize) asX_CO2->setRange(secondenGeleden - windowSize, secondenGeleden);
-                    if (waarde > asY_CO2->max()) asY_CO2->setMax(waarde + 200);
-                    if (waarde < asY_CO2->min()) asY_CO2->setMin(qMax(0.0, waarde - 100));
+                if (secondenGeleden > windowSize) asX_Lucht->setRange(secondenGeleden - windowSize, secondenGeleden);
+                if (waarde > asY_Lucht->max()) asY_Lucht->setMax(qMin(100.0, waarde + 10));
 
-                    QString msg = "⚠️ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
-                    beheerWaarschuwing(msg, waarde > Config::CO2_WAARSCHUWING);
-                }
-                else if (id == "TEMP") {
-                    ui->lcdNumber_Temperatuur->display(waarde);
-                    seriesTemp->append(secondenGeleden, waarde);
-
-                    if (secondenGeleden > windowSize) asX_Temp->setRange(secondenGeleden - windowSize, secondenGeleden);
-                    if (waarde > asY_Temp->max()) asY_Temp->setMax(waarde + 5);
-                    if (waarde < asY_Temp->min()) asY_Temp->setMin(waarde - 5);
-
-                    QString msg = "⚠️ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "°C) -> Actie: Ventilator AAN";
-                    beheerWaarschuwing(msg, waarde > Config::TEMP_WAARSCHUWING);
-                }
-                else if (id == "HUM") {
-                    ui->lcdNumber_Luchtvochtigheid->display(waarde);
-                    seriesLucht->append(secondenGeleden, waarde);
-
-                    if (secondenGeleden > windowSize) asX_Lucht->setRange(secondenGeleden - windowSize, secondenGeleden);
-                    if (waarde > asY_Lucht->max()) asY_Lucht->setMax(qMin(100.0, waarde + 10));
-
-                    QString msg = "⚠️ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
-                    beheerWaarschuwing(msg, waarde > Config::HUM_WAARSCHUWING);
-                }
+                QString msg = "⚠️ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
+                beheerWaarschuwing(msg, waarde > Config::HUM_WAARSCHUWING);
             }
         }
     }
@@ -259,7 +266,6 @@ void MainWindow::on_pushButton_Reset_Tafel_clicked()
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
     ui->textBrowser_Logboek->append(tijd + " - Reset gestuurd naar tafel " + QString::number(tafelId) + ".");
-    // label_Status_Drukknop_1 wordt bijgewerkt via de inkomende Bifrost "OK" van de Wemos
 }
 
 void MainWindow::on_pushButton_Stuur_Menu_clicked()
