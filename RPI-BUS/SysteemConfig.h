@@ -23,6 +23,9 @@ constexpr double HUM_WAARSCHUWING  = 65.0;
 // Timers & Intervallen (in milliseconden)
 constexpr int SENSOR_TIMER_INTERVAL = 2000; // Interval voor het genereren/uitlezen van sensoren
 constexpr int UI_TIMER_INTERVAL     = 100;  // Refresh rate van het dashboard
+
+constexpr uint32_t STM32_BRANDALARM_ID = 0x010; // Hoge prioriteit voor brand! (was 0x400)
+constexpr uint32_t STM32_VENTILATOR_ID = 0x200; // Normale prioriteit
 }
 
 #endif // SYSTEEMCONFIG_H
