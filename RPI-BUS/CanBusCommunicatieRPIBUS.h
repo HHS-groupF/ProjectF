@@ -21,6 +21,7 @@ public slots:
 signals:
     // Signaal dat wordt afgevuurd als we data ontvangen van de STM32
     void inkomendeSensorData(uint32_t stmId, const QString &sensorType, double waarde);
+    void noodstopVrijgegeven();
 
 private slots:
     void ontvangCanBerichten();
