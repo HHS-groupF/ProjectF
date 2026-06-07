@@ -52,7 +52,7 @@ void CanBusCommunicatieRPIBUS::ontvangCanBerichten() {
             emit inkomendeSensorData(stmId, sensorType, static_cast<double>(sensorWaarde));
         } 
         else if (payload.size() == 1 && stmId == 0x300 && payload.at(0) == 0x01) {
-            qDebug() << "✅ [CAN-BUS] Noodstop vrijgegeven vanaf STM32 fysieke knop!";
+            qDebug() << " [CAN-BUS] Noodstop vrijgegeven vanaf STM32 fysieke knop!";
             emit noodstopVrijgegeven();
         } 
         else {
