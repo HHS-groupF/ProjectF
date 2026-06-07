@@ -8,7 +8,6 @@
 #include <cstring>
 
 SocketCommunicatie::SocketCommunicatie(std::string ip, int p) {
-    // Let op: De parameters worden hier overschreven door vaste waarden.
     ipAdresDoel = "10.0.0.1";
     poort = 50001;
     isVerbonden = false;
@@ -18,8 +17,7 @@ SocketCommunicatie::SocketCommunicatie(std::string ip, int p) {
 }
 
 SocketCommunicatie::~SocketCommunicatie() {
-    stopThreads = true; // Zorgt dat de while-loops in de threads stoppen
-    // Sluit de poort netjes af als het object wordt vernietigd
+    stopThreads = true;
     if (server_fd >= 0) close(server_fd);
 }
 
@@ -35,7 +33,7 @@ bool SocketCommunicatie::verbind() {
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY; // Luister op alle netwerkinterfaces
+    address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(poort);
 
     // Koppel de socket aan de poort en begin met luisteren (max 3 in de wachtrij)
@@ -73,9 +71,8 @@ bool SocketCommunicatie::verbind() {
                         std::cout << "[Heartbeat Ontvangen]: " << ontvangen << std::endl;
                     }
                 }
-                close(new_socket); // Verbinding weer sluiten na het lezen
+                close(new_socket);
             }
-            // Kleine pauze om de CPU niet voor 100% te belasten
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }).detach();
@@ -100,7 +97,6 @@ void SocketCommunicatie::verzendData(std::string bericht) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(poort);
 
-    // Zet het IP adres om naar het juiste formaat
     if (inet_pton(AF_INET, ipAdresDoel.c_str(), &serv_addr.sin_addr) <= 0) {
         close(sock);
         return;
@@ -114,9 +110,9 @@ void SocketCommunicatie::verzendData(std::string bericht) {
 }
 
 std::string SocketCommunicatie::ontvangData() {
-    std::lock_guard<std::mutex> lock(data_mutex); // Lock om thread-safety problemen te voorkomen
+    std::lock_guard<std::mutex> lock(data_mutex);en
     std::string data = laatsteData;
-    laatsteData = ""; // Maak de string leeg zodat we niet twee keer hetzelfde uitlezen
+    laatsteData = "";
     return data;
 }
 
@@ -125,7 +121,6 @@ bool SocketCommunicatie::checkConnectieStatus() {
     auto nu = std::chrono::steady_clock::now();
     auto verstreken = std::chrono::duration_cast<std::chrono::seconds>(nu - laatsteOntvangstTijd).count();
 
-    // Als we 5 seconden niks gehoord hebben, gaan we ervan uit dat de verbinding weg is
     if (verstreken > 5) {
         if (isVerbonden) {
             std::cout << "\n[FOUT] Communicatie langer dan 5 sec weggevallen!" << std::endl;
