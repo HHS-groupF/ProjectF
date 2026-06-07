@@ -17,7 +17,6 @@ SocketCommunicatie::SocketCommunicatie(string ip, int p)
 
 SocketCommunicatie::~SocketCommunicatie() {
     isVerbonden = false;
-    // Sluit de poort netjes af als het object wordt vernietigd
     if (server_fd >= 0) close(server_fd);
 }
 
@@ -33,7 +32,7 @@ bool SocketCommunicatie::verbind() {
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY; // Luister op alle netwerkinterfaces
+    address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(poort);
 
     // Koppel de socket aan de poort en begin met luisteren (max 3 in de wachtrij)
@@ -59,7 +58,6 @@ bool SocketCommunicatie::verbind() {
                 if (bytesRead > 0) {
                     string ontvangen(buffer.data(), bytesRead);
                     
-                    // Update de timer omdat we zojuist iets ontvangen hebben
                     this->laatsteOntvangstTijd = steady_clock::now();
 
                     // Sla alleen echte data op in de buffer, negeer heartbeats voor de hoofdapplicatie
@@ -71,7 +69,7 @@ bool SocketCommunicatie::verbind() {
                         cout << "[BUS - Heartbeat Ontvangen]: " << ontvangen << endl;
                     }
                 }
-                close(new_socket); // Verbinding weer sluiten na het lezen
+                close(new_socket);
             }
         }
     }).detach();
@@ -120,7 +118,6 @@ bool SocketCommunicatie::checkConnectieStatus() {
     auto nu = steady_clock::now();
     auto verstreken = duration_cast<seconds>(nu - laatsteOntvangstTijd).count();
 
-    // Als we 5 seconden niks gehoord hebben, gaan we ervan uit dat de verbinding weg is
     if (verstreken > 5) {
         if (isVerbonden) {
             cout << "\n[FOUT] BUS Communicatie langer dan 5 sec weggevallen!" << endl;
