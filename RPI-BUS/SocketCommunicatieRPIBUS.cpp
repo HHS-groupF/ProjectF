@@ -27,7 +27,7 @@ SocketCommunicatieRPIBUS::~SocketCommunicatieRPIBUS() {
 }
 
 void SocketCommunicatieRPIBUS::start() {
-    // --- SAFEGUARD: Voorkom dubbel starten en crashen ---
+    //SAFEGUARD: Voorkom dubbel starten en crashen
     if (luisterThread.joinable()) {
         qDebug() << "[RPI-BUS] Server is al gestart! Tweede startpoging genegeerd.";
         return;
@@ -42,7 +42,7 @@ void SocketCommunicatieRPIBUS::start() {
     struct sockaddr_in address;
     std::memset(&address, 0, sizeof(address));
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY; // luistert op alle interfaces (RJ45 én WiFi)
+    address.sin_addr.s_addr = INADDR_ANY; 
     address.sin_port = htons(Config::POORT_RPIBUS_COMMANDS);
 
     if (::bind(serverFd, (struct sockaddr*)&address, sizeof(address)) < 0) {
@@ -54,16 +54,14 @@ void SocketCommunicatieRPIBUS::start() {
 
     qDebug() << "[RPI-BUS] Server luistert naar commando's op poort" << Config::POORT_RPIBUS_COMMANDS;
 
-    // Start de luister thread één keer
     luisterThread = std::thread(&SocketCommunicatieRPIBUS::luisterLus, this);
 
-    // Probeer de verbinding op te zetten
     zorgVoorSensorVerbinding();
 
     // --- HEARTBEAT TIMER STARTEN ---
     heartbeatTimer = new QTimer(this);
     connect(heartbeatTimer, &QTimer::timeout, this, &SocketCommunicatieRPIBUS::verzendHeartbeat);
-    heartbeatTimer->start(2000); // Stuur elke 2 seconden een heartbeat
+    heartbeatTimer->start(2000); 
 }
 
 
@@ -84,7 +82,6 @@ void SocketCommunicatieRPIBUS::luisterLus() {
             if (n <= 0) break;
             buffer.append(temp, n);
 
-            // Commando's komen per regel binnen.
             size_t pos;
             while ((pos = buffer.find('\n')) != std::string::npos) {
                 QString cmd = QString::fromStdString(buffer.substr(0, pos)).trimmed();
@@ -92,7 +89,6 @@ void SocketCommunicatieRPIBUS::luisterLus() {
                 if (!cmd.isEmpty()) emit inkomendCommando(cmd);
             }
         }
-        // Eventuele rest zonder newline ook nog verwerken.
         QString rest = QString::fromStdString(buffer).trimmed();
         if (!rest.isEmpty()) emit inkomendCommando(rest);
 
