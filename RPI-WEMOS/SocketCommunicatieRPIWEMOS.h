@@ -9,8 +9,7 @@
 
 // ============================================================================
 //  SocketCommunicatieRPIWEMOS — eigen socket-implementatie (rauwe BSD-sockets,
-//  geen QTcpSocket/library). De interface is identiek gebleven aan de vorige
-//  versie, zodat de rest van de code ongewijzigd blijft.
+//  geen QTcpSocket/library). 
 //
 //  - Luistert op POORT_WEMOS_DATA voor binnenkomende sensordata van RPI-BUS.
 //  - Verbindt naar RPI-BUS:POORT_RPIBUS_COMMANDS om commando's te versturen.
