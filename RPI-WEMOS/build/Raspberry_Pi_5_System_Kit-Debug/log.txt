@@ -1,0 +1,30 @@
+Netwerk backend gestart. Luistert naar poort 8080...
+Bifrost (Heimdall) luistert op poort 9000...
+13:52:24 - Bifrost: nieuwe client verbonden (145.52.127.139)
+13:52:24 - Bifrost: nieuwe client verbonden (145.52.127.172)
+13:53:27 - Sfeerlicht uitgeschakeld.
+13:53:39 - Reset gestuurd naar tafel 1.
+13:53:39 - [TAFEL] Tafel 1 is geholpen.
+13:53:40 - [TAFEL] Tafel 1 vraagt hulp!
+13:54:03 - Menu loop ingesteld op: hallo kk hoer
+Netwerk backend gestart. Luistert naar poort 8080...
+Bifrost (Heimdall) luistert op poort 9000...
+13:56:21 - Bifrost: nieuwe client verbonden (145.52.127.172)
+13:56:21 - Bifrost: nieuwe client verbonden (145.52.127.139)
+13:56:33 - Lichtkrant ingesteld op: hehey
+13:56:33 - Menu loop ingesteld op: 
+13:56:33 - Menu loop ingesteld op: 
+13:56:36 - Lichtkrant ingesteld op: 
+13:56:43 - Lichtkrant ingesteld op: hoi
+13:56:57 - Menu loop ingesteld op: he4lloi
+13:57:05 - Reset gestuurd naar tafel 1.
+13:57:05 - [TAFEL] Tafel 1 is geholpen.
+13:57:08 - [TAFEL] Tafel 1 vraagt hulp!
+Netwerk backend gestart. Luistert naar poort 8080...
+Bifrost (Heimdall) luistert op poort 9000...
+14:01:26 - Bifrost: nieuwe client verbonden (145.52.127.139)
+14:01:26 - Bifrost: nieuwe client verbonden (145.52.127.172)
+Netwerk backend gestart. Luistert naar poort 8080...
+Bifrost (Heimdall) luistert op poort 9000...
+14:02:37 - Bifrost: nieuwe client verbonden (145.52.127.172)
+14:02:37 - Bifrost: nieuwe client verbonden (145.52.127.139)
