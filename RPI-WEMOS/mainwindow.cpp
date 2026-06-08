@@ -9,6 +9,7 @@
 #include <QRegularExpression>
 #include <QFile>
 #include <QTextStream>
+#include <QComboBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -49,42 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
         schrijfNaarLog(logRegel);
     });
 
-    connect(heimdall, &Heimdall::runeOntvangen, this, [this](QString topicStr, QString payload) {
-        QStringList delen = topicStr.split('/');
-
-        if (delen.size() == 3 && delen[0] == "tafel" && delen[2] == "status") {
-            QString tafelId = delen[1];
-            QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-            bool hulpNodig = (payload == "HELP");
-
-            if (hulpNodig) {
-                ui->textBrowser_Logboek->append("<b>" + tijd + " - [TAFEL] Tafel " + tafelId + " vraagt hulp!</b>");
-                schrijfNaarLog(tijd + " - [TAFEL] Tafel " + tafelId + " vraagt hulp!");
-                beheerWaarschuwing("Tafel " + tafelId + " vraagt hulp!", true);
-            } else if (payload == "OK") {
-                QString logRegel = tijd + " - [TAFEL] Tafel " + tafelId + " is geholpen.";
-                ui->textBrowser_Logboek->append(logRegel);
-                schrijfNaarLog(logRegel);
-                beheerWaarschuwing("Tafel " + tafelId + " vraagt hulp!", false);
-            }
-
-            // Update de status-LED voor tafel 1
-            if (tafelId == "1") {
-                if (hulpNodig)
-                    ui->label_Status_Drukknop_1->setStyleSheet("background-color: orange; border-radius: 45px;");
-                else
-                    ui->label_Status_Drukknop_1->setStyleSheet("background-color: green; border-radius: 45px;");
-            }
-        }
-
-        else if (topicStr == "sensor/beweging") {
-            bool beweging = (payload == "JA");
-            QString aanStijl = "background-color: green; border-radius: 45px;";
-            QString uitStijl = "background-color: rgb(170, 0, 0); border-radius: 45px;";
-            ui->label_Status_Bewegingssensor->setStyleSheet(beweging ? aanStijl : uitStijl);
-            ui->label_Status_Verlichting_LED->setStyleSheet(beweging ? aanStijl : uitStijl);
-        }
-    });
+    // Inkomende Wemos-runes (tafel/status, sensor/beweging) gaan naar het brein
+    // (CentraalBesturing). De koppeling staat verderop, zodra centraalSysteem bestaat.
 
     if (heimdall->start(Config::POORT_BIFROST)) {
         QString logRegel = "Bifrost (Heimdall) luistert op poort " + QString::number(Config::POORT_BIFROST) + "...";
@@ -122,6 +89,49 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::stuurNetwerkCommando, socketComm, &SocketCommunicatieRPIWEMOS::verzendData);
+
+    // --- Tafel + RGB: logica in het brein, UI hier ---
+    // Inkomende Wemos-runes naar het brein.
+    connect(heimdall, &Heimdall::runeOntvangen,
+            centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::verwerkBifrostRune);
+    // Uitgaande Bifrost-berichten van het brein naar de Wemos-devices.
+    connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::stuurBifrostBericht,
+            heimdall, &Heimdall::publiceer);
+
+    // Tafel-status: dynamische LED + logboek + waarschuwingenlijst.
+    connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::tafelStatusGewijzigd, this, [this](int id, bool hulpNodig) {
+        QLabel* led = haalTafelLed(id);
+        led->setStyleSheet(hulpNodig ? "background-color: orange; border-radius: 30px; color: white; font-weight: bold;"
+                                     : "background-color: green; border-radius: 30px; color: white; font-weight: bold;");
+        QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString tekst = hulpNodig ? "[TAFEL] Tafel " + QString::number(id) + " vraagt hulp!"
+                                  : "[TAFEL] Tafel " + QString::number(id) + " is geholpen.";
+        ui->textBrowser_Logboek->append(hulpNodig ? "<b>" + tijd + " - " + tekst + "</b>" : tijd + " - " + tekst);
+        schrijfNaarLog(tijd + " - " + tekst);
+        beheerWaarschuwing("Tafel " + QString::number(id) + " vraagt hulp!", hulpNodig);
+    });
+
+    // Bewegingssensor-status-LED.
+    connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::bewegingStatusGewijzigd, this, [this](bool beweging) {
+        ui->label_Status_Bewegingssensor->setStyleSheet(beweging ? "background-color: green; border-radius: 45px;"
+                                                                 : "background-color: rgb(170, 0, 0); border-radius: 45px;");
+    });
+
+    // RGB-status-LED ("r,g,b" of "UIT").
+    connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::rgbStatusGewijzigd, this, [this](QString rgbWaarde) {
+        if (rgbWaarde == "UIT")
+            ui->label_Status_Verlichting_RGB->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
+        else
+            ui->label_Status_Verlichting_RGB->setStyleSheet("background-color: rgb(" + rgbWaarde + "); border-radius: 45px;");
+    });
+
+    // RGB combobox-keuze + startmodus (standaard automatisch) doorgeven aan het brein.
+    centraalSysteem->zetRgbKleurKeuze(ui->comboBox_RGB_Kleur->currentText());
+    connect(ui->comboBox_RGB_Kleur, &QComboBox::currentTextChanged,
+            centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::zetRgbKleurKeuze);
+    centraalSysteem->zetRgbAutoModus(ui->checkBox_RGB_Auto->isChecked());
+    ui->pushButton_RGB_Set->setEnabled(!ui->checkBox_RGB_Auto->isChecked());
+    ui->pushButton_RGB_Uit->setEnabled(!ui->checkBox_RGB_Auto->isChecked());
 
     uiTimer = new QTimer(this);
     connect(uiTimer, &QTimer::timeout, this, &MainWindow::updateScherm);
@@ -274,20 +284,7 @@ void MainWindow::updateScherm()
 void MainWindow::on_pushButton_RGB_Set_clicked()
 {
     QString kleurNaam = ui->comboBox_RGB_Kleur->currentText();
-    QString kleurWaarde;
-    QColor labelKleur;
-
-    if      (kleurNaam == "Wit")   { kleurWaarde = Config::RGB_WIT;   labelKleur = QColor(255, 255, 255); }
-    else if (kleurNaam == "Warm")  { kleurWaarde = Config::RGB_WARM;  labelKleur = QColor(255, 120, 20);  }
-    else if (kleurNaam == "Rood")  { kleurWaarde = Config::RGB_ROOD;  labelKleur = QColor(255, 0, 0);     }
-    else if (kleurNaam == "Blauw") { kleurWaarde = Config::RGB_BLAUW; labelKleur = QColor(0, 0, 255);     }
-    else if (kleurNaam == "Groen") { kleurWaarde = Config::RGB_GROEN; labelKleur = QColor(0, 255, 0);     }
-
-    heimdall->publiceer("sensor/rgb/set", kleurWaarde);
-
-    ui->label_Status_Verlichting_RGB->setStyleSheet(
-        QString("background-color: rgb(%1,%2,%3); border-radius: 45px;")
-            .arg(labelKleur.red()).arg(labelKleur.green()).arg(labelKleur.blue()));
+    centraalSysteem->zetRgbKleur(kleurNaam);   // logica + LED-update via signaal
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
     QString logRegel = tijd + " - Sfeerlicht ingesteld op: " + kleurNaam;
@@ -297,10 +294,7 @@ void MainWindow::on_pushButton_RGB_Set_clicked()
 
 void MainWindow::on_pushButton_RGB_Uit_clicked()
 {
-    heimdall->publiceer("sensor/rgb/set", "UIT");
-
-    ui->label_Status_Verlichting_RGB->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
-    ui->label_Status_Verlichting_LED->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
+    centraalSysteem->zetRgbUit();
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
     QString logRegel = tijd + " - Sfeerlicht uitgeschakeld.";
@@ -308,15 +302,41 @@ void MainWindow::on_pushButton_RGB_Uit_clicked()
     schrijfNaarLog(logRegel);
 }
 
+void MainWindow::on_checkBox_RGB_Auto_toggled(bool checked)
+{
+    // Modus naar het brein; UI (handmatige knoppen aan/uit) blijft hier.
+    centraalSysteem->zetRgbAutoModus(checked);
+    ui->pushButton_RGB_Set->setEnabled(!checked);
+    ui->pushButton_RGB_Uit->setEnabled(!checked);
+}
+
 void MainWindow::on_pushButton_Reset_Tafel_clicked()
 {
     int tafelId = ui->spinBox_Tafel_ID->value();
-    heimdall->publiceer("tafel/" + QString::number(tafelId) + "/reset", "RESET");
+    centraalSysteem->resetTafel(tafelId);
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
     QString logRegel = tijd + " - Reset gestuurd naar tafel " + QString::number(tafelId) + ".";
     ui->textBrowser_Logboek->append(logRegel);
     schrijfNaarLog(logRegel);
+}
+
+QLabel* MainWindow::haalTafelLed(int id)
+{
+    if (tafelLeds.contains(id)) return tafelLeds.value(id);
+
+    // Nieuwe tafel → automatisch een ronde status-LED met het tafelnummer.
+    QLabel* led = new QLabel(ui->centralwidget);
+    int index = tafelLeds.size();
+    int x = 420 + index * 70;   // naast elkaar in een rij
+    int y = 400;
+    led->setGeometry(x, y, 60, 60);
+    led->setAlignment(Qt::AlignCenter);
+    led->setText(QString::number(id));
+    led->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 30px; color: white; font-weight: bold;");
+    led->show();
+    tafelLeds.insert(id, led);
+    return led;
 }
 
 void MainWindow::on_pushButton_Stuur_Menu_clicked()

@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QMap>
+#include <QLabel>
 
 #include <QChart>
 #include <QChartView>
@@ -33,11 +35,16 @@ private slots:
     void on_pushButton_Stuur_Menu_clicked();
     void on_pushButton_RGB_Set_clicked();
     void on_pushButton_RGB_Uit_clicked();
+    void on_checkBox_RGB_Auto_toggled(bool checked);
 private:
     Ui::MainWindow *ui;
     QString netwerkBuffer;
 
     void schrijfNaarLog(const QString &bericht);
+
+    // Dynamische status-LED's per tafel (tafelnummer → LED-widget)
+    QMap<int, QLabel*> tafelLeds;
+    QLabel* haalTafelLed(int id);
 
     SocketCommunicatieRPIWEMOS *socketComm;
     CentraalBesturingssysteemRPIWEMOS *centraalSysteem;
