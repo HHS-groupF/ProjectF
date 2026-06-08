@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['pi_0',['pi',['../md_UPLOAD__GIDS.html#autotoc_md12',1,'5. RPI-BUS (Qt6) op de BUS-Pi'],['../md_UPLOAD__GIDS.html#autotoc_md14',1,'6. RPI-WEMOS (Qt6 dashboard) op de WEMOS-Pi']]],
+  ['pi_20↔_20pi_20link_20rpi_20bus_20↔_20rpi_20wemos_1',['A.2 — Bifrost op de Pi ↔ Pi-link (RPI-BUS ↔ RPI-WEMOS)',['../md_UPLOAD__GIDS.html#autotoc_md28',1,'']]],
+  ['pi_20↔_20wemos_20—_20bifrost_20geen_20broker_20nodig_2',['4. Communicatie Pi ↔ Wemos — Bifrost (geen broker nodig)',['../md_UPLOAD__GIDS.html#autotoc_md10',1,'']]],
+  ['pi_20↔_20wemos_20link_3',['A.1 — Bifrost op de Pi ↔ Wemos-link',['../md_UPLOAD__GIDS.html#autotoc_md27',1,'']]],
+  ['pi_5fip_5fadres_4',['pi_ip_adres',['../Wemos-tafel_2config_8h.html#a70e7cc39c70b41d8b03b7ca79899cd61',1,'PI_IP_ADRES:&#160;config.h'],['../Sensor_2config_8h.html#a70e7cc39c70b41d8b03b7ca79899cd61',1,'PI_IP_ADRES:&#160;config.h'],['../config_8h.html#a70e7cc39c70b41d8b03b7ca79899cd61',1,'PI_IP_ADRES:&#160;config.h']]],
+  ['pir_5fpin_5',['PIR_PIN',['../Sensor_2config_8h.html#a22efb88130cbace44007553eec72a188',1,'config.h']]],
+  ['pirsensor_6',['pirsensor',['../classPirSensor.html#a7fcb9f3d3b518238fc54b6457662c81e',1,'PirSensor::PirSensor()'],['../classPirSensor.html',1,'PirSensor']]],
+  ['pirsensor_2ecpp_7',['PirSensor.cpp',['../PirSensor_8cpp.html',1,'']]],
+  ['pirsensor_2eh_8',['PirSensor.h',['../PirSensor_8h.html',1,'']]],
+  ['platform_5fid_9',['PLATFORM_ID',['../CMakeCXXCompilerId_8cpp.html#adbc5372f40838899018fadbc89bd588b',1,'CMakeCXXCompilerId.cpp']]],
+  ['poort_5fbifrost_10',['POORT_BIFROST',['../namespaceConfig.html#aae4185eadbfb7fc8005a1d11c49fe32e',1,'Config']]],
+  ['poort_5frpibus_5fcommands_11',['POORT_RPIBUS_COMMANDS',['../namespaceConfig.html#a95db085cf8b35dadcfb29c3a30cedcf8',1,'Config']]],
+  ['poort_5fwemos_5fdata_12',['POORT_WEMOS_DATA',['../namespaceConfig.html#ad33c58e6d92e3979de958500c6d0966c',1,'Config']]],
+  ['poorten_20—_20eerst_20alle_20adressen_20gelijkzetten_13',['2. Netwerk &amp; poorten — eerst alle adressen gelijkzetten',['../md_UPLOAD__GIDS.html#autotoc_md6',1,'']]],
+  ['problemen_14',['11. Checklist &amp; veelvoorkomende problemen',['../md_UPLOAD__GIDS.html#autotoc_md24',1,'']]],
+  ['projectf_15',['ProjectF',['../md_README.html',1,'']]],
+  ['projectf_20naar_20de_20hardware_16',['Upload-gids — ProjectF naar de hardware',['../md_UPLOAD__GIDS.html',1,'']]],
+  ['protocol_17',['Bijlage A — Het Bifrost-protocol',['../md_UPLOAD__GIDS.html#autotoc_md26',1,'']]],
+  ['publiceer_18',['publiceer',['../classHeimdall.html#a7bbc2e9d6da5f3715231f08093b999e7',1,'Heimdall']]],
+  ['pushbutton_5fbrandoverruleknop_19',['pushButton_Brandoverruleknop',['../classUi__MainWindow.html#a7da34d3257b759bd63e4461072056803',1,'Ui_MainWindow']]],
+  ['pushbutton_5freset_5ftafel_20',['pushButton_Reset_Tafel',['../classUi__MainWindow.html#ae58018962fcc11dad57c7cf641619b0b',1,'Ui_MainWindow']]],
+  ['pushbutton_5frgb_5fset_21',['pushButton_RGB_Set',['../classUi__MainWindow.html#aad6e0ca2960ae8977fe32fabf09537d9',1,'Ui_MainWindow']]],
+  ['pushbutton_5frgb_5fuit_22',['pushButton_RGB_Uit',['../classUi__MainWindow.html#af10639b93f6f279cbaf98bf8b3e32091',1,'Ui_MainWindow']]],
+  ['pushbutton_5fstuur_5fmenu_23',['pushButton_Stuur_Menu',['../classUi__MainWindow.html#ab7dcd65193590335a9d254cb6376668c',1,'Ui_MainWindow']]],
+  ['pushbutton_5fupdate_5flichtkrant_24',['pushButton_Update_Lichtkrant',['../classUi__MainWindow.html#ad7db7c637e4e68f70d9bcae050d6985d',1,'Ui_MainWindow']]]
+];

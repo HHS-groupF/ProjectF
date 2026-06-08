@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['tafel_5fconfig_0',['tafel_config',['../tafel__config__unit1_8h.html#ab68390acf380b41bcb7b34976d026802',1,'TAFEL_CONFIG:&#160;tafel_config_unit1.h'],['../tafel__config__unit2_8h.html#ab68390acf380b41bcb7b34976d026802',1,'TAFEL_CONFIG:&#160;tafel_config_unit2.h']]]
+  ['hardware_5ftype_0',['HARDWARE_TYPE',['../Lichtkrant_8cpp.html#a04988e7d812ffad244fd37a708b92536',1,'Lichtkrant.cpp']]],
+  ['hex_1',['HEX',['../CMakeCXXCompilerId_8cpp.html#a46d5d95daa1bef867bd0179594310ed5',1,'CMakeCXXCompilerId.cpp']]]
 ];

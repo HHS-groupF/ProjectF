@@ -1,4 +1,14 @@
 var searchData=
 [
-  ['error_5fhandler_0',['error_handler',['../Ventilator_2main_8c.html#a1730ffe1e560465665eb47d9264826f9',1,'Error_Handler(void):&#160;main.c'],['../main_8h.html#a1730ffe1e560465665eb47d9264826f9',1,'Error_Handler(void):&#160;main.c']]]
+  ['canbuscommunicatierpibus_0',['CanBusCommunicatieRPIBUS',['../classCanBusCommunicatieRPIBUS.html#a7de31c01b4c93be1b381a4b276cfcf18',1,'CanBusCommunicatieRPIBUS']]],
+  ['canbusstm_5fprocessrx_1',['CanBusSTM_ProcessRx',['../CanBusSTM_8c.html#ac1ea07e729b2ead84c0c961de876b72c',1,'CanBusSTM.c']]],
+  ['centraalbesturingssysteemrpibus_2',['CentraalBesturingssysteemRPIBUS',['../classCentraalBesturingssysteemRPIBUS.html#a3c6db5eff0a433be62ffe1abb432224c',1,'CentraalBesturingssysteemRPIBUS']]],
+  ['centraalbesturingssysteemrpiwemos_3',['CentraalBesturingssysteemRPIWEMOS',['../classCentraalBesturingssysteemRPIWEMOS.html#a92d2d5609096a8b4f827614c8922d2a9',1,'CentraalBesturingssysteemRPIWEMOS']]],
+  ['checkconnectiestatus_4',['checkConnectieStatus',['../classSocketCommunicatieRPIWEMOS.html#ad01f68261bf2b0e4c94874be9b343c15',1,'SocketCommunicatieRPIWEMOS']]],
+  ['co2sensor_5fcreate_5',['co2sensor_create',['../CO2Sensor_8c.html#a2f14469ab3995bc3a29fc8e6427b1efb',1,'CO2Sensor_Create(CO2Sensor_t *sensor, I2C_HandleTypeDef *edge_i2c, float initieleGrens):&#160;CO2Sensor.c'],['../CO2Sensor_8h.html#a2f14469ab3995bc3a29fc8e6427b1efb',1,'CO2Sensor_Create(CO2Sensor_t *sensor, I2C_HandleTypeDef *edge_i2c, float initieleGrens):&#160;CO2Sensor.c']]],
+  ['co2sensor_5fgrensoverschreden_6',['co2sensor_grensoverschreden',['../CO2Sensor_8h.html#aa3276c2d013ca040f2b85fa32cc1c2c2',1,'CO2Sensor_grensOverschreden(CO2Sensor_t *sensor):&#160;CO2Sensor.c'],['../CO2Sensor_8c.html#aa3276c2d013ca040f2b85fa32cc1c2c2',1,'CO2Sensor_grensOverschreden(CO2Sensor_t *sensor):&#160;CO2Sensor.c']]],
+  ['co2sensor_5finit_7',['co2sensor_init',['../CO2Sensor_8c.html#a0a9205487a8403f8bb3c61f14fcf209b',1,'CO2Sensor_Init(CO2Sensor_t *sensor):&#160;CO2Sensor.c'],['../CO2Sensor_8h.html#a0a9205487a8403f8bb3c61f14fcf209b',1,'CO2Sensor_Init(CO2Sensor_t *sensor):&#160;CO2Sensor.c']]],
+  ['co2sensor_5fleesmeting_8',['co2sensor_leesmeting',['../CO2Sensor_8c.html#a5f0a23486188971bcc84c6878b226890',1,'CO2Sensor_LeesMeting(CO2Sensor_t *sensor):&#160;CO2Sensor.c'],['../CO2Sensor_8h.html#a5f0a23486188971bcc84c6878b226890',1,'CO2Sensor_LeesMeting(CO2Sensor_t *sensor):&#160;CO2Sensor.c']]],
+  ['co2sensor_5fsetgrenswaarde_9',['co2sensor_setgrenswaarde',['../CO2Sensor_8c.html#a7d29ab9fba66ffc279a218f327379834',1,'CO2Sensor_setGrenswaarde(CO2Sensor_t *sensor, float nieuweWaarde):&#160;CO2Sensor.c'],['../CO2Sensor_8h.html#a7d29ab9fba66ffc279a218f327379834',1,'CO2Sensor_setGrenswaarde(CO2Sensor_t *sensor, float nieuweWaarde):&#160;CO2Sensor.c']]],
+  ['co2sensor_5fstartmeting_10',['co2sensor_startmeting',['../CO2Sensor_8c.html#a118490a68f3f7bec0f70e4ecbd7c1e4f',1,'CO2Sensor_StartMeting(CO2Sensor_t *sensor, TIM_HandleTypeDef *htim):&#160;CO2Sensor.c'],['../CO2Sensor_8h.html#a118490a68f3f7bec0f70e4ecbd7c1e4f',1,'CO2Sensor_StartMeting(CO2Sensor_t *sensor, TIM_HandleTypeDef *htim):&#160;CO2Sensor.c']]]
 ];

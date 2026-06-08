@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DoxyTest: Ventilator/CanBusSTM.c File Reference</title>
+<title>DoxyTest: STM/CanBusSTM.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,7 +70,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_676811de4acd01c39e2768ba98d182fd.html">Ventilator</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_327c904981e4abecaa1a81e309b923cb.html">STM</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -85,34 +85,18 @@ $(function() {
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a866605c9daab6f79bc27188f76de35a3" id="r_a866605c9daab6f79bc27188f76de35a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CanBusSTM_8c.html#a866605c9daab6f79bc27188f76de35a3">CanBusSTM_Init</a> (CAN_HandleTypeDef *hcan)</td></tr>
-<tr class="separator:a866605c9daab6f79bc27188f76de35a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68a8f2f304ef6c5f85b12c11ca022cb5" id="r_a68a8f2f304ef6c5f85b12c11ca022cb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CanBusSTM_8c.html#a68a8f2f304ef6c5f85b12c11ca022cb5">CanBusSTM_SendSensorData</a> (CAN_HandleTypeDef *hcan, float <a class="el" href="Ventilator_2main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, float <a class="el" href="Ventilator_2main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a>, float <a class="el" href="Ventilator_2main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8">hum</a>)</td></tr>
-<tr class="separator:a68a8f2f304ef6c5f85b12c11ca022cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae78520ca78f464fe2b746743394e0afd" id="r_ae78520ca78f464fe2b746743394e0afd"><td class="memItemLeft" align="right" valign="top">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:Ventilator/CanBusSTM.c static CAN_RxHeaderTypeDef <a class="el" href="main_8c.html#a6ee6e13063b860648180eea65852cc71">RxHeader</a>;static uint8_t <a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[8];static volatile bool flag_vent_aan=false;static volatile bool flag_vent_uit=false;void CanBusSTM_Init(CAN_HandleTypeDef *hcan) { CAN_FilterTypeDef sFilterConfig;sFilterConfig.FilterBank=0;sFilterConfig.FilterMode=CAN_FILTERMODE_IDMASK;sFilterConfig.FilterScale=CAN_FILTERSCALE_32BIT;sFilterConfig.FilterIdHigh=0x0000;sFilterConfig.FilterIdLow=0x0000;sFilterConfig.FilterMaskIdHigh=0x0000;sFilterConfig.FilterMaskIdLow=0x0000;sFilterConfig.FilterFIFOAssignment=CAN_RX_FIFO0;sFilterConfig.FilterActivation=ENABLE;sFilterConfig.SlaveStartFilterBank=14;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ConfigFilter(hcan, &amp;sFilterConfig) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_Start(hcan) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();printf(&quot;[INFO] CanBusSTM succesvol gestart.\r\n&quot;);} void CanBusSTM_SendSensorData(CAN_HandleTypeDef *hcan, float <a class="el" href="main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, float <a class="el" href="main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a>, float <a class="el" href="main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8">hum</a>) { CAN_TxHeaderTypeDef TxHeader={0};uint32_t TxMailbox;uint8_t TxData[4];TxHeader.RTR=CAN_RTR_DATA;TxHeader.IDE=CAN_ID_STD;TxHeader.DLC=4;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; 0) { TxHeader.StdId=0x100;memcpy(TxData, &amp;<a class="el" href="main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, 4);<a class="el" href="CanBusSTM_8c.html#a6e3720fd96be5921b0f2d92157e4e8c3">HAL_CAN_AddTxMessage</a>(hcan, &amp;TxHeader, TxData, &amp;TxMailbox);} <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; 0) { TxHeader.StdId=0x101;memcpy(TxData, &amp;<a class="el" href="main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a>, 4);<a class="el" href="CanBusSTM_8c.html#a6e3720fd96be5921b0f2d92157e4e8c3">HAL_CAN_AddTxMessage</a>(hcan, &amp;TxHeader, TxData, &amp;TxMailbox);} <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; 0) { TxHeader.StdId=0x102;memcpy(TxData, &amp;<a class="el" href="main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8">hum</a>, 4);<a class="el" href="CanBusSTM_8c.html#a6e3720fd96be5921b0f2d92157e4e8c3">HAL_CAN_AddTxMessage</a>(hcan, &amp;TxHeader, TxData, &amp;TxMailbox);} } void <a class="el" href="CanBusSTM_8c.html#ac1ea07e729b2ead84c0c961de876b72c">CanBusSTM_ProcessRx</a>(<a class="el" href="structVentilator__t.html">Ventilator_t</a> *vent) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(flag_vent_aan) { flag_vent_aan=false;<a class="el" href="Ventilator_8c.html#a5aac35f0f97e54b6faab6213165d9b7f">Ventilator_AanGaan</a>(vent, 1);} <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(flag_vent_uit) { flag_vent_uit=false;<a class="el" href="Ventilator_8c.html#a9ed4df6071a98dd04aa65df9ca25ed6b">Ventilator_UitGaan</a>(vent, 0);} } void <a class="el" href="CanBusSTM_8c.html#a7368d39e78009c017d6f81ccf33b9b2c">HAL_CAN_RxFifo0MsgPendingCallback</a>(CAN_HandleTypeDef *hcan) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(hcan-&gt;Instance==CAN1) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &amp;<a class="el" href="main_8c.html#a6ee6e13063b860648180eea65852cc71">RxHeader</a>, <a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>)==HAL_OK) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(RxHeader.StdId==0x200 &amp;&amp;RxHeader.DLC &gt;=1) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(<a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[0]==0x01) flag_vent_aan=true;else <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(<a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[0]==0x00) flag_vent_uit=true;} } } }=======static CAN_RxHeaderTypeDef <a class="el" href="main_8c.html#a6ee6e13063b860648180eea65852cc71">RxHeader</a>;static uint8_t <a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[8];static volatile bool flag_vent_aan=false;static volatile bool flag_vent_uit=false;void CanBusSTM_Init(CAN_HandleTypeDef *hcan) { CAN_FilterTypeDef sFilterConfig;sFilterConfig.FilterBank=0;sFilterConfig.FilterMode=CAN_FILTERMODE_IDMASK;sFilterConfig.FilterScale=CAN_FILTERSCALE_32BIT;sFilterConfig.FilterIdHigh=0x0000;sFilterConfig.FilterIdLow=0x0000;sFilterConfig.FilterMaskIdHigh=0x0000;sFilterConfig.FilterMaskIdLow=0x0000;sFilterConfig.FilterFIFOAssignment=CAN_RX_FIFO0;sFilterConfig.FilterActivation=ENABLE;sFilterConfig.SlaveStartFilterBank=14;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ConfigFilter(hcan, &amp;sFilterConfig) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_Start(hcan) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();printf(&quot;[INFO] CanBusSTM succesvol gestart.\r\n&quot;);} void CanBusSTM_SendSensorData(CAN_HandleTypeDef *hcan, float <a class="el" href="main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, float <a class="el" href="main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a>, float <a class="el" href="main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8">hum</a>) { CAN_TxHeaderTypeDef TxHeader={0};uint32_t TxMailbox;uint8_t TxData[4];TxHeader.RTR=CAN_RTR_DATA;TxHeader.IDE=CAN_ID_STD;TxHeader.DLC=4;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CanBusSTM_8c.html#ae78520ca78f464fe2b746743394e0afd">memcpy</a> (TxData, &amp;<a class="el" href="main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, 4)</td></tr>
+<tr class="separator:ae78520ca78f464fe2b746743394e0afd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e3720fd96be5921b0f2d92157e4e8c3" id="r_a6e3720fd96be5921b0f2d92157e4e8c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CanBusSTM_8c.html#a6e3720fd96be5921b0f2d92157e4e8c3">HAL_CAN_AddTxMessage</a> (hcan, &amp;TxHeader, TxData, &amp;TxMailbox)</td></tr>
+<tr class="separator:a6e3720fd96be5921b0f2d92157e4e8c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a303e70d28a986a037f730d2210249a06" id="r_a303e70d28a986a037f730d2210249a06"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a> (HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; 0)</td></tr>
+<tr class="separator:a303e70d28a986a037f730d2210249a06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1ea07e729b2ead84c0c961de876b72c" id="r_ac1ea07e729b2ead84c0c961de876b72c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CanBusSTM_8c.html#ac1ea07e729b2ead84c0c961de876b72c">CanBusSTM_ProcessRx</a> (<a class="el" href="structVentilator__t.html">Ventilator_t</a> *vent)</td></tr>
 <tr class="separator:ac1ea07e729b2ead84c0c961de876b72c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7368d39e78009c017d6f81ccf33b9b2c" id="r_a7368d39e78009c017d6f81ccf33b9b2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CanBusSTM_8c.html#a7368d39e78009c017d6f81ccf33b9b2c">HAL_CAN_RxFifo0MsgPendingCallback</a> (CAN_HandleTypeDef *hcan)</td></tr>
 <tr class="separator:a7368d39e78009c017d6f81ccf33b9b2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a866605c9daab6f79bc27188f76de35a3" name="a866605c9daab6f79bc27188f76de35a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a866605c9daab6f79bc27188f76de35a3">&#9670;&#160;</a></span>CanBusSTM_Init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanBusSTM_Init </td>
-          <td>(</td>
-          <td class="paramtype">CAN_HandleTypeDef *&#160;</td>
-          <td class="paramname"><em>hcan</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="ac1ea07e729b2ead84c0c961de876b72c" name="ac1ea07e729b2ead84c0c961de876b72c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac1ea07e729b2ead84c0c961de876b72c">&#9670;&#160;</a></span>CanBusSTM_ProcessRx()</h2>
 
@@ -131,35 +115,35 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a68a8f2f304ef6c5f85b12c11ca022cb5" name="a68a8f2f304ef6c5f85b12c11ca022cb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68a8f2f304ef6c5f85b12c11ca022cb5">&#9670;&#160;</a></span>CanBusSTM_SendSensorData()</h2>
+<a id="a6e3720fd96be5921b0f2d92157e4e8c3" name="a6e3720fd96be5921b0f2d92157e4e8c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e3720fd96be5921b0f2d92157e4e8c3">&#9670;&#160;</a></span>HAL_CAN_AddTxMessage()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CanBusSTM_SendSensorData </td>
+          <td class="memname">HAL_CAN_AddTxMessage </td>
           <td>(</td>
-          <td class="paramtype">CAN_HandleTypeDef *&#160;</td>
-          <td class="paramname"><em>hcan</em>, </td>
+          <td class="paramtype">hcan&#160;</td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>co2</em>, </td>
+          <td class="paramtype">&amp;&#160;</td>
+          <td class="paramname"><em>TxHeader</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>temp</em>, </td>
+          <td class="paramtype">TxData&#160;</td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>hum</em>&#160;</td>
+          <td class="paramtype">&amp;&#160;</td>
+          <td class="paramname"><em>TxMailbox</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -183,6 +167,68 @@ Functions</h2></td></tr>
           <td class="paramtype">CAN_HandleTypeDef *&#160;</td>
           <td class="paramname"><em>hcan</em></td><td>)</td>
           <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a303e70d28a986a037f730d2210249a06" name="a303e70d28a986a037f730d2210249a06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a303e70d28a986a037f730d2210249a06">&#9670;&#160;</a></span>if()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">if </td>
+          <td>(</td>
+          <td class="paramtype">HAL_CAN_GetTxMailboxesFreeLevel(hcan)&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">0&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae78520ca78f464fe2b746743394e0afd" name="ae78520ca78f464fe2b746743394e0afd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae78520ca78f464fe2b746743394e0afd">&#9670;&#160;</a></span>memcpy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:Ventilator/CanBusSTM.c static CAN_RxHeaderTypeDef <a class="el" href="main_8c.html#a6ee6e13063b860648180eea65852cc71">RxHeader</a>;static uint8_t <a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[8];static volatile bool flag_vent_aan=false;static volatile bool flag_vent_uit=false;void CanBusSTM_Init(CAN_HandleTypeDef *hcan) { CAN_FilterTypeDef sFilterConfig;sFilterConfig.FilterBank=0;sFilterConfig.FilterMode=CAN_FILTERMODE_IDMASK;sFilterConfig.FilterScale=CAN_FILTERSCALE_32BIT;sFilterConfig.FilterIdHigh=0x0000;sFilterConfig.FilterIdLow=0x0000;sFilterConfig.FilterMaskIdHigh=0x0000;sFilterConfig.FilterMaskIdLow=0x0000;sFilterConfig.FilterFIFOAssignment=CAN_RX_FIFO0;sFilterConfig.FilterActivation=ENABLE;sFilterConfig.SlaveStartFilterBank=14;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ConfigFilter(hcan, &amp;sFilterConfig) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_Start(hcan) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();printf(&quot;[INFO] CanBusSTM succesvol gestart.\r\n&quot;);} void CanBusSTM_SendSensorData(CAN_HandleTypeDef *hcan, float <a class="el" href="main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, float <a class="el" href="main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a>, float <a class="el" href="main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8">hum</a>) { CAN_TxHeaderTypeDef TxHeader={0};uint32_t TxMailbox;uint8_t TxData[4];TxHeader.RTR=CAN_RTR_DATA;TxHeader.IDE=CAN_ID_STD;TxHeader.DLC=4;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; 0) { TxHeader.StdId=0x100;memcpy(TxData, &amp;<a class="el" href="main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, 4);<a class="el" href="CanBusSTM_8c.html#a6e3720fd96be5921b0f2d92157e4e8c3">HAL_CAN_AddTxMessage</a>(hcan, &amp;TxHeader, TxData, &amp;TxMailbox);} <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; 0) { TxHeader.StdId=0x101;memcpy(TxData, &amp;<a class="el" href="main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a>, 4);<a class="el" href="CanBusSTM_8c.html#a6e3720fd96be5921b0f2d92157e4e8c3">HAL_CAN_AddTxMessage</a>(hcan, &amp;TxHeader, TxData, &amp;TxMailbox);} <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; 0) { TxHeader.StdId=0x102;memcpy(TxData, &amp;<a class="el" href="main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8">hum</a>, 4);<a class="el" href="CanBusSTM_8c.html#a6e3720fd96be5921b0f2d92157e4e8c3">HAL_CAN_AddTxMessage</a>(hcan, &amp;TxHeader, TxData, &amp;TxMailbox);} } void <a class="el" href="CanBusSTM_8c.html#ac1ea07e729b2ead84c0c961de876b72c">CanBusSTM_ProcessRx</a>(<a class="el" href="structVentilator__t.html">Ventilator_t</a> *vent) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(flag_vent_aan) { flag_vent_aan=false;<a class="el" href="Ventilator_8c.html#a5aac35f0f97e54b6faab6213165d9b7f">Ventilator_AanGaan</a>(vent, 1);} <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(flag_vent_uit) { flag_vent_uit=false;<a class="el" href="Ventilator_8c.html#a9ed4df6071a98dd04aa65df9ca25ed6b">Ventilator_UitGaan</a>(vent, 0);} } void <a class="el" href="CanBusSTM_8c.html#a7368d39e78009c017d6f81ccf33b9b2c">HAL_CAN_RxFifo0MsgPendingCallback</a>(CAN_HandleTypeDef *hcan) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(hcan-&gt;Instance==CAN1) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &amp;<a class="el" href="main_8c.html#a6ee6e13063b860648180eea65852cc71">RxHeader</a>, <a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>)==HAL_OK) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(RxHeader.StdId==0x200 &amp;&amp;RxHeader.DLC &gt;=1) { <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(<a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[0]==0x01) flag_vent_aan=true;else <a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(<a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[0]==0x00) flag_vent_uit=true;} } } }=======static CAN_RxHeaderTypeDef <a class="el" href="main_8c.html#a6ee6e13063b860648180eea65852cc71">RxHeader</a>;static uint8_t <a class="el" href="main_8c.html#a14629afcc7f0b2d62c2b617b07d98184">RxData</a>[8];static volatile bool flag_vent_aan=false;static volatile bool flag_vent_uit=false;void CanBusSTM_Init(CAN_HandleTypeDef *hcan) { CAN_FilterTypeDef sFilterConfig;sFilterConfig.FilterBank=0;sFilterConfig.FilterMode=CAN_FILTERMODE_IDMASK;sFilterConfig.FilterScale=CAN_FILTERSCALE_32BIT;sFilterConfig.FilterIdHigh=0x0000;sFilterConfig.FilterIdLow=0x0000;sFilterConfig.FilterMaskIdHigh=0x0000;sFilterConfig.FilterMaskIdLow=0x0000;sFilterConfig.FilterFIFOAssignment=CAN_RX_FIFO0;sFilterConfig.FilterActivation=ENABLE;sFilterConfig.SlaveStartFilterBank=14;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ConfigFilter(hcan, &amp;sFilterConfig) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_Start(hcan) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) !=HAL_OK) <a class="el" href="main_8c.html#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a>();printf(&quot;[INFO] CanBusSTM succesvol gestart.\r\n&quot;);} void CanBusSTM_SendSensorData(CAN_HandleTypeDef *hcan, float <a class="el" href="main_8c.html#aebc87043e24425e76950cf38e12d62da">co2</a>, float <a class="el" href="main_8c.html#a57fcd0183b27d40f319e55f47806a01a">temp</a>, float <a class="el" href="main_8c.html#abccbe6737072d3e47e3f3c1ecec74fb8">hum</a>) { CAN_TxHeaderTypeDef TxHeader={0};uint32_t TxMailbox;uint8_t TxData[4];TxHeader.RTR=CAN_RTR_DATA;TxHeader.IDE=CAN_ID_STD;TxHeader.DLC=4;<a class="el" href="CanBusSTM_8c.html#a303e70d28a986a037f730d2210249a06">if</a>(HAL_CAN_GetTxMailboxesFreeLevel(hcan) &gt; memcpy </td>
+          <td>(</td>
+          <td class="paramtype">TxData&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&amp;&#160;</td>
+          <td class="paramname"><em>co2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">4&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

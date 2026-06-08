@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DoxyTest: Ventilator/Ventilator.h Source File</title>
+<title>DoxyTest: STM/Ventilator.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -75,42 +75,50 @@ $(document).ready(function() { init_codefold(0); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_676811de4acd01c39e2768ba98d182fd.html">Ventilator</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_327c904981e4abecaa1a81e309b923cb.html">STM</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">Ventilator.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="Ventilator_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef VENTILATOR_H_</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define VENTILATOR_H_</span></div>
+<a href="Ventilator_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef VENTILATOR_H</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define VENTILATOR_H</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="main_8h.html">main.h</a>&quot;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="foldopen" id="foldopen00007" data-start="{" data-end="};">
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="structVentilator__t.html">    7</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1">    8</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1">isAan</a>;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="structVentilator__t.html#a193d4ddafc6452ca1d486722bcf5b16a">    9</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structVentilator__t.html#a193d4ddafc6452ca1d486722bcf5b16a">overRule</a>;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>} <a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// VENTILATOR_Pin en VENTILATOR_GPIO_Port komen uit main.h (PB0 = D3)</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="foldopen" id="foldopen00009" data-start="{" data-end="};">
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="structVentilator__t.html">    9</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1">   10</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1">isAan</a>;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="structVentilator__t.html#a021231bb8c0c212e52f6eacf5114331e">   11</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structVentilator__t.html#a021231bb8c0c212e52f6eacf5114331e">wasAan</a>;          <span class="comment">// Onthoudt de staat vóór het brandalarm</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="structVentilator__t.html#ad243f2a822cd3d0a8ca4105775d47b8e">   12</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structVentilator__t.html#ad243f2a822cd3d0a8ca4105775d47b8e">noodstopActief</a>;  <span class="comment">// Blokkeert alles bij brandalarm</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structVentilator__t.html#a535e78233e69e0f6061d23be38c30dc6">   13</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structVentilator__t.html#a535e78233e69e0f6061d23be38c30dc6">handmatigModus</a>;  <span class="comment">// Handmatige bediening, negeert RPi</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>} <a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>;</div>
 </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#ad64926d86b7510bf639815cf6fd3cf08">Ventilator_Create</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent);</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#a5aac35f0f97e54b6faab6213165d9b7f">Ventilator_AanGaan</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent, <span class="keywordtype">int</span> Status);</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#a9ed4df6071a98dd04aa65df9ca25ed6b">Ventilator_UitGaan</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent, <span class="keywordtype">int</span> Status);</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#a10576c7007ffe80b87c5a75fd4034005">Ventilator_noodStop</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent);</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">bool</span> <a class="code hl_function" href="Ventilator_8h.html#a27cd2edc4f3bee103a2bc4fe54e8b4d5">Ventilator_getIsAan</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent);</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#endif </span><span class="comment">/* VENTILATOR_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#ad64926d86b7510bf639815cf6fd3cf08">Ventilator_Create</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent);</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#a5aac35f0f97e54b6faab6213165d9b7f">Ventilator_AanGaan</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent, <span class="keywordtype">int</span> Status);</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#a9ed4df6071a98dd04aa65df9ca25ed6b">Ventilator_UitGaan</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent, <span class="keywordtype">int</span> Status);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#a10576c7007ffe80b87c5a75fd4034005">Ventilator_noodStop</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="Ventilator_8h.html#addeef8cd40a3e005eac918a8f262bc3a">   20</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="Ventilator_8h.html#addeef8cd40a3e005eac918a8f262bc3a">Ventilator_HerstelStatus</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keywordtype">bool</span> <a class="code hl_function" href="Ventilator_8h.html#a27cd2edc4f3bee103a2bc4fe54e8b4d5">Ventilator_getIsAan</a>(<a class="code hl_struct" href="structVentilator__t.html">Ventilator_t</a>* vent);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#endif </span><span class="comment">// VENTILATOR_H</span></div>
 <div class="ttc" id="aVentilator_8h_html_a10576c7007ffe80b87c5a75fd4034005"><div class="ttname"><a href="Ventilator_8h.html#a10576c7007ffe80b87c5a75fd4034005">Ventilator_noodStop</a></div><div class="ttdeci">void Ventilator_noodStop(Ventilator_t *vent)</div><div class="ttdef"><b>Definition</b> Ventilator.c:21</div></div>
 <div class="ttc" id="aVentilator_8h_html_a27cd2edc4f3bee103a2bc4fe54e8b4d5"><div class="ttname"><a href="Ventilator_8h.html#a27cd2edc4f3bee103a2bc4fe54e8b4d5">Ventilator_getIsAan</a></div><div class="ttdeci">bool Ventilator_getIsAan(Ventilator_t *vent)</div><div class="ttdef"><b>Definition</b> Ventilator.c:27</div></div>
 <div class="ttc" id="aVentilator_8h_html_a5aac35f0f97e54b6faab6213165d9b7f"><div class="ttname"><a href="Ventilator_8h.html#a5aac35f0f97e54b6faab6213165d9b7f">Ventilator_AanGaan</a></div><div class="ttdeci">void Ventilator_AanGaan(Ventilator_t *vent, int Status)</div><div class="ttdef"><b>Definition</b> Ventilator.c:9</div></div>
 <div class="ttc" id="aVentilator_8h_html_a9ed4df6071a98dd04aa65df9ca25ed6b"><div class="ttname"><a href="Ventilator_8h.html#a9ed4df6071a98dd04aa65df9ca25ed6b">Ventilator_UitGaan</a></div><div class="ttdeci">void Ventilator_UitGaan(Ventilator_t *vent, int Status)</div><div class="ttdef"><b>Definition</b> Ventilator.c:15</div></div>
 <div class="ttc" id="aVentilator_8h_html_ad64926d86b7510bf639815cf6fd3cf08"><div class="ttname"><a href="Ventilator_8h.html#ad64926d86b7510bf639815cf6fd3cf08">Ventilator_Create</a></div><div class="ttdeci">void Ventilator_Create(Ventilator_t *vent)</div><div class="ttdef"><b>Definition</b> Ventilator.c:4</div></div>
+<div class="ttc" id="aVentilator_8h_html_addeef8cd40a3e005eac918a8f262bc3a"><div class="ttname"><a href="Ventilator_8h.html#addeef8cd40a3e005eac918a8f262bc3a">Ventilator_HerstelStatus</a></div><div class="ttdeci">void Ventilator_HerstelStatus(Ventilator_t *vent)</div></div>
 <div class="ttc" id="amain_8h_html"><div class="ttname"><a href="main_8h.html">main.h</a></div><div class="ttdoc">: Header for main.c file. This file contains the common defines of the application.</div></div>
-<div class="ttc" id="astructVentilator__t_html"><div class="ttname"><a href="structVentilator__t.html">Ventilator_t</a></div><div class="ttdef"><b>Definition</b> Ventilator.h:7</div></div>
-<div class="ttc" id="astructVentilator__t_html_a193d4ddafc6452ca1d486722bcf5b16a"><div class="ttname"><a href="structVentilator__t.html#a193d4ddafc6452ca1d486722bcf5b16a">Ventilator_t::overRule</a></div><div class="ttdeci">bool overRule</div><div class="ttdef"><b>Definition</b> Ventilator.h:9</div></div>
-<div class="ttc" id="astructVentilator__t_html_ac7b936388bd555bcdb1029c5eac327a1"><div class="ttname"><a href="structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1">Ventilator_t::isAan</a></div><div class="ttdeci">bool isAan</div><div class="ttdef"><b>Definition</b> Ventilator.h:8</div></div>
+<div class="ttc" id="astructVentilator__t_html"><div class="ttname"><a href="structVentilator__t.html">Ventilator_t</a></div><div class="ttdef"><b>Definition</b> Ventilator.h:9</div></div>
+<div class="ttc" id="astructVentilator__t_html_a021231bb8c0c212e52f6eacf5114331e"><div class="ttname"><a href="structVentilator__t.html#a021231bb8c0c212e52f6eacf5114331e">Ventilator_t::wasAan</a></div><div class="ttdeci">bool wasAan</div><div class="ttdef"><b>Definition</b> Ventilator.h:11</div></div>
+<div class="ttc" id="astructVentilator__t_html_a535e78233e69e0f6061d23be38c30dc6"><div class="ttname"><a href="structVentilator__t.html#a535e78233e69e0f6061d23be38c30dc6">Ventilator_t::handmatigModus</a></div><div class="ttdeci">bool handmatigModus</div><div class="ttdef"><b>Definition</b> Ventilator.h:13</div></div>
+<div class="ttc" id="astructVentilator__t_html_ac7b936388bd555bcdb1029c5eac327a1"><div class="ttname"><a href="structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1">Ventilator_t::isAan</a></div><div class="ttdeci">bool isAan</div><div class="ttdef"><b>Definition</b> Ventilator.h:10</div></div>
+<div class="ttc" id="astructVentilator__t_html_ad243f2a822cd3d0a8ca4105775d47b8e"><div class="ttname"><a href="structVentilator__t.html#ad243f2a822cd3d0a8ca4105775d47b8e">Ventilator_t::noodstopActief</a></div><div class="ttdeci">bool noodstopActief</div><div class="ttdef"><b>Definition</b> Ventilator.h:12</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <hr class="footer"/><address class="footer"><small>
 Generated by Doxygen

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['error_5fhandler_0',['error_handler',['../Ventilator_2main_8c.html#a1730ffe1e560465665eb47d9264826f9',1,'Error_Handler(void):&#160;main.c'],['../main_8h.html#a1730ffe1e560465665eb47d9264826f9',1,'Error_Handler(void):&#160;main.c']]]
+  ['6_20rpi_20wemos_20qt6_20dashboard_20op_20de_20wemos_20pi_0',['6. RPI-WEMOS (Qt6 dashboard) op de WEMOS-Pi',['../md_UPLOAD__GIDS.html#autotoc_md14',1,'']]]
 ];

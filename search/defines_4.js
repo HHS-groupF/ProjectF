@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['swclk_5fgpio_5fport_0',['SWCLK_GPIO_Port',['../main_8h.html#a54d419ccaa2653d1bceae3f1a7206890',1,'main.h']]],
-  ['swclk_5fpin_1',['SWCLK_Pin',['../main_8h.html#ad2e9165c92edc48968db01ca88c27822',1,'main.h']]],
-  ['swdio_5fgpio_5fport_2',['SWDIO_GPIO_Port',['../main_8h.html#a0d6c5c9d267a552e5bb02eb57498f683',1,'main.h']]],
-  ['swdio_5fpin_3',['SWDIO_Pin',['../main_8h.html#ac30893c7c5dd78cf02632dc653c3e74e',1,'main.h']]]
+  ['dec_0',['DEC',['../CMakeCXXCompilerId_8cpp.html#ad1280362da42492bbc11aa78cbf776ad',1,'CMakeCXXCompilerId.cpp']]],
+  ['drukknop_5fgpio_5fport_1',['DRUKKNOP_GPIO_Port',['../main_8h.html#a159591114a185456bcc44a3a07c0b46f',1,'main.h']]],
+  ['drukknop_5fpin_2',['DRUKKNOP_Pin',['../main_8h.html#a966f81c41bc2afb542d63a48e09cb2da',1,'main.h']]]
 ];

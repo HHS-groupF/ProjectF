@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['socketcommunicatie_0',['SocketCommunicatie',['../classSocketCommunicatie.html',1,'']]]
+  ['pirsensor_0',['PirSensor',['../classPirSensor.html',1,'']]]
 ];

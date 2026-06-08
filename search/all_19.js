@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['readme_2emd_0',['README.md',['../README_8md.html',1,'']]],
+  ['red_5fpin_1',['RED_PIN',['../Sensor_2config_8h.html#ab4bef9ac328c0fce714520bb566f723d',1,'config.h']]],
+  ['resettafel_2',['resetTafel',['../classCentraalBesturingssysteemRPIWEMOS.html#a8948f6b094527c31236335d9d9190877',1,'CentraalBesturingssysteemRPIWEMOS']]],
+  ['retranslateui_3',['retranslateUi',['../classUi__MainWindow.html#a097dd160c3534a204904cb374412c618',1,'Ui_MainWindow']]],
+  ['rgb_5fblauw_4',['RGB_BLAUW',['../namespaceConfig.html#a858ba145ced3664dbd9054d370c57f32',1,'Config']]],
+  ['rgb_5fgroen_5',['RGB_GROEN',['../namespaceConfig.html#a1476716c502944c1156777a0b527b4aa',1,'Config']]],
+  ['rgb_5frood_6',['RGB_ROOD',['../namespaceConfig.html#a83082f29d1b82270051f1f2ea5c4a640',1,'Config']]],
+  ['rgb_5fwarm_7',['RGB_WARM',['../namespaceConfig.html#a8fad54eafe2187dc97bc9761566ce3be',1,'Config']]],
+  ['rgb_5fwit_8',['RGB_WIT',['../namespaceConfig.html#aa4ba2d2bd2ae3b711a59e1925271af62',1,'Config']]],
+  ['rgblampen_9',['rgblampen',['../classRGBLampen.html#a378e1a919c64bce1d69047dca486fbff',1,'RGBLampen::RGBLampen()'],['../classRGBLampen.html',1,'RGBLampen']]],
+  ['rgblampen_2ecpp_10',['RGBLampen.cpp',['../RGBLampen_8cpp.html',1,'']]],
+  ['rgblampen_2eh_11',['RGBLampen.h',['../RGBLampen_8h.html',1,'']]],
+  ['rgbstatusgewijzigd_12',['rgbStatusGewijzigd',['../classCentraalBesturingssysteemRPIWEMOS.html#a8a5d2fd2dbc287b888beb247426f632b',1,'CentraalBesturingssysteemRPIWEMOS']]],
+  ['rpi_20bus_20↔_20rpi_20wemos_13',['A.2 — Bifrost op de Pi ↔ Pi-link (RPI-BUS ↔ RPI-WEMOS)',['../md_UPLOAD__GIDS.html#autotoc_md28',1,'']]],
+  ['rpi_20bus_20qt6_20op_20de_20bus_20pi_14',['5. RPI-BUS (Qt6) op de BUS-Pi',['../md_UPLOAD__GIDS.html#autotoc_md12',1,'']]],
+  ['rpi_20wemos_20qt6_20dashboard_20op_20de_20wemos_20pi_15',['6. RPI-WEMOS (Qt6 dashboard) op de WEMOS-Pi',['../md_UPLOAD__GIDS.html#autotoc_md14',1,'']]],
+  ['rpi_5fbus_5fip_16',['RPI_BUS_IP',['../namespaceConfig.html#a27ba7739239149b4862399632e93d469',1,'Config']]],
+  ['rpi_5fwemos_5fip_17',['RPI_WEMOS_IP',['../namespaceConfig.html#a278983ac47b9baab6695cc0a125b8ffd',1,'Config']]],
+  ['rpibus_5fsocket_2ecpp_18',['RPIBUS_Socket.cpp',['../RPIBUS__Socket_8cpp.html',1,'']]],
+  ['rpiwemos_5fsocket_2ecpp_19',['RPIWEMOS_Socket.cpp',['../RPIWEMOS__Socket_8cpp.html',1,'']]],
+  ['runecallback_20',['runecallback',['../Sensor_2SocketWemos_8h.html#a26ebb743cb44a703cd2331692966d59a',1,'RuneCallback:&#160;SocketWemos.h'],['../Wemos-tafel_2SocketWemos_8h.html#a26ebb743cb44a703cd2331692966d59a',1,'RuneCallback:&#160;SocketWemos.h']]],
+  ['runeontvangen_21',['runeOntvangen',['../classHeimdall.html#a6a9e1b6d8ce7cf7f202260ada7db862b',1,'Heimdall']]],
+  ['rxdata_22',['RxData',['../main_8c.html#a14629afcc7f0b2d62c2b617b07d98184',1,'main.c']]],
+  ['rxheader_23',['RxHeader',['../main_8c.html#a6ee6e13063b860648180eea65852cc71',1,'main.c']]]
+];

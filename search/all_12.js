@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['update_0',['update',['../classTafel.html#af54d430974de3ffbb0e87ed3b6f09992',1,'Tafel']]]
+  ['klassendiagram_0',['klassendiagram',['../classdiagram.html',1,'Systeem Architectuur Klassendiagram'],['../classdiagram.html#autotoc_md0',1,'Systeem Architectuur Klassendiagram']]],
+  ['klassendiagram_2emd_1',['klassendiagram.md',['../klassendiagram_8md.html',1,'']]]
 ];

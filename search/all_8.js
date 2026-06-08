@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['isaan_0',['isAan',['../structVentilator__t.html#ac7b936388bd555bcdb1029c5eac327a1',1,'Ventilator_t']]],
-  ['isconnected_1',['isConnected',['../classNetwerkManager.html#a2654520a87bb9a337b4e38db738852d6',1,'NetwerkManager']]]
+  ['9_20ventilator_20stm32_20via_20stm32cubeide_0',['9. Ventilator (STM32) via STM32CubeIDE',['../md_UPLOAD__GIDS.html#autotoc_md20',1,'']]]
 ];

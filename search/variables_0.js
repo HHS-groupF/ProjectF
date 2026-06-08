@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['co2_0',['co2',['../Ventilator_2main_8c.html#aebc87043e24425e76950cf38e12d62da',1,'main.c']]]
+  ['blue_5fpin_0',['BLUE_PIN',['../Sensor_2config_8h.html#a380ccb5531e9586c3aac87393fab9822',1,'config.h']]]
 ];

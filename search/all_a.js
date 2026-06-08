@@ -1,14 +1,14 @@
 var searchData=
 [
-  ['ld3_5fgpio_5fport_0',['LD3_GPIO_Port',['../main_8h.html#ae851c2d6146e6d4fac9f4a9983f5cf1f',1,'main.h']]],
-  ['ld3_5fpin_1',['LD3_Pin',['../main_8h.html#a71154fae0eacbdf882bd1481164f0652',1,'main.h']]],
-  ['loop_2',['loop',['../classNetwerkManager.html#a2171459a35175f8dcfbdcd2e50c83727',1,'NetwerkManager']]],
-  ['luchtvochtigheidsensor_2ec_3',['LuchtvochtigheidSensor.c',['../LuchtvochtigheidSensor_8c.html',1,'']]],
-  ['luchtvochtigheidsensor_2eh_4',['LuchtvochtigheidSensor.h',['../LuchtvochtigheidSensor_8h.html',1,'']]],
-  ['luchtvochtigheidsensor_5fcreate_5',['luchtvochtigheidsensor_create',['../LuchtvochtigheidSensor_8c.html#a6134d9858da124ed44a0be0e6a796dca',1,'LuchtvochtigheidSensor_Create(LuchtvochtigheidSensor_t *sensor, I2C_HandleTypeDef *edge_i2c, float initieleGrens):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a6134d9858da124ed44a0be0e6a796dca',1,'LuchtvochtigheidSensor_Create(LuchtvochtigheidSensor_t *sensor, I2C_HandleTypeDef *edge_i2c, float initieleGrens):&#160;LuchtvochtigheidSensor.c']]],
-  ['luchtvochtigheidsensor_5fgrensoverschreden_6',['luchtvochtigheidsensor_grensoverschreden',['../LuchtvochtigheidSensor_8c.html#a40afd5524213bd5a37bf898852241928',1,'LuchtvochtigheidSensor_grensOverschreden(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a40afd5524213bd5a37bf898852241928',1,'LuchtvochtigheidSensor_grensOverschreden(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c']]],
-  ['luchtvochtigheidsensor_5fleesmeting_7',['luchtvochtigheidsensor_leesmeting',['../LuchtvochtigheidSensor_8c.html#a3f637f04429213888f953adf6b3c0ac6',1,'LuchtvochtigheidSensor_LeesMeting(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a3f637f04429213888f953adf6b3c0ac6',1,'LuchtvochtigheidSensor_LeesMeting(LuchtvochtigheidSensor_t *sensor):&#160;LuchtvochtigheidSensor.c']]],
-  ['luchtvochtigheidsensor_5fsetgrenswaarde_8',['luchtvochtigheidsensor_setgrenswaarde',['../LuchtvochtigheidSensor_8c.html#a7b7b26268134b3bf67afa7cf6f59d42f',1,'LuchtvochtigheidSensor_setGrenswaarde(LuchtvochtigheidSensor_t *sensor, float nieuweWaarde):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#a7b7b26268134b3bf67afa7cf6f59d42f',1,'LuchtvochtigheidSensor_setGrenswaarde(LuchtvochtigheidSensor_t *sensor, float nieuweWaarde):&#160;LuchtvochtigheidSensor.c']]],
-  ['luchtvochtigheidsensor_5fstartmeting_9',['luchtvochtigheidsensor_startmeting',['../LuchtvochtigheidSensor_8c.html#acd0e64c8763ae6ac48969abeb17300b5',1,'LuchtvochtigheidSensor_StartMeting(LuchtvochtigheidSensor_t *sensor, TIM_HandleTypeDef *htim):&#160;LuchtvochtigheidSensor.c'],['../LuchtvochtigheidSensor_8h.html#acd0e64c8763ae6ac48969abeb17300b5',1,'LuchtvochtigheidSensor_StartMeting(LuchtvochtigheidSensor_t *sensor, TIM_HandleTypeDef *htim):&#160;LuchtvochtigheidSensor.c']]],
-  ['luchtvochtigheidsensor_5ft_10',['LuchtvochtigheidSensor_t',['../structLuchtvochtigheidSensor__t.html',1,'']]]
+  ['a_20—_20het_20bifrost_20protocol_0',['Bijlage A — Het Bifrost-protocol',['../md_UPLOAD__GIDS.html#autotoc_md26',1,'']]],
+  ['a_201_20—_20bifrost_20op_20de_20pi_20↔_20wemos_20link_1',['A.1 — Bifrost op de Pi ↔ Wemos-link',['../md_UPLOAD__GIDS.html#autotoc_md27',1,'']]],
+  ['a_202_20—_20bifrost_20op_20de_20pi_20↔_20pi_20link_20rpi_20bus_20↔_20rpi_20wemos_2',['A.2 — Bifrost op de Pi ↔ Pi-link (RPI-BUS ↔ RPI-WEMOS)',['../md_UPLOAD__GIDS.html#autotoc_md28',1,'']]],
+  ['aangaan_3',['aangaan',['../classRGBLampen.html#a48d132287d994dea6acd6e0aed906d3d',1,'RGBLampen']]],
+  ['abi_5fid_4',['ABI_ID',['../moc__predefs_8h.html#a12ae39ceaadaa474ba09d20fba083f68',1,'moc_predefs.h']]],
+  ['activeerbrandoverrule_5',['activeerBrandOverrule',['../classCentraalBesturingssysteemRPIWEMOS.html#aeec37451075910a9c22050c31e35f6c3',1,'CentraalBesturingssysteemRPIWEMOS']]],
+  ['adressen_20gelijkzetten_6',['2. Netwerk &amp; poorten — eerst alle adressen gelijkzetten',['../md_UPLOAD__GIDS.html#autotoc_md6',1,'']]],
+  ['alle_20adressen_20gelijkzetten_7',['2. Netwerk &amp; poorten — eerst alle adressen gelijkzetten',['../md_UPLOAD__GIDS.html#autotoc_md6',1,'']]],
+  ['architecture_5fid_8',['ARCHITECTURE_ID',['../CMakeCXXCompilerId_8cpp.html#aba35d0d200deaeb06aee95ca297acb28',1,'CMakeCXXCompilerId.cpp']]],
+  ['architectuur_20de_20drie_20verbindingen_9',['Bijlage B — Architectuur &amp; de drie verbindingen',['../md_UPLOAD__GIDS.html#autotoc_md30',1,'']]],
+  ['architectuur_20klassendiagram_10',['architectuur klassendiagram',['../classdiagram.html',1,'Systeem Architectuur Klassendiagram'],['../classdiagram.html#autotoc_md0',1,'Systeem Architectuur Klassendiagram']]]
 ];
