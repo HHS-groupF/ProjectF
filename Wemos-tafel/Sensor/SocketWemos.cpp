@@ -28,7 +28,7 @@ void SocketWemos::verbindServer() {
   Serial.print(_serverIp); Serial.print(":"); Serial.println(_serverPoort);
 
   if (_client.connect(_serverIp, _serverPoort)) {
-    _client.setNoDelay(true);   // geen Nagle-buffering: Runes meteen versturen
+    _client.setNoDelay(true);
     Serial.println("[Bifrost] verbonden met Heimdall.");
   } else {
     Serial.println("[Bifrost] verbinden mislukt, opnieuw proberen...");
@@ -42,7 +42,6 @@ void SocketWemos::loop() {
   }
 
   if (!_client.connected()) {
-    // Niet-blokkerende herverbind: één poging per 3 seconden.
     if (millis() - _laatsteHerverbindTijd >= 3000) verbindServer();
     return;
   }
