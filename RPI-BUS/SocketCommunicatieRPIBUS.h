@@ -8,14 +8,7 @@
 #include <mutex>
 #include <QTimer>
 
-// ============================================================================
-//  SocketCommunicatieRPIBUS — eigen socket-implementatie (rauwe BSD-sockets,
-//  geen QTcpSocket/library). De interface is identiek gebleven aan de vorige
-//  versie, zodat de rest van de code ongewijzigd blijft.
-//
-//  - Luistert op POORT_RPIBUS_COMMANDS voor binnenkomende commando's van RPI-WEMOS.
-//  - Verbindt naar RPI-WEMOS:POORT_WEMOS_DATA om sensordata te versturen.
-// ============================================================================
+
 class SocketCommunicatieRPIBUS : public QObject {
     Q_OBJECT
 
@@ -31,11 +24,11 @@ signals:
 private slots:
     void verzendHeartbeat();
 private:
-    void luisterLus();                // accepteert + leest commando's (eigen thread)
-    bool zorgVoorSensorVerbinding();  // (her)verbindt de sensor-socket naar RPI-WEMOS
+    void luisterLus();               
+    bool zorgVoorSensorVerbinding();  
 
-    int serverFd = -1;   // luistert op POORT_RPIBUS_COMMANDS
-    int sensorFd = -1;   // verbinding naar RPI-WEMOS voor sensordata
+    int serverFd = -1;   
+    int sensorFd = -1;   
 
     std::atomic<bool> gestopt{false};
     std::thread luisterThread;
