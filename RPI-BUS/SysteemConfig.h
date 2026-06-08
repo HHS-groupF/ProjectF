@@ -8,8 +8,8 @@ namespace Config {
 const QString RPI_WEMOS_IP = "145.52.127.190";
 const QString RPI_BUS_IP   = "145.52.127.183";
 
-constexpr int POORT_WEMOS_DATA      = 8080; // Waar WEMOS op luistert (binnenkomende sensordata)
-constexpr int POORT_RPIBUS_COMMANDS = 8081; // Waar RPI-BUS op luistert (binnenkomende commando's)
+constexpr int POORT_WEMOS_DATA      = 8080; 
+constexpr int POORT_RPIBUS_COMMANDS = 8081; 
 
 // Sensor Drempelwaarden (Limieten)
 constexpr double TEMP_WAARSCHUWING = 28.0;
@@ -21,11 +21,11 @@ constexpr double CO2_BRAND         = 1500.0;
 constexpr double HUM_WAARSCHUWING  = 65.0;
 
 // Timers & Intervallen (in milliseconden)
-constexpr int SENSOR_TIMER_INTERVAL = 2000; // Interval voor het genereren/uitlezen van sensoren
-constexpr int UI_TIMER_INTERVAL     = 100;  // Refresh rate van het dashboard
+constexpr int SENSOR_TIMER_INTERVAL = 2000; 
+constexpr int UI_TIMER_INTERVAL     = 100;  
 
-constexpr uint32_t STM32_BRANDALARM_ID = 0x010; // Hoge prioriteit voor brand! (was 0x400)
-constexpr uint32_t STM32_VENTILATOR_ID = 0x200; // Normale prioriteit
+constexpr uint32_t STM32_BRANDALARM_ID = 0x010; 
+constexpr uint32_t STM32_VENTILATOR_ID = 0x200; 
 }
 
 #endif // SYSTEEMCONFIG_H
