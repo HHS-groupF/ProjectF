@@ -711,9 +711,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QCheckBox" name="checkBox_RGB_Auto">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>490</y>
-      <width>245</width>
+      <x>580</x>
+      <y>692</y>
+      <width>280</width>
       <height>24</height>
      </rect>
     </property>

@@ -41,7 +41,6 @@ void CentraalBesturingssysteemRPIWEMOS::verwerkBifrostRune(const QString &topic,
     // sensor/beweging  ->  JA / NEE  (stuurt in automatische modus de RGB)
     else if (topic == "sensor/beweging") {
         bool beweging = (payload == "JA");
-        laatsteBeweging = beweging;
         emit bewegingStatusGewijzigd(beweging);
 
         if (rgbAutoModus) {
@@ -78,9 +77,9 @@ void CentraalBesturingssysteemRPIWEMOS::zetRgbAutoModus(bool aan)
 void CentraalBesturingssysteemRPIWEMOS::zetRgbKleurKeuze(const QString &kleurNaam)
 {
     rgbKleurKeuze = kleurNaam;
-    // In automatische modus met actieve beweging: pas de nieuwe kleur meteen toe
-    // (anders verandert de kleur pas bij de volgende beweging).
-    if (rgbAutoModus && laatsteBeweging) zetRgbKleur(rgbKleurKeuze);
+    // In automatische modus: pas de gekozen kleur meteen toe (live), zodat je je
+    // keuze direct ziet en niet pas bij de volgende beweging.
+    if (rgbAutoModus) zetRgbKleur(rgbKleurKeuze);
 }
 
 bool CentraalBesturingssysteemRPIWEMOS::kleurNaarWaarde(const QString &naam, QString &rgbWaarde) const

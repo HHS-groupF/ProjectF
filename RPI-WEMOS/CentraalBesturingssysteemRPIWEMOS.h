@@ -37,7 +37,6 @@ signals:
 private:
     bool rgbAutoModus = true;        // standaard: RGB volgt de bewegingssensor
     QString rgbKleurKeuze = "Wit";   // laatst gekozen kleur in de combobox
-    bool laatsteBeweging = false;    // huidige bewegingsstatus (voor directe kleurupdate)
     bool kleurNaarWaarde(const QString &naam, QString &rgbWaarde) const;
 };
 
