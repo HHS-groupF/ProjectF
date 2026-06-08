@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // TOEGEVOEGD: Beperk het RAM-geheugen van de textbrowsers tot 100 regels
+    // Beperk het RAM-geheugen van de textbrowsers tot 100 regels
     ui->textBrowser_Logboek->document()->setMaximumBlockCount(100);
     ui->textBrowser_Socket->document()->setMaximumBlockCount(100);
 
