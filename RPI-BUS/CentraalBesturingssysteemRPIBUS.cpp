@@ -33,7 +33,7 @@ void CentraalBesturingssysteemRPIBUS::verwerkCommando(const QString &commando) {
             // Schakel na 5 seconden (5000 milliseconden) de overrule automatisch weer uit
             QTimer::singleShot(5000, this, [this]() {
                 isOverruleActief = false;
-                controleerLimieten(); // Herbereken de status om de normale monitoring te hervatten
+                controleerLimieten(); 
             });
 
             controleerLimieten(); 
@@ -49,10 +49,9 @@ void CentraalBesturingssysteemRPIBUS::verwerkStmNoodstopReset() {
     // Stuur een melding naar de WEMOS zodat de actie in het logboek verschijnt
     emit stuurNetwerkData("LOG STM32 Fysieke brandoverrule-knop ingedrukt!\n");
     
-    // Start exact dezelfde timer van 5 seconden voor de fysieke knop
     QTimer::singleShot(5000, this, [this]() {
         isOverruleActief = false;
-        controleerLimieten(); // Herbereken de status om de normale monitoring te hervatten
+        controleerLimieten(); 
     });
 
     controleerLimieten();
