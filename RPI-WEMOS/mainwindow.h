@@ -1,0 +1,85 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+#include <QTimer>
+#include <QElapsedTimer>
+#include <QMap>
+#include <QLabel>
+
+#include <QChart>
+#include <QChartView>
+#include <QLineSeries>
+#include <QValueAxis>
+
+#include "SocketCommunicatieRPIWEMOS.h"
+#include "CentraalBesturingssysteemRPIWEMOS.h"
+#include "Heimdall.h"
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+private slots:
+    void updateScherm();
+    void on_pushButton_Update_Lichtkrant_clicked();
+    void on_pushButton_Brandoverruleknop_clicked();
+    void on_pushButton_Reset_Tafel_clicked();
+    void on_pushButton_Stuur_Menu_clicked();
+    void on_pushButton_RGB_Set_clicked();
+    void on_pushButton_RGB_Uit_clicked();
+    void on_checkBox_RGB_Auto_toggled(bool checked);
+private:
+    Ui::MainWindow *ui;
+    QString netwerkBuffer;
+
+    void schrijfNaarLog(const QString &bericht);
+
+    // Dynamische status-LED's per tafel (tafelnummer → LED-widget)
+    QMap<int, QLabel*> tafelLeds;
+    QLabel* haalTafelLed(int id);
+
+    SocketCommunicatieRPIWEMOS *socketComm;
+    CentraalBesturingssysteemRPIWEMOS *centraalSysteem;
+    Heimdall *heimdall;   // Bifrost-server richting de Wemos-devices
+
+    QTimer *uiTimer;
+    QElapsedTimer timerSindsStart;
+
+    QLineSeries *seriesTemp;
+    QLineSeries *seriesCO2;
+    QLineSeries *seriesLucht;
+
+    QLineSeries *seriesWaarschuwingTemp;
+    QLineSeries *seriesWaarschuwingCO2;
+    QLineSeries *seriesWaarschuwingLucht;
+
+    QLineSeries *seriesBrandTemp;
+    QLineSeries *seriesBrandCO2;
+
+    QChart *chartTemp;
+    QChart *chartCO2;
+    QChart *chartLucht;
+
+    QChartView *chartViewTemp;
+    QChartView *chartViewCO2;
+    QChartView *chartViewLucht;
+
+    QValueAxis *asX_Temp;
+    QValueAxis *asY_Temp;
+    QValueAxis *asX_CO2;
+    QValueAxis *asY_CO2;
+    QValueAxis *asX_Lucht;
+    QValueAxis *asY_Lucht;
+
+    void setupGrafieken();
+    void beheerWaarschuwing(const QString &msg, bool actief);
+};
+#endif // MAINWINDOW_H

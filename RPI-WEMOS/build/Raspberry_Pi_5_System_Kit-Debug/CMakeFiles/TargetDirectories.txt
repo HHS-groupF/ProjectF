@@ -1,0 +1,9 @@
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/RPI-WEMOS.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/edit_cache.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/rebuild_cache.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/list_install_components.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/install.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/install/local.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/install/strip.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/RPI-WEMOS_autogen_timestamp_deps.dir
+/home/rpi_b/Documents/projectfRGB/ProjectF-RGB/RPI-WEMOS/build/Raspberry_Pi_5_System_Kit-Debug/CMakeFiles/RPI-WEMOS_autogen.dir
