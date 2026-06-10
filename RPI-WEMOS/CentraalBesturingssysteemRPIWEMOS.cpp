@@ -1,7 +1,6 @@
 #include "CentraalBesturingssysteemRPIWEMOS.h"
 #include "SysteemConfig.h"
 #include <QStringList>
-#include <QDebug>
 
 CentraalBesturingssysteemRPIWEMOS::CentraalBesturingssysteemRPIWEMOS(QObject *parent)
     : QObject(parent)
@@ -10,14 +9,7 @@ CentraalBesturingssysteemRPIWEMOS::CentraalBesturingssysteemRPIWEMOS(QObject *pa
     // De vertraging is instelbaar via Config::RGB_UIT_VERTRAGING.
     rgbUitTimer = new QTimer(this);
     rgbUitTimer->setSingleShot(true);
-    connect(rgbUitTimer, &QTimer::timeout, this, [this]() {
-        qDebug() << "[RGB] uit-timer VERLOPEN -> lamp gaat nu uit";
-        emit logBerichtGegenereerd("[RGB] uit-vertraging verlopen -> lamp uit");
-        zetRgbUit();
-    });
-
-    // Bewijs bij opstarten dat DEZE build draait + welke vertraging actief is.
-    qDebug() << "[RGB] uit-vertraging ingesteld op" << Config::RGB_UIT_VERTRAGING << "ms";
+    connect(rgbUitTimer, &QTimer::timeout, this, &CentraalBesturingssysteemRPIWEMOS::zetRgbUit);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::verwerkInkomendeStatus(bool brand, bool overrule, bool ventilator)
@@ -59,16 +51,10 @@ void CentraalBesturingssysteemRPIWEMOS::verwerkBifrostRune(const QString &topic,
         if (rgbAutoModus) {
             if (beweging) {
                 // Beweging: lamp meteen aan en een lopende uit-timer annuleren.
-                qDebug() << "[RGB] beweging JA -> lamp aan, uit-timer geannuleerd";
                 rgbUitTimer->stop();
                 zetRgbKleur(rgbKleurKeuze);
             } else if (Config::RGB_UIT_VERTRAGING > 0) {
                 // Geen beweging: lamp pas na de ingestelde vertraging uitzetten.
-                qDebug() << "[RGB] beweging NEE -> uit-timer gestart:"
-                         << Config::RGB_UIT_VERTRAGING << "ms";
-                emit logBerichtGegenereerd("[RGB] geen beweging -> lamp gaat over "
-                                           + QString::number(Config::RGB_UIT_VERTRAGING / 1000)
-                                           + " s uit");
                 rgbUitTimer->start(Config::RGB_UIT_VERTRAGING);
             } else {
                 // Vertraging 0: direct uit.
