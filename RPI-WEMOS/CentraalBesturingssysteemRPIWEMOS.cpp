@@ -5,6 +5,11 @@
 CentraalBesturingssysteemRPIWEMOS::CentraalBesturingssysteemRPIWEMOS(QObject *parent)
     : QObject(parent)
 {
+    // Timer die de RGB-sfeerlamp uitzet nadat de beweging is gestopt.
+    // De vertraging is instelbaar via Config::RGB_UIT_VERTRAGING.
+    rgbUitTimer = new QTimer(this);
+    rgbUitTimer->setSingleShot(true);
+    connect(rgbUitTimer, &QTimer::timeout, this, &CentraalBesturingssysteemRPIWEMOS::zetRgbUit);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::verwerkInkomendeStatus(bool brand, bool overrule, bool ventilator)
@@ -44,8 +49,17 @@ void CentraalBesturingssysteemRPIWEMOS::verwerkBifrostRune(const QString &topic,
         emit bewegingStatusGewijzigd(beweging);
 
         if (rgbAutoModus) {
-            if (beweging) zetRgbKleur(rgbKleurKeuze);
-            else          zetRgbUit();
+            if (beweging) {
+                // Beweging: lamp meteen aan en een lopende uit-timer annuleren.
+                rgbUitTimer->stop();
+                zetRgbKleur(rgbKleurKeuze);
+            } else if (Config::RGB_UIT_VERTRAGING > 0) {
+                // Geen beweging: lamp pas na de ingestelde vertraging uitzetten.
+                rgbUitTimer->start(Config::RGB_UIT_VERTRAGING);
+            } else {
+                // Vertraging 0: direct uit.
+                zetRgbUit();
+            }
         }
     }
 }

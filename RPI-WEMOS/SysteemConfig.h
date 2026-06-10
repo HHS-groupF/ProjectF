@@ -27,6 +27,11 @@ constexpr double HUM_WAARSCHUWING  = 65.0;
 constexpr int SENSOR_TIMER_INTERVAL = 2000; // Interval voor het genereren/uitlezen van sensoren
 constexpr int UI_TIMER_INTERVAL     = 100;  // Refresh rate van het dashboard
 
+// Hoe lang de RGB-sfeerlamp nog AAN blijft nadat de bewegingssensor "NEE" meldt
+// (extra software-vertraging bovenop de hardware hold-tijd van de PIR zelf).
+// Op 0 zetten = lamp gaat direct uit zodra de beweging stopt.
+constexpr int RGB_UIT_VERTRAGING    = 10000; // 10 seconden
+
 // RGB Sfeerlicht kleur presets (formaat: "R,G,B")
 const QString RGB_WIT   = "255,255,255";
 const QString RGB_WARM  = "255,120,20";

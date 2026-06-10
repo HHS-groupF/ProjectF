@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTimer>
 
 class CentraalBesturingssysteemRPIWEMOS : public QObject {
     Q_OBJECT
@@ -37,6 +38,7 @@ signals:
 private:
     bool rgbAutoModus = true;        // standaard: RGB volgt de bewegingssensor
     QString rgbKleurKeuze = "Wit";   // laatst gekozen kleur in de combobox
+    QTimer *rgbUitTimer = nullptr;   // vertraging voor het uitschakelen van de RGB na "geen beweging"
     bool kleurNaarWaarde(const QString &naam, QString &rgbWaarde) const;
 };
 
