@@ -1,111 +1,90 @@
 #include "CentraalBesturingssysteemRPIWEMOS.h"
-#include "SysteemConfig.h"
-#include <QStringList>
+
+#include "IRuneVerwerker.h"
+#include "RgbModule.h"
+#include "TafelModule.h"
+#include "VeiligheidModule.h"
 
 CentraalBesturingssysteemRPIWEMOS::CentraalBesturingssysteemRPIWEMOS(QObject *parent)
     : QObject(parent)
 {
-    // Timer die de RGB-sfeerlamp uitzet nadat de beweging is gestopt.
-    // De vertraging is instelbaar via Config::RGB_UIT_VERTRAGING.
-    rgbUitTimer = new QTimer(this);
-    rgbUitTimer->setSingleShot(true);
-    connect(rgbUitTimer, &QTimer::timeout, this, &CentraalBesturingssysteemRPIWEMOS::zetRgbUit);
+    m_rgb        = new RgbModule(this);
+    m_tafel      = new TafelModule(this);
+    m_veiligheid = new VeiligheidModule(this);
+
+    // Modules die Bifrost-runes verwerken, registreren voor de dispatch.
+    m_verwerkers << m_rgb << m_tafel;
+
+    // --- Module-signalen bundelen naar de coordinator-signalen ---------------
+    // Veiligheid
+    connect(m_veiligheid, &VeiligheidModule::ventilatorStatusGewijzigd,
+            this, &CentraalBesturingssysteemRPIWEMOS::ventilatorStatusGewijzigd);
+    connect(m_veiligheid, &VeiligheidModule::brandAlarmStatusGewijzigd,
+            this, &CentraalBesturingssysteemRPIWEMOS::brandAlarmStatusGewijzigd);
+    connect(m_veiligheid, &VeiligheidModule::overruleStatusGewijzigd,
+            this, &CentraalBesturingssysteemRPIWEMOS::overruleStatusGewijzigd);
+    connect(m_veiligheid, &VeiligheidModule::stuurNetwerkCommando,
+            this, &CentraalBesturingssysteemRPIWEMOS::stuurNetwerkCommando);
+    connect(m_veiligheid, &VeiligheidModule::logBerichtGegenereerd,
+            this, &CentraalBesturingssysteemRPIWEMOS::logBerichtGegenereerd);
+
+    // Tafels
+    connect(m_tafel, &TafelModule::stuurBifrostBericht,
+            this, &CentraalBesturingssysteemRPIWEMOS::stuurBifrostBericht);
+    connect(m_tafel, &TafelModule::tafelStatusGewijzigd,
+            this, &CentraalBesturingssysteemRPIWEMOS::tafelStatusGewijzigd);
+
+    // RGB
+    connect(m_rgb, &RgbModule::stuurBifrostBericht,
+            this, &CentraalBesturingssysteemRPIWEMOS::stuurBifrostBericht);
+    connect(m_rgb, &RgbModule::rgbStatusGewijzigd,
+            this, &CentraalBesturingssysteemRPIWEMOS::rgbStatusGewijzigd);
+    connect(m_rgb, &RgbModule::bewegingStatusGewijzigd,
+            this, &CentraalBesturingssysteemRPIWEMOS::bewegingStatusGewijzigd);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::verwerkInkomendeStatus(bool brand, bool overrule, bool ventilator)
 {
-    emit brandAlarmStatusGewijzigd(brand);
-    emit overruleStatusGewijzigd(overrule);
-    emit ventilatorStatusGewijzigd(ventilator);
+    m_veiligheid->verwerkInkomendeStatus(brand, overrule, ventilator);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::activeerBrandOverrule()
 {
-    emit overruleStatusGewijzigd(true);
-    emit brandAlarmStatusGewijzigd(false);
-    emit logBerichtGegenereerd("GEBRUIKER: Brandmelding handmatig gereset via Dashboard.");
-
-    emit stuurNetwerkCommando("COMMAND: ALARM_OVERRULED\n");
+    m_veiligheid->activeerBrandOverrule();
 }
 
-// ===========================================================================
-//  Tafel- en RGB-logica (Wemos-runes via Heimdall)
-// ===========================================================================
 void CentraalBesturingssysteemRPIWEMOS::verwerkBifrostRune(const QString &topic, const QString &payload)
 {
-    QStringList delen = topic.split('/');
-
-    // tafel/<id>/status  ->  HELP / OK
-    if (delen.size() == 3 && delen[0] == "tafel" && delen[2] == "status") {
-        int id = delen[1].toInt();
-        bool hulpNodig = (payload == "HELP");
-        if (hulpNodig || payload == "OK") {
-            emit tafelStatusGewijzigd(id, hulpNodig);
-        }
-    }
-    // sensor/beweging  ->  JA / NEE  (stuurt in automatische modus de RGB)
-    else if (topic == "sensor/beweging") {
-        bool beweging = (payload == "JA");
-        laatsteBeweging = beweging;
-        emit bewegingStatusGewijzigd(beweging);
-
-        if (rgbAutoModus) {
-            if (beweging) {
-                // Beweging: lamp meteen aan en een lopende uit-timer annuleren.
-                rgbUitTimer->stop();
-                zetRgbKleur(rgbKleurKeuze);
-            } else if (Config::RGB_UIT_VERTRAGING > 0) {
-                // Geen beweging: lamp pas na de ingestelde vertraging uitzetten.
-                rgbUitTimer->start(Config::RGB_UIT_VERTRAGING);
-            } else {
-                // Vertraging 0: direct uit.
-                zetRgbUit();
-            }
+    // Route de Rune naar de eerste module die het topic aankan.
+    for (IRuneVerwerker *verwerker : m_verwerkers) {
+        if (verwerker->kanVerwerken(topic)) {
+            verwerker->verwerkRune(topic, payload);
+            return;
         }
     }
 }
 
 void CentraalBesturingssysteemRPIWEMOS::resetTafel(int id)
 {
-    emit stuurBifrostBericht("tafel/" + QString::number(id) + "/reset", "RESET");
+    m_tafel->resetTafel(id);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::zetRgbKleur(const QString &kleurNaam)
 {
-    QString rgbWaarde;
-    if (!kleurNaarWaarde(kleurNaam, rgbWaarde)) return;
-    emit stuurBifrostBericht("sensor/rgb/set", rgbWaarde);
-    emit rgbStatusGewijzigd(rgbWaarde);
+    m_rgb->zetRgbKleur(kleurNaam);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::zetRgbUit()
 {
-    emit stuurBifrostBericht("sensor/rgb/set", "UIT");
-    emit rgbStatusGewijzigd("UIT");
+    m_rgb->zetRgbUit();
 }
 
 void CentraalBesturingssysteemRPIWEMOS::zetRgbAutoModus(bool aan)
 {
-    rgbAutoModus = aan;
+    m_rgb->zetRgbAutoModus(aan);
 }
 
 void CentraalBesturingssysteemRPIWEMOS::zetRgbKleurKeuze(const QString &kleurNaam)
 {
-    rgbKleurKeuze = kleurNaam;
-    // In automatische modus blijft de lamp de bewegingssensor volgen: pas de nieuwe
-    // kleur alleen live toe als er op dit moment beweging is (lamp al aan). Zonder
-    // beweging onthouden we de kleur alleen voor de volgende beweging; de lamp gaat
-    // dus niet ongewenst constant aan door het wisselen van kleur.
-    if (rgbAutoModus && laatsteBeweging) zetRgbKleur(rgbKleurKeuze);
-}
-
-bool CentraalBesturingssysteemRPIWEMOS::kleurNaarWaarde(const QString &naam, QString &rgbWaarde) const
-{
-    if      (naam == "Wit")   rgbWaarde = Config::RGB_WIT;
-    else if (naam == "Warm")  rgbWaarde = Config::RGB_WARM;
-    else if (naam == "Rood")  rgbWaarde = Config::RGB_ROOD;
-    else if (naam == "Blauw") rgbWaarde = Config::RGB_BLAUW;
-    else if (naam == "Groen") rgbWaarde = Config::RGB_GROEN;
-    else return false;
-    return true;
+    m_rgb->zetRgbKleurKeuze(kleurNaam);
 }

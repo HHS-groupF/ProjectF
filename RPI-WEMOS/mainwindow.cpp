@@ -1,12 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "SysteemConfig.h"
+#include "Heimdall.h"                     // concrete IBerichtKanaal-implementatie (enige plek)
+#include "SocketCommunicatieRPIWEMOS.h"   // concrete IBusVerbinding-implementatie (enige plek)
 #include <QDateTime>
 #include <QListWidget>
 #include <QPen>
 #include <QColor>
 #include <QDebug>
-#include <QRegularExpression>
 #include <QFile>
 #include <QTextStream>
 #include <QComboBox>
@@ -24,10 +25,15 @@ MainWindow::MainWindow(QWidget *parent)
     setupGrafieken();
     timerSindsStart.start();
 
+    // Eén instantiatiepunt voor de BUS-verbinding: hier wissel je de concrete
+    // implementatie om voor een andere IBusVerbinding zonder de rest te raken.
     socketComm = new SocketCommunicatieRPIWEMOS(this);
 
+    // BUS-protocolparser: decodeert de rauwe socketdata tot getypeerde signalen.
+    busParser = new BusProtocolParser(this);
+
     // --- Socket logs gaan naar textBrowser_Socket ---
-    connect(socketComm, &SocketCommunicatieRPIWEMOS::nieuwLogBericht, this, [this](QString bericht) {
+    connect(socketComm, &IBusVerbinding::nieuwLogBericht, this, [this](QString bericht) {
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString logRegel = tijd + " - " + bericht;
         ui->textBrowser_Socket->append(logRegel);
@@ -40,10 +46,13 @@ MainWindow::MainWindow(QWidget *parent)
         schrijfNaarLog(startMsg);
     }
 
-    // --- Bifrost-server (Heimdall): communicatie richting de Wemos-devices ---
-    heimdall = new Heimdall(this);
+    // --- Communicatie-kanaal richting de Wemos-devices ---
+    // Eén instantiatiepunt: wissel hier Heimdall om voor een andere
+    // IBerichtKanaal-implementatie (MQTT, WebSocket, QTcpServer, ...) en de
+    // rest van de applicatie verandert niet.
+    kanaal = new Heimdall(this);
 
-    connect(heimdall, &Heimdall::logBericht, this, [this](QString bericht) {
+    connect(kanaal, &IBerichtKanaal::logBericht, this, [this](QString bericht) {
         QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString logRegel = tijd + " - " + bericht;
         ui->textBrowser_Logboek->append(logRegel);
@@ -53,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Inkomende Wemos-runes (tafel/status, sensor/beweging) gaan naar het brein
     // (CentraalBesturing). De koppeling staat verderop, zodra centraalSysteem bestaat.
 
-    if (heimdall->start(Config::POORT_BIFROST)) {
+    if (kanaal->start(Config::POORT_BIFROST)) {
         QString logRegel = "Bifrost (Heimdall) luistert op poort " + QString::number(Config::POORT_BIFROST) + "...";
         ui->textBrowser_Logboek->append(logRegel);
         schrijfNaarLog(logRegel);
@@ -88,15 +97,15 @@ MainWindow::MainWindow(QWidget *parent)
         schrijfNaarLog(tijd + " - " + bericht);
     });
 
-    connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::stuurNetwerkCommando, socketComm, &SocketCommunicatieRPIWEMOS::verzendData);
+    connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::stuurNetwerkCommando, socketComm, &IBusVerbinding::verzendData);
 
     // --- Tafel + RGB: logica in het brein, UI hier ---
     // Inkomende Wemos-runes naar het brein.
-    connect(heimdall, &Heimdall::runeOntvangen,
+    connect(kanaal, &IBerichtKanaal::runeOntvangen,
             centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::verwerkBifrostRune);
     // Uitgaande Bifrost-berichten van het brein naar de Wemos-devices.
     connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::stuurBifrostBericht,
-            heimdall, &Heimdall::publiceer);
+            kanaal, &IBerichtKanaal::publiceer);
 
     // Tafel-status: dynamische LED + logboek + waarschuwingenlijst.
     connect(centraalSysteem, &CentraalBesturingssysteemRPIWEMOS::tafelStatusGewijzigd, this, [this](int id, bool hulpNodig) {
@@ -132,6 +141,64 @@ MainWindow::MainWindow(QWidget *parent)
     centraalSysteem->zetRgbAutoModus(ui->checkBox_RGB_Auto->isChecked());
     ui->pushButton_RGB_Set->setEnabled(!ui->checkBox_RGB_Auto->isChecked());
     ui->pushButton_RGB_Uit->setEnabled(!ui->checkBox_RGB_Auto->isChecked());
+
+    // --- BUS-protocolparser koppelen aan de UI ---
+    connect(busParser, &BusProtocolParser::heartbeatOntvangen, this, [this]() {
+        QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+        ui->textBrowser_Socket->append(tijd + " - ❤️ HEARTBEAT ONTVANGEN");
+        // Bewust NIET naar log.txt om de SD-kaart te sparen.
+    });
+
+    connect(busParser, &BusProtocolParser::hardwareLog, this, [this](QString bericht) {
+        QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+        ui->textBrowser_Logboek->append("<b><span style='color:#e67e22'>" + tijd + " - " + bericht + "</span></b>");
+        schrijfNaarLog(tijd + " - " + bericht);
+    });
+
+    connect(busParser, &BusProtocolParser::algemeenBerichtOntvangen, this, [this](QString bericht) {
+        QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString logRegel = tijd + " - Inkomend: " + bericht;
+        ui->textBrowser_Logboek->append(logRegel);
+        schrijfNaarLog(logRegel);
+    });
+
+    connect(busParser, &BusProtocolParser::gebouwStatus, this, [this](bool brand, bool overrule, bool ventilator) {
+        centraalSysteem->verwerkInkomendeStatus(brand, overrule, ventilator);
+        beheerWaarschuwing("🔥 NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
+        beheerWaarschuwing("⚠️ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
+    });
+
+    connect(busParser, &BusProtocolParser::sensorMeting, this, [this](QString id, double waarde) {
+        double secondenGeleden = timerSindsStart.elapsed() / 1000.0;
+        double windowSize = 60.0;
+
+        if (id == "CO2") {
+            ui->lcdNumber_CO2->display(waarde);
+            seriesCO2->append(secondenGeleden, waarde);
+            if (secondenGeleden > windowSize) asX_CO2->setRange(secondenGeleden - windowSize, secondenGeleden);
+            if (waarde > asY_CO2->max()) asY_CO2->setMax(waarde + 200);
+            if (waarde < asY_CO2->min()) asY_CO2->setMin(qMax(0.0, waarde - 100));
+            QString msg = "⚠️ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
+            beheerWaarschuwing(msg, waarde > Config::CO2_WAARSCHUWING);
+        }
+        else if (id == "TEMP") {
+            ui->lcdNumber_Temperatuur->display(waarde);
+            seriesTemp->append(secondenGeleden, waarde);
+            if (secondenGeleden > windowSize) asX_Temp->setRange(secondenGeleden - windowSize, secondenGeleden);
+            if (waarde > asY_Temp->max()) asY_Temp->setMax(waarde + 5);
+            if (waarde < asY_Temp->min()) asY_Temp->setMin(waarde - 5);
+            QString msg = "⚠️ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "°C) -> Actie: Ventilator AAN";
+            beheerWaarschuwing(msg, waarde > Config::TEMP_WAARSCHUWING);
+        }
+        else if (id == "HUM") {
+            ui->lcdNumber_Luchtvochtigheid->display(waarde);
+            seriesLucht->append(secondenGeleden, waarde);
+            if (secondenGeleden > windowSize) asX_Lucht->setRange(secondenGeleden - windowSize, secondenGeleden);
+            if (waarde > asY_Lucht->max()) asY_Lucht->setMax(qMin(100.0, waarde + 10));
+            QString msg = "⚠️ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
+            beheerWaarschuwing(msg, waarde > Config::HUM_WAARSCHUWING);
+        }
+    });
 
     uiTimer = new QTimer(this);
     connect(uiTimer, &QTimer::timeout, this, &MainWindow::updateScherm);
@@ -177,108 +244,17 @@ void MainWindow::beheerWaarschuwing(const QString &msg, bool actief)
 
 void MainWindow::updateScherm()
 {
-    // 1. Update de verbindingsstatus indicator in de UI
+    // Verbindingsstatus-indicator bijwerken.
     if (socketComm->checkConnectieStatus()) {
         ui->label_Status_Socketverbinding->setStyleSheet("background-color: green; border-radius: 45px;");
     } else {
         ui->label_Status_Socketverbinding->setStyleSheet("background-color: rgb(170, 0, 0); border-radius: 45px;");
     }
 
-    // 2. Haal nieuwe netwerkdata op en voeg deze toe aan de buffer
-    QString inkomend = socketComm->ontvangData();
-    if (!inkomend.isEmpty()) {
-        netwerkBuffer += inkomend;
-    }
-
-    // 3. Verwerk alle volledige regels die momenteel in de buffer zitten (TCP stream-safe)
-    while (netwerkBuffer.contains('\n')) {
-        int pos = netwerkBuffer.indexOf('\n');
-        QString ruwBericht = netwerkBuffer.left(pos);
-        netwerkBuffer.remove(0, pos + 1); // Verwijder de verwerkte regel inclusief de '\n'
-
-        QString schoonBericht = ruwBericht.trimmed();
-        if (schoonBericht.isEmpty()) continue;
-
-        // --- HEARTBEAT OMLEIDING ---
-        if (schoonBericht == "HEARTBEAT") {
-            QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-            ui->textBrowser_Socket->append(tijd + " - ❤️ HEARTBEAT ONTVANGEN");
-            // LET OP: Bewust NIET naar de SD-kaart/log.txt geschreven om deze te sparen
-            continue;
-        }
-
-        // --- HARDWARE LOG OMLEIDING (Voor fysieke STM32 brandoverrule meldingen) ---
-        if (schoonBericht.startsWith("LOG ")) {
-            QString logBericht = schoonBericht.mid(4); // Haal het woordje "LOG " van de regel af
-            QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-            ui->textBrowser_Logboek->append("<b><span style='color:#e67e22'>" + tijd + " - " + logBericht + "</span></b>");
-            schrijfNaarLog(tijd + " - " + logBericht);
-            continue; // Stop verdere parsing voor deze specifieke regel
-        }
-
-        QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
-        QString logRegel = tijd + " - Inkomend: " + schoonBericht;
-        ui->textBrowser_Logboek->append(logRegel);
-        schrijfNaarLog(logRegel);
-
-        // --- Parser: splits op alle vormen van witruimte (zowel spaties als tabs) ---
-        QStringList delen = schoonBericht.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-        if (delen.isEmpty()) continue;
-        const QString type = delen[0];
-
-        // STATUS <brand> <overrule> <ventilator>   (1/0)
-        if (type == "STATUS" && delen.size() >= 4) {
-            bool brand      = (delen[1] == "1");
-            bool overrule   = (delen[2] == "1");
-            bool ventilator = (delen[3] == "1");
-
-            centraalSysteem->verwerkInkomendeStatus(brand, overrule, ventilator);
-
-            beheerWaarschuwing("🔥 NOODGEVAL: BRAND gedetecteerd! -> Actie: Ventilator geforceerd UIT", brand);
-            beheerWaarschuwing("⚠️ Brandalarm Handmatig Genegeerd -> Actie: Ventilator vrijgegeven", overrule && !brand);
-        }
-
-        // SENSOR <nodeId> <sensorId> <waarde>
-        else if (type == "SENSOR" && delen.size() >= 4) {
-            QString id = delen[2];
-            double waarde = delen[3].toDouble();
-            double secondenGeleden = timerSindsStart.elapsed() / 1000.0;
-            double windowSize = 60.0;
-
-            if (id == "CO2") {
-                ui->lcdNumber_CO2->display(waarde);
-                seriesCO2->append(secondenGeleden, waarde);
-
-                if (secondenGeleden > windowSize) asX_CO2->setRange(secondenGeleden - windowSize, secondenGeleden);
-                if (waarde > asY_CO2->max()) asY_CO2->setMax(waarde + 200);
-                if (waarde < asY_CO2->min()) asY_CO2->setMin(qMax(0.0, waarde - 100));
-
-                QString msg = "⚠️ CO2-niveau te hoog (> " + QString::number(Config::CO2_WAARSCHUWING) + " PPM) -> Actie: Ventilator AAN";
-                beheerWaarschuwing(msg, waarde > Config::CO2_WAARSCHUWING);
-            }
-            else if (id == "TEMP") {
-                ui->lcdNumber_Temperatuur->display(waarde);
-                seriesTemp->append(secondenGeleden, waarde);
-
-                if (secondenGeleden > windowSize) asX_Temp->setRange(secondenGeleden - windowSize, secondenGeleden);
-                if (waarde > asY_Temp->max()) asY_Temp->setMax(waarde + 5);
-                if (waarde < asY_Temp->min()) asY_Temp->setMin(waarde - 5);
-
-                QString msg = "⚠️ Temperatuur te hoog (> " + QString::number(Config::TEMP_WAARSCHUWING) + "°C) -> Actie: Ventilator AAN";
-                beheerWaarschuwing(msg, waarde > Config::TEMP_WAARSCHUWING);
-            }
-            else if (id == "HUM") {
-                ui->lcdNumber_Luchtvochtigheid->display(waarde);
-                seriesLucht->append(secondenGeleden, waarde);
-
-                if (secondenGeleden > windowSize) asX_Lucht->setRange(secondenGeleden - windowSize, secondenGeleden);
-                if (waarde > asY_Lucht->max()) asY_Lucht->setMax(qMin(100.0, waarde + 10));
-
-                QString msg = "⚠️ Luchtvochtigheid te hoog (> " + QString::number(Config::HUM_WAARSCHUWING) + "%) -> Actie: Ventilator AAN";
-                beheerWaarschuwing(msg, waarde > Config::HUM_WAARSCHUWING);
-            }
-        }
-    }
+    // Nieuwe socketdata aan de parser geven; die zendt getypeerde signalen uit
+    // die in de constructor aan de UI zijn gekoppeld (gebouwStatus, sensorMeting,
+    // hardwareLog, heartbeat, ...). De UI kent het draadformaat dus niet meer.
+    busParser->verwerk(socketComm->ontvangData());
 }
 
 void MainWindow::on_pushButton_RGB_Set_clicked()
@@ -342,7 +318,7 @@ QLabel* MainWindow::haalTafelLed(int id)
 void MainWindow::on_pushButton_Stuur_Menu_clicked()
 {
     QString nieuweTekst = ui->lineEdit_Lichtkrant_Nieuw->text();
-    heimdall->publiceer("wemos/lichtkrant", "MENU:" + nieuweTekst);
+    kanaal->publiceer("wemos/lichtkrant", "MENU:" + nieuweTekst);
 
     QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
     QString logRegel = tijd + " - Menu loop ingesteld op: " + nieuweTekst;
@@ -356,8 +332,8 @@ void MainWindow::on_pushButton_Update_Lichtkrant_clicked()
 {
     QString nieuweTekst = ui->lineEdit_Lichtkrant_Nieuw->text();
 
-    // Stuur naar Wemos lichtkrant via Bifrost
-    heimdall->publiceer("wemos/lichtkrant", "MSG:" + nieuweTekst);
+    // Stuur naar Wemos lichtkrant via het communicatie-kanaal
+    kanaal->publiceer("wemos/lichtkrant", "MSG:" + nieuweTekst);
 
     // Stuur ook naar RPI-BUS via TCP (voor toekomstig gebruik)
     socketComm->verzendData("LICHTKRANT:" + nieuweTekst + "\n");

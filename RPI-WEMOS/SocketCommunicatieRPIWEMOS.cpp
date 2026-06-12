@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-SocketCommunicatieRPIWEMOS::SocketCommunicatieRPIWEMOS(QObject *parent) : QObject(parent) {}
+SocketCommunicatieRPIWEMOS::SocketCommunicatieRPIWEMOS(QObject *parent) : IBusVerbinding(parent) {}
 
 SocketCommunicatieRPIWEMOS::~SocketCommunicatieRPIWEMOS() {
     gestopt = true;

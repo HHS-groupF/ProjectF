@@ -1,7 +1,7 @@
 #ifndef HEIMDALL_H
 #define HEIMDALL_H
 
-#include <QObject>
+#include "IBerichtKanaal.h"
 #include <QString>
 #include <atomic>
 #include <thread>
@@ -21,18 +21,16 @@
 //  Heimdall stuurt uitgaande Runes naar alle verbonden clients (broadcast);
 //  elke Wemos filtert zelf op het topic dat hij nodig heeft.
 // ============================================================================
-class Heimdall : public QObject {
+class Heimdall : public IBerichtKanaal {
     Q_OBJECT
 public:
     explicit Heimdall(QObject *parent = nullptr);
-    ~Heimdall();
+    ~Heimdall() override;
 
-    bool start(int poort);                                        // begin te luisteren
-    void publiceer(const QString &topic, const QString &payload); // stuur Rune naar alle clients
+    bool start(int poort) override;                                        // begin te luisteren
+    void publiceer(const QString &topic, const QString &payload) override; // stuur Rune naar alle clients
 
-signals:
-    void runeOntvangen(QString topic, QString payload); // inkomend bericht (naar GUI-thread)
-    void logBericht(QString bericht);                   // statusmelding voor het logboek
+    // runeOntvangen() en logBericht() zijn geërfd van IBerichtKanaal.
 
 private:
     void accepteerLus();              // accepteert nieuwe clients (eigen thread)

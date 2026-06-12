@@ -3,24 +3,47 @@
 
 #include <QObject>
 #include <QString>
-#include <QTimer>
+#include <QVector>
 
+class IRuneVerwerker;
+class RgbModule;
+class TafelModule;
+class VeiligheidModule;
+
+// ============================================================================
+//  CentraalBesturingssysteemRPIWEMOS — coordinator.
+// ----------------------------------------------------------------------------
+//  Bevat zelf GEEN domeinlogica meer (was voorheen een god-class). Hij bezit de
+//  losse modules (veiligheid, tafels, RGB), bundelt hun signalen naar buiten, en
+//  routeert inkomende Bifrost-runes naar de module die het topic kan verwerken
+//  (via de IRuneVerwerker-interface). Nieuwe device-modules toevoegen vereist
+//  geen wijziging in de dispatch-logica.
+//
+//  De publieke API is bewust identiek aan de oude god-class gebleven, zodat de
+//  MainWindow-koppelingen ongewijzigd blijven werken.
+// ============================================================================
 class CentraalBesturingssysteemRPIWEMOS : public QObject {
     Q_OBJECT
 public:
     explicit CentraalBesturingssysteemRPIWEMOS(QObject *parent = nullptr);
+
     void verwerkInkomendeStatus(bool brand, bool overrule, bool ventilator);
+
+    // Directe toegang tot de modules (voor fijnmazige koppeling indien gewenst).
+    RgbModule        *rgb() const { return m_rgb; }
+    TafelModule      *tafel() const { return m_tafel; }
+    VeiligheidModule *veiligheid() const { return m_veiligheid; }
 
 public slots:
     void activeerBrandOverrule();
 
-    // --- Tafel- en RGB-logica ---
-    void verwerkBifrostRune(const QString &topic, const QString &payload); // tafel/status + sensor/beweging (van Heimdall)
+    // --- Tafel- en RGB-logica (gedelegeerd aan de modules) ---
+    void verwerkBifrostRune(const QString &topic, const QString &payload); // van Heimdall
     void resetTafel(int id);
     void zetRgbKleur(const QString &kleurNaam);
     void zetRgbUit();
-    void zetRgbAutoModus(bool aan);                 // checkbox: RGB volgt bewegingssensor
-    void zetRgbKleurKeuze(const QString &kleurNaam); // onthoudt de combobox-keuze
+    void zetRgbAutoModus(bool aan);
+    void zetRgbKleurKeuze(const QString &kleurNaam);
 
 signals:
     void stuurNetwerkCommando(const QString &commando);                     // naar de BUS-socket
@@ -36,11 +59,11 @@ signals:
     void rgbStatusGewijzigd(const QString &rgbWaarde);  // "r,g,b" of "UIT"
 
 private:
-    bool rgbAutoModus = true;        // standaard: RGB volgt de bewegingssensor
-    bool laatsteBeweging = false;    // huidige bewegingsstatus (voor "RGB volgt beweging")
-    QString rgbKleurKeuze = "Wit";   // laatst gekozen kleur in de combobox
-    QTimer *rgbUitTimer = nullptr;   // vertraging voor het uitschakelen van de RGB na "geen beweging"
-    bool kleurNaarWaarde(const QString &naam, QString &rgbWaarde) const;
+    RgbModule        *m_rgb = nullptr;
+    TafelModule      *m_tafel = nullptr;
+    VeiligheidModule *m_veiligheid = nullptr;
+
+    QVector<IRuneVerwerker*> m_verwerkers;  // rune-dispatch (open/closed)
 };
 
 #endif // CENTRAALBESTURINGSSYSTEEMRPIWEMOS_H

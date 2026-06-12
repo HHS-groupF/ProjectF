@@ -25,10 +25,21 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(RPI-WEMOS
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        IBusVerbinding.h
         SocketCommunicatieRPIWEMOS.h
         SocketCommunicatieRPIWEMOS.cpp
+        BusProtocolParser.h
+        BusProtocolParser.cpp
         CentraalBesturingssysteemRPIWEMOS.h
         CentraalBesturingssysteemRPIWEMOS.cpp
+        IBerichtKanaal.h
+        IRuneVerwerker.h
+        RgbModule.h
+        RgbModule.cpp
+        TafelModule.h
+        TafelModule.cpp
+        VeiligheidModule.h
+        VeiligheidModule.cpp
         Heimdall.h
         Heimdall.cpp
         SysteemConfig.h

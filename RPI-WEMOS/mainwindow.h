@@ -12,9 +12,10 @@
 #include <QLineSeries>
 #include <QValueAxis>
 
-#include "SocketCommunicatieRPIWEMOS.h"
 #include "CentraalBesturingssysteemRPIWEMOS.h"
-#include "Heimdall.h"
+#include "IBerichtKanaal.h"
+#include "IBusVerbinding.h"
+#include "BusProtocolParser.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,7 +39,6 @@ private slots:
     void on_checkBox_RGB_Auto_toggled(bool checked);
 private:
     Ui::MainWindow *ui;
-    QString netwerkBuffer;
 
     void schrijfNaarLog(const QString &bericht);
 
@@ -46,9 +46,10 @@ private:
     QMap<int, QLabel*> tafelLeds;
     QLabel* haalTafelLed(int id);
 
-    SocketCommunicatieRPIWEMOS *socketComm;
+    IBusVerbinding *socketComm;   // verbinding met de RPI-BUS (bv. SocketCommunicatieRPIWEMOS)
+    BusProtocolParser *busParser; // decodeert het BUS-tekstprotocol
     CentraalBesturingssysteemRPIWEMOS *centraalSysteem;
-    Heimdall *heimdall;   // Bifrost-server richting de Wemos-devices
+    IBerichtKanaal *kanaal;       // communicatie-kanaal richting de Wemos-devices (bv. Heimdall)
 
     QTimer *uiTimer;
     QElapsedTimer timerSindsStart;

@@ -1,7 +1,7 @@
 #ifndef SOCKETCOMMUNICATIERPIWEMOS_H
 #define SOCKETCOMMUNICATIERPIWEMOS_H
 
-#include <QObject>
+#include "IBusVerbinding.h"
 #include <QString>
 #include <atomic>
 #include <thread>
@@ -14,20 +14,19 @@
 //  - Luistert op POORT_WEMOS_DATA voor binnenkomende sensordata van RPI-BUS.
 //  - Verbindt naar RPI-BUS:POORT_RPIBUS_COMMANDS om commando's te versturen.
 // ============================================================================
-class SocketCommunicatieRPIWEMOS : public QObject {
+class SocketCommunicatieRPIWEMOS : public IBusVerbinding {
     Q_OBJECT
 
 public:
     explicit SocketCommunicatieRPIWEMOS(QObject *parent = nullptr);
-    ~SocketCommunicatieRPIWEMOS();
+    ~SocketCommunicatieRPIWEMOS() override;
 
-    bool verbind();
-    void verzendData(const QString &bericht);
-    QString ontvangData();
-    bool checkConnectieStatus();
+    bool verbind() override;
+    void verzendData(const QString &bericht) override;
+    QString ontvangData() override;
+    bool checkConnectieStatus() override;
 
-signals:
-    void nieuwLogBericht(QString bericht);
+    // nieuwLogBericht() is geërfd van IBusVerbinding.
 
 private:
     void luisterLus();               // accepteert + leest sensordata (eigen thread)

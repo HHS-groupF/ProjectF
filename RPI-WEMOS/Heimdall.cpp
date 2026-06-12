@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-Heimdall::Heimdall(QObject *parent) : QObject(parent) {}
+Heimdall::Heimdall(QObject *parent) : IBerichtKanaal(parent) {}
 
 Heimdall::~Heimdall() {
     gestopt = true;
