@@ -136,6 +136,20 @@ MainWindow::MainWindow(QWidget *parent)
     uiTimer = new QTimer(this);
     connect(uiTimer, &QTimer::timeout, this, &MainWindow::updateScherm);
     uiTimer->start(Config::UI_TIMER_INTERVAL);
+
+    // Verbindings-watchdog: zolang er geen verbinding is met de andere Pi
+    // (RPI-BUS), elke 5 seconden een waarschuwing in console + dashboard.
+    verbindingWatchdog = new QTimer(this);
+    connect(verbindingWatchdog, &QTimer::timeout, this, [this]() {
+        if (!socketComm->checkConnectieStatus()) {
+            QString tijd = QDateTime::currentDateTime().toString("hh:mm:ss");
+            QString waarschuwing = "⚠️ Geen verbinding met de andere Pi (RPI-BUS)!";
+            ui->textBrowser_Logboek->append("<b><span style='color:red'>" + tijd + " - " + waarschuwing + "</span></b>");
+            schrijfNaarLog(tijd + " - " + waarschuwing);
+            qWarning().noquote() << tijd << "-" << waarschuwing;   // console
+        }
+    });
+    verbindingWatchdog->start(5000);
 }
 
 void MainWindow::schrijfNaarLog(const QString &bericht)
@@ -154,6 +168,7 @@ void MainWindow::schrijfNaarLog(const QString &bericht)
 MainWindow::~MainWindow()
 {
     uiTimer->stop();
+    verbindingWatchdog->stop();
     delete ui;
 }
 

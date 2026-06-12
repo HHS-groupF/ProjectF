@@ -51,6 +51,7 @@ private:
     Heimdall *heimdall;   // Bifrost-server richting de Wemos-devices
 
     QTimer *uiTimer;
+    QTimer *verbindingWatchdog;   // waarschuwt elke 5s zolang de RPI-BUS-verbinding weg is
     QElapsedTimer timerSindsStart;
 
     QLineSeries *seriesTemp;
